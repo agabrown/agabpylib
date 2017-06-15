@@ -3,6 +3,9 @@ agabpylib
 
 **Python library with Anthony's private plotting and data analysis utilities.** 
 
+Mostly code for trying out stuff or for producing examples for my private notes on Bayesian
+inference applications in astronomy.
+
 Documentation
 -------------
 
