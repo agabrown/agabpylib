@@ -21,6 +21,7 @@ The following python packages are required:
 * `numpy <http://www.numpy.org/>`_
 * `scipy <http://www.scipy.org/>`_
 * `matplotlib <http://matplotlib.org/>`_
+* `scikit-learn <http://scikit-learn.org/stable/>`_
 * `setuptools <https://pypi.python.org/pypi/setuptools>`_
 
 Attribution
@@ -31,7 +32,7 @@ Please acknowlegde the authors if you use this code in your research.
 License
 -------
 
-Copyright (c) 2017 Anthony Brown, Leiden Observatory
+Copyright (c) 2015-2017 Anthony Brown, Leiden Observatory
 
 agabpylib is open source and free software: you can redistribute it and/or
 modify it under the terms of MIT license.
