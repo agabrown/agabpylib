@@ -6,13 +6,12 @@ agabpylib
 Documentation
 -------------
 
-All classes and methods/functions are documented so use the python help()
-function to find out more.
+Included with most of the python code, so read the comments or use python's help() function.
 
 Installation notes
 ------------------
 
-This package was developed in a python 3.4 environment and you may experience
+This package was developed in a python 3.4+ environment and you may experience
 problems if you have an older version installed.
 
 The following python packages are required:
