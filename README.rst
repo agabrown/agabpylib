@@ -1,8 +1,7 @@
 agabpylib
 =========
 
-**A collection of often used Python methods and classes, written by Anthony
-Brown** 
+**Python library with Anthony's private plotting and data analysis utilities.** 
 
 Documentation
 -------------
