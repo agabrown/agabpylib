@@ -97,7 +97,7 @@ setup(
     # have to be included in MANIFEST.in as well.
     package_data={'': ['LICENSE', 'AUTHORS.rst', 'HISTORY.rst', 'INSTALL',
         'MANIFEST.in'], 'agabpylib':[], 'agabpylib':['data/*.txt'], 'agabpylib.plotting':['data/*.rgb'],
-        'agabpylib.plotting':['data/*.txt']},
+        'agabpylib.plotting':['data/*.txt'], 'agabpylib.simulation':['data/*']},
     include_package_data=True,
 
     # Although 'package_data' is the preferred approach, in some case you may

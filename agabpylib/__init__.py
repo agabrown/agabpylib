@@ -1,7 +1,7 @@
 """
 Python utilities.
 
-Anthony Brown Oct 2015 - Jun 2017
+Anthony Brown Oct 2015 - Jul 2017
 """
 
 __version__ = "0.1.0"
