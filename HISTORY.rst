@@ -9,3 +9,8 @@
 ++++++++++++++++
 
 - Merged in python code from my data analysis and inference tools, imported to github.
+
+0.1.1 (Jul 2017)
+++++++++++++++++
+
+- Add the code fori very simple simulations of parallax surveys.
