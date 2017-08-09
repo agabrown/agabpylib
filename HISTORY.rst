@@ -13,4 +13,9 @@
 0.1.1 (Jul 2017)
 ++++++++++++++++
 
-- Add the code fori very simple simulations of parallax surveys.
+- Add the code for very simple simulations of parallax surveys.
+
+0.1.2 (Aug 2017)
+++++++++++++++++
+
+- Added code for the evaluation of generalized Fermi-Dirac integrals.
