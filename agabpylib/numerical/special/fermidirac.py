@@ -11,7 +11,7 @@ Anthony Brown Aug 2017
 import numpy as np
 from scipy.integrate import fixed_quad
 
-from agabpylib.numerical.integrate.quadrature import fixed_quad_laguerre
+from agabpylib.numerical.integrate import fixed_quad_laguerre
 
 __all__ = ['fd_evaluate']
 

@@ -7,7 +7,7 @@ Anthony Brown Aug 2017
 import numpy as np
 from scipy.special import roots_laguerre
 
-__all__ = ['fixed_quad_laguere']
+__all__ = ['fixed_quad_laguerre']
 
 def _cached_roots_laguerre(n):
     """
