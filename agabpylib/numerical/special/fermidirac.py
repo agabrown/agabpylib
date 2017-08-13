@@ -48,7 +48,13 @@ def _calculate_breakpoints(eta):
     s1, s2, s3 - The integration interval boundaries. Where the intervals are [-inf, s1], [s1,s2],
     [s2,s3], [s3,+inf]
     """
-    xi = np.log(1.0 + np.exp(_sigma*(eta - _D))) / _sigma
+    zz = np.array(eta)
+    smallexp = _sigma*(zz - _D) < 100.0
+    largeexp = np.logical_not(smallexp)
+    xi = np.zeros_like(zz)    
+    xi[smallexp] = np.log(1.0 + np.exp(_sigma*(zz[smallexp] - _D))) / _sigma
+    xi[largeexp] = (_sigma*(zz[largeexp] - _D)) / _sigma
+
     xisqr = xi*xi
     xa = (_a1 + _b1*xi + _c1*xisqr) / (1 + _c1*xi)
     xb = (_a2 + _b2*xi + _c2*_d2*xisqr) / (1 + _e2*xi + _c2*xisqr)
@@ -127,20 +133,35 @@ def fd_evaluate(nu, eta, theta):
     Parameters
     ----------
 
-    nu - Index of Fermi-Dirac integral.
-    eta - Value of the parameter eta.
-    theta - Value of the parameter theta.
+    nu : Index of Fermi-Dirac integral, must be a scalar.
+    eta : Value(s) of the parameter eta, can be an array.
+    theta : Value of the parameter theta, must be a scalar.
 
     Returns
     -------
 
     Value of the Fermi-Dirac integral.
     """
+    if (not np.isscalar(nu) or not np.isscalar(theta)):
+        raise TypeError("fd_evaluate() is only vectorized for eta")
+
     order = 20
     s1, s2, s3 = _calculate_breakpoints(eta)
-    i1, dummy = fixed_quad(_fd_integrand_nearzero, 0, np.sqrt(s1), args=(nu, eta, theta), n=order)
-    i2, dummy = fixed_quad(_fd_integrand, s1, s2, args=(nu, eta, theta), n=order)
-    i3, dummy = fixed_quad(_fd_integrand, s2, s3, args=(nu, eta, theta), n=order)
-    i4, dummy = fixed_quad_laguerre(_fd_integrand, s3, args=(nu, eta, theta), n=order)
+
+    if np.isscalar(eta):
+        i1, dummy = fixed_quad(_fd_integrand_nearzero, 0, np.sqrt(s1), args=(nu, eta, theta), n=order)
+        i2, dummy = fixed_quad(_fd_integrand, s1, s2, args=(nu, eta, theta), n=order)
+        i3, dummy = fixed_quad(_fd_integrand, s2, s3, args=(nu, eta, theta), n=order)
+        i4, dummy = fixed_quad_laguerre(_fd_integrand, s3, args=(nu, eta, theta), n=order)
+    else:
+        i1 = np.zeros_like(eta)
+        i2 = np.zeros_like(eta)
+        i3 = np.zeros_like(eta)
+        i4 = np.zeros_like(eta)
+        for i in range(eta.size):
+            i1[i], dummy = fixed_quad(_fd_integrand_nearzero, 0, np.sqrt(s1[i]), args=(nu, eta[i], theta), n=order)
+            i2[i], dummy = fixed_quad(_fd_integrand, s1[i], s2[i], args=(nu, eta[i], theta), n=order)
+            i3[i], dummy = fixed_quad(_fd_integrand, s2[i], s3[i], args=(nu, eta[i], theta), n=order)
+            i4[i], dummy = fixed_quad_laguerre(_fd_integrand, s3[i], args=(nu, eta[i], theta), n=order)
 
     return i1+i2+i3+i4

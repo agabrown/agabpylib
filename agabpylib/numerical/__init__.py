@@ -4,4 +4,4 @@ Numerical tools.
 This package provides modules for numerical analysis.
 """
 
-__modules__ =  ['special', 'integrate']
+__modules__ =  ['special', 'integrate', 'optimize']
