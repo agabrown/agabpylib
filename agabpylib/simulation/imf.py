@@ -47,7 +47,7 @@ class MultiPartPowerLaw:
             self.xlimits[i] = np.sum(A[0:i+1]*self.B[0:i+1])
         self.xlimits[-1] = 1.0
 
-    def evaluate(self, mass):
+    def pdf(self, mass):
         """
         Evaluate the IMF (the probability density as a function of mass) for the input set of masses.
 
