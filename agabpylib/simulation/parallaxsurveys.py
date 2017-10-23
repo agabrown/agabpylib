@@ -17,7 +17,7 @@ from scipy.special import erf
 from cycler import cycler
 from os import path
 
-from agabpylib.plotting.fancyaxes import get_basic_xy_axis, configure_basic_xy_axis
+from agabpylib.plotting.plotstyles import useagab, apply_tufte
 from agabpylib.plotting.distinct_colours import get_distinct
 from agabpylib.densityestimation.kde import kde_scikitlearn
 from agabpylib.tools.robuststats import rse
@@ -338,10 +338,11 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None):
             simulatedSurvey.observedParallaxes[positiveParallaxes])
     deltaAbsMag = estimatedAbsMags - simulatedSurvey.absoluteMagnitudes[positiveParallaxes]
 
+    useagab()
     fig = plt.figure(figsize=(16,10))
   
     axA = fig.add_subplot(2,2,1)
-    configure_basic_xy_axis(axA, withgrid=False)
+    apply_tufte(axA, withgrid=False)
     axA.set_prop_cycle(cycler('color', get_distinct(3)))
 
     minPMinThird=np.power(simulatedSurvey.minParallax,-3.0)
@@ -371,7 +372,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None):
         t.set_fontsize(14)
 
     axB = fig.add_subplot(2,2,2)
-    configure_basic_xy_axis(axB, withgrid=False)
+    apply_tufte(axB, withgrid=False)
     axB.set_prop_cycle(cycler('color', get_distinct(3)))
 
     scatter = rse(simulatedSurvey.absoluteMagnitudes)
@@ -393,7 +394,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None):
         t.set_fontsize(14)
 
     axC = fig.add_subplot(2,2,3)
-    configure_basic_xy_axis(axC, withgrid=False)
+    apply_tufte(axC, withgrid=False)
     axC.set_prop_cycle(cycler('color', get_distinct(3)))
 
     m = np.linspace(simulatedSurvey.observedMagnitudes.min(), simulatedSurvey.observedMagnitudes.max(), 1000)
@@ -416,7 +417,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None):
         t.set_fontsize(14)
 
     axD = fig.add_subplot(2,2,4)
-    configure_basic_xy_axis(axD, withgrid=False)
+    apply_tufte(axD, withgrid=False)
     axD.set_prop_cycle(cycler('color', get_distinct(2)))
     if len(relParErr) < 1000:
         axD.semilogx(relParErr,deltaAbsMag,'.')
