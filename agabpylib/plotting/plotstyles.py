@@ -10,7 +10,7 @@ from cycler import cycler
 
 from agabpylib.plotting.distinct_colours import get_distinct
 
-def useagab():
+def useagab(usetex=True, fontfam='serif'):
     """
     Configure the plotting style to my liking.
 
@@ -22,7 +22,8 @@ def useagab():
     Keywords
     --------
 
-    None
+    usetex : Whether or not to use LaTeX text (default True).
+    fontfam : Font family to use (default 'serif')
 
     Returns
     -------
@@ -30,14 +31,15 @@ def useagab():
     Nothing
     """
     line_colours = get_distinct(4)
-    rc('text', usetex=True)
-    rc('text.latex', preamble=r'\usepackage{amsmath}')
-    rc('font', family='serif', size=18)
+    if (usetex):
+        rc('text', usetex=True)
+        rc('text.latex', preamble=r'\usepackage{amsmath}')
+    rc('font', family=fontfam, size=18)
     rc('xtick.major', size='6')
     rc('xtick.minor', size='4')
     rc('ytick.major', size='6')
     rc('ytick.minor', size='4')
-    rc('lines', linewidth=1.5)
+    rc('lines', linewidth=2.0)
     rc('axes', linewidth=1)
     rc('axes', prop_cycle=(cycler('color',line_colours)))
     rc('xtick', direction='out')
