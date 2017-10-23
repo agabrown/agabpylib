@@ -1,21 +1,26 @@
 .. :changelog:
 
-0.0.0 (Oct 2015)
+0.1.3 (Oct 2017)
 ++++++++++++++++
 
-- Creation.
+- Refactored the plot styling code.
 
-0.1.0 (Jun 2017)
+0.1.2 (Aug 2017)
 ++++++++++++++++
 
-- Merged in python code from my data analysis and inference tools, imported to github.
+- Added code for the evaluation of generalized Fermi-Dirac integrals.
 
 0.1.1 (Jul 2017)
 ++++++++++++++++
 
 - Add the code for very simple simulations of parallax surveys.
 
-0.1.2 (Aug 2017)
+0.1.0 (Jun 2017)
 ++++++++++++++++
 
-- Added code for the evaluation of generalized Fermi-Dirac integrals.
+- Merged in python code from my data analysis and inference tools, imported to github.
+
+0.0.0 (Oct 2015)
+++++++++++++++++
+
+- Creation.
