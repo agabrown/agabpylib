@@ -1,7 +1,7 @@
 """
 Setup module for agabpylib
 
-Anthony Brown Oct 2015 - Oct 2017
+Anthony Brown Oct 2015 - Nov 2017
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html

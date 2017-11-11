@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.1.4 (Nov 2017)
+++++++++++++++++
+
+- Simple Metropolis MCMC sampler added while reading through `Hogg & Foreman-Mackey (2017) <https://arxiv.org/abs/1710.06068>`_.
+
 0.1.3 (Oct 2017)
 ++++++++++++++++
 
