@@ -41,7 +41,8 @@ class MetropolisSampler:
         self.lnprob = lnprob
         self.proposal_rvs = proposal_rvs
         self.samples = None
-        self.acceptance_fraction = 0.0
+        self.numiter = None
+        self.accepted_samples = 1
 
     def run_mcmc(self, theta_init, n_iter, burnin=0, thin=1):
         """
@@ -72,6 +73,7 @@ class MetropolisSampler:
         Nothing
         """
 
+        self.numiter = n_iter
         if np.isscalar(theta_init):
             self.samples = np.empty(n_iter)
         else:
@@ -82,13 +84,13 @@ class MetropolisSampler:
             lnr = np.log(np.random.uniform())
             lnpdf_theta_k = self.lnprob(self.samples[i-1])
             lnpdf_theta_prop = self.lnprob(theta_prop)
+            #   HANDLE THIS CASE!
+            #if (np.isinf(lnpdf_theta_prop) and np.isinf(lnpdf_theta_k)):
             if (lnpdf_theta_prop - lnpdf_theta_k > lnr):
                 self.samples[i] = theta_prop
-                self.acceptance_fraction += 1
+                self.accepted_samples += 1
             else:
                 self.samples[i] = self.samples[i-1]
-
-        self.acceptance_fraction /= n_iter
 
     def get_samples(self):
         """
@@ -135,4 +137,4 @@ class MetropolisSampler:
         """
         if np.any(self.samples == None):
             raise Exception("No samples generated: Please invoke run_mcmc() first!")
-        return self.acceptance_fraction
+        return self.accepted_samples/self.numiter
