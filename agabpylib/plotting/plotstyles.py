@@ -1,7 +1,7 @@
 """
 Provides plotting styles.
 
-Anthony Brown Aug 2015 - Oct 2017
+Anthony Brown Aug 2015 - Nov 2017
 """
 
 import matplotlib.pyplot as plt
@@ -10,7 +10,7 @@ from cycler import cycler
 
 from agabpylib.plotting.distinct_colours import get_distinct
 
-def useagab(usetex=True, fontfam='serif'):
+def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolours=4):
     """
     Configure the plotting style to my liking.
 
@@ -22,16 +22,23 @@ def useagab(usetex=True, fontfam='serif'):
     Keywords
     --------
 
-    usetex : Whether or not to use LaTeX text (default True).
-    fontfam : Font family to use (default 'serif')
+    usetex : boolean
+        Whether or not to use LaTeX text (default True).
+    fontfam : boolean
+        Font family to use (default 'serif')
+    sroncolours : boolean
+        If true use colour-blind proof distinct colours (https://personal.sron.nl/~pault/).
+    ncolours : int
+        Number of distinct colours from SRON scheme to cycle through automatically during plotting
+        (default 4).
 
     Returns
     -------
 
     Nothing
     """
-    line_colours = get_distinct(4)
-    if (usetex):
+    line_colours = get_distinct(ncolours)
+    if usetex:
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
     rc('font', family=fontfam, size=18)
@@ -41,7 +48,8 @@ def useagab(usetex=True, fontfam='serif'):
     rc('ytick.minor', size='4')
     rc('lines', linewidth=2.0)
     rc('axes', linewidth=1)
-    rc('axes', prop_cycle=(cycler('color',line_colours)))
+    if sroncolours:
+        rc('axes', prop_cycle=(cycler('color',line_colours)))
     rc('xtick', direction='out')
     rc('ytick', direction='out')
     rc('grid', color='cbcbcb')

@@ -4,6 +4,8 @@
 ++++++++++++++++
 
 - Simple Metropolis MCMC sampler added while reading through `Hogg & Foreman-Mackey (2017) <https://arxiv.org/abs/1710.06068>`_.
+- Version of astroML's
+  `convert_to_stdev <https://github.com/astroML/astroML/blob/master/astroML/plotting/mcmc.py>`_ added which is robust to NaNs.
 
 0.1.3 (Oct 2017)
 ++++++++++++++++
