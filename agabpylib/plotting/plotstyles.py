@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from cycler import cycler
 
-from distinct_colours import get_distinct
+from agabpylib.plotting.distinct_colours import get_distinct
 
 def useagab(usetex=True, fontfam='serif', sroncolours=True):
     """
