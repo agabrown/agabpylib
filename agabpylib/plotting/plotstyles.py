@@ -10,7 +10,7 @@ from cycler import cycler
 
 from agabpylib.plotting.distinct_colours import get_distinct
 
-def useagab(usetex=True, fontfam='serif', sroncolours=True):
+def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4):
     """
     Configure the plotting style to my liking.
 
@@ -28,13 +28,15 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True):
         Font family to use (default 'serif')
     sroncolours : boolean
         If true use colour-blind proof distinct colours (https://personal.sron.nl/~pault/).
+    ncolors : int
+        Number of distinct colours to use (applies to SRON colours only, default 4)
 
     Returns
     -------
 
     Nothing
     """
-    line_colours = get_distinct(4)
+    line_colours = get_distinct(ncolors)
     if (usetex):
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
