@@ -27,6 +27,14 @@ def make_plot(args):
     Nothing
     """
 
+    basename = 'a-descriptive-name'
+    if args['pdfOutput']:
+        plt.savefig(basename+'.pdf')
+    elif args['pngOutput']:
+        plt.savefig(basename+'.png')
+    else:
+        plt.show()
+
 def parseCommandLineArguments():
     """
     Set up command line parsing.
