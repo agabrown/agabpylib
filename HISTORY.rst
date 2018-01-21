@@ -1,5 +1,11 @@
 .. :changelog:
 
+0.1.5 (Jan 2018)
+++++++++++++++++
+
+- Incorporated improvements made during development of luminosity calibration
+  tutorial.
+
 0.1.4 (Nov 2017)
 ++++++++++++++++
 
