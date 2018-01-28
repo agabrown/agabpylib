@@ -32,7 +32,7 @@ Please acknowlegde the authors if you use this code in your research.
 License
 -------
 
-Copyright (c) 2015-2017 Anthony Brown, Leiden Observatory
+Copyright (c) 2015-2018 Anthony Brown, Leiden Observatory
 
 agabpylib is open source and free software: you can redistribute it and/or
 modify it under the terms of MIT license.
