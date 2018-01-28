@@ -6,6 +6,7 @@
 - Incorporated improvements made during development of luminosity calibration
   tutorial.
 - Merged `mcmc` and `tools` modules in `agabpylib.plotting` into single module `inference`.
+- Stan tools added to `agabpylib.mcmc` package.
 
 0.1.4 (Nov 2017)
 ++++++++++++++++

@@ -17,10 +17,17 @@ def error_ellipses(mu, covmat, sigma_levels, **kwargs):
     Parameters
     ----------
 
-    mu - Mean of Normal distribution (2-vector)
-    covmat - Covariance matrix stored as [sigma_x^2, sigma_y^2, sigma_xy]
-    sigma_levels - Equivalent n-sigma levels to draw
-    **kwargs - Extra arguments for matplotlib.patches.Ellipse
+    mu : float array
+        Mean of Normal distribution (2-vector)
+    covmat : float array
+        Covariance matrix stored as [sigma_x^2, sigma_y^2, sigma_xy]
+    sigma_levels : float or 1-D array
+        Equivalent n-sigma levels to draw
+
+    Keywords
+    --------
+    **kwargs : 
+        Extra arguments for matplotlib.patches.Ellipse
 
     Returns
     -------
@@ -28,7 +35,7 @@ def error_ellipses(mu, covmat, sigma_levels, **kwargs):
     List of matplotlib.patches.Ellipse objects
     """
 
-    sigmaLevels2D = -2.0*np.log(1.0-erf(sigma_levels/np.sqrt(2.0)))
+    sigmaLevels2D = -2.0*np.log(1.0-erf(np.array([sigma_levels]).flatten()/np.sqrt(2.0)))
 
     eigvalmax = 0.5*(covmat[0]+covmat[1]+np.sqrt((covmat[0]-covmat[1])**2+4*covmat[2]**2))
     eigvalmin = 0.5*(covmat[0]+covmat[1]-np.sqrt((covmat[0]-covmat[1])**2+4*covmat[2]**2))
