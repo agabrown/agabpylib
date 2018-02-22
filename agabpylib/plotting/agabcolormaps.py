@@ -16,10 +16,9 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 def get_data(path):
     return os.path.join(_ROOT, 'data', path)
 
-_Blackbody_data = genfromtxt(get_data('bbr_color.txt'), dtype=None, skip_header=19, comments='#',
-        names=('temp','cmf','x','y','P','r','g','b','R','G','B','hexRGB'))
+_Blackbody_data = genfromtxt(get_data('bbr_color.txt'), dtype=None, skip_header=19, comments='#', names=('temp','cmf','x','y','P','r','g','b','R','G','B','hexRGB'), encoding=None)
 npoints = (int) (len(_Blackbody_data['temp'])/2)
-indices = where(_Blackbody_data['cmf']==b'10deg')
+indices = where(_Blackbody_data['cmf']=='10deg')
 r_bb = _Blackbody_data['r'][indices]
 g_bb = _Blackbody_data['g'][indices]
 b_bb = _Blackbody_data['b'][indices]
@@ -151,7 +150,8 @@ _BerryPos_data = {
 
 # Using data from BlueDarkOrange18.rgb
 #
-bdoData = genfromtxt(get_data('BlueDarkOrange18.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+bdoData = genfromtxt(get_data('BlueDarkOrange18.rgb'), dtype=None,
+        skip_header=7, names=('r','g','b'), encoding =None)
 _BlueDarkOrange18_data = empty((18,3))
 for i in range(18):
   _BlueDarkOrange18_data[i][0]=bdoData['r'][i]/255.0
@@ -166,7 +166,8 @@ _BluesAgab_data = {
 
 # Using data from BlueDarkOrange19.rgb
 #
-bdoData = genfromtxt(get_data('BlueDarkOrange19.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+bdoData = genfromtxt(get_data('BlueDarkOrange19.rgb'), dtype=None,
+        skip_header=7, names=('r','g','b'), encoding=None)
 _BlueDarkOrange19_data = empty((19,3))
 for i in range(19):
   _BlueDarkOrange19_data[i][0]=bdoData['r'][i]/255.0
@@ -181,7 +182,7 @@ _BlueDarkOrange_data = {
 
 # Using data from BlueGreen14.rgb
 #
-bg14Data = genfromtxt(get_data('BlueGreen14.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+bg14Data = genfromtxt(get_data('BlueGreen14.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _BlueGreen14_data = empty((14,3))
 for i in range(14):
   _BlueGreen14_data[i][0]=bg14Data['r'][i]/255.0
@@ -190,7 +191,7 @@ for i in range(14):
 
 # Using data from StepSeq25.rgb
 #
-ss25Data = genfromtxt(get_data('StepSeq25.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+ss25Data = genfromtxt(get_data('StepSeq25.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _StepSeq25_data = empty((25,3))
 for i in range(25):
   _StepSeq25_data[i][0]=ss25Data['r'][i]/255.0
@@ -199,7 +200,7 @@ for i in range(25):
 
 # Using data from CyanOrange14.rgb
 #
-co14Data = genfromtxt(get_data('CyanOrange14.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+co14Data = genfromtxt(get_data('CyanOrange14.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _CyanOrange14_data = empty((14,3))
 for i in range(14):
   _CyanOrange14_data[i][0]=co14Data['r'][i]/255.0
@@ -208,7 +209,7 @@ for i in range(14):
 
 # Using data from BlueDarkYellow18.rgb
 #
-bdyData = genfromtxt(get_data('BlueDarkYellow18.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+bdyData = genfromtxt(get_data('BlueDarkYellow18.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _BlueDarkYellow18_data = empty((18,3))
 for i in range(18):
   _BlueDarkYellow18_data[i][0]=bdyData['r'][i]/255.0
@@ -217,7 +218,7 @@ for i in range(18):
 
 # Using data from BlueYellow14.rgb
 #
-by14Data = genfromtxt(get_data('BlueYellow14.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+by14Data = genfromtxt(get_data('BlueYellow14.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _BlueYellow14_data = empty((14,3))
 for i in range(14):
   _BlueYellow14_data[i][0]=by14Data['r'][i]/255.0
@@ -226,7 +227,8 @@ for i in range(14):
 
 # Using data from LightBlueToDarkBlue10.rgb
 #
-bu10Data = genfromtxt(get_data('LightBlueToDarkBlue10.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+bu10Data = genfromtxt(get_data('LightBlueToDarkBlue10.rgb'), dtype=None,
+        skip_header=7, names=('r','g','b'), encoding=None)
 _LightBlueToDarkBlue10_data = empty((10,3))
 for i in range(10):
   _LightBlueToDarkBlue10_data[i][0]=bu10Data['r'][i]/255.0
@@ -241,7 +243,7 @@ _LightBlueToDarkBlue_data = {
 
 # Using data from Cat_12.rgb
 #
-cat12data = genfromtxt(get_data('Cat_12.rgb'), dtype=None, skip_header=7, names=('r','g','b'))
+cat12data = genfromtxt(get_data('Cat_12.rgb'), dtype=None, skip_header=7, names=('r','g','b'), encoding=None)
 _Cat12_data = empty((12,3))
 for i in range(12):
   _Cat12_data[i][0]=cat12data['r'][i]/255.0
