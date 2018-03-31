@@ -61,7 +61,7 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4):
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
 
-def apply_tufte(ax, withgrid=False, minorticks=False):
+def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
     """
     Apply the "Tufte" style to the plot axes contained in the input axis object. This mimics the sparse
     style advocated by Tufte in his book "The Visual Display of Quantitative Information".
@@ -74,8 +74,12 @@ def apply_tufte(ax, withgrid=False, minorticks=False):
     Keywords
     --------
 
-    withgrid - When true a grid is displayed in the plot background
-    minorticks - When true minor tickmarks are drawn.
+    withgrid : boolean
+        When true a grid is displayed in the plot background
+    minorticks : boolean
+        When true minor tickmarks are drawn.
+    gridboth : boolean
+        When true minor tickmarks are also used for the grid
 
     Returns
     -------
@@ -96,7 +100,10 @@ def apply_tufte(ax, withgrid=False, minorticks=False):
         ax.spines[axis].set_linewidth(1.5)
     ax.tick_params('both', width=1.5, which='both')
     if withgrid:
-        ax.grid(True)
+        if (gridboth):
+            ax.grid(which='both')
+        else:
+            ax.grid()
     if minorticks:
         ax.minorticks_on()
     for axis in ['top','bottom','left','right']:
