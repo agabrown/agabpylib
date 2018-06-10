@@ -1,7 +1,7 @@
 """
 Setup module for agabpylib
 
-Anthony Brown Oct 2015 - Nov 2017
+Anthony Brown Oct 2015 - Jun 2018
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
@@ -57,7 +57,7 @@ setup(
         'Intended Audience :: Science/Research',
 
         # Pick your license as you wish (should match "license" above)
-        'License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)',
+        'License :: OSI Approved :: MIT',
         'Operating System :: OS Independent',
 
         # Specify the Python versions you support here. In particular, ensure
@@ -82,7 +82,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy','scipy', 'matplotlib', 'scikit-learn'],
+    install_requires=['numpy','scipy', 'matplotlib', 'scikit-learn', 'pandas'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
