@@ -10,7 +10,8 @@ from cycler import cycler
 
 from agabpylib.plotting.distinct_colours import get_distinct
 
-def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4):
+def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4, axislinewidths=1, linewidths=2,
+        lenticks=6):
     """
     Configure the plotting style to my liking.
 
@@ -30,6 +31,12 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4):
         If true use colour-blind proof distinct colours (https://personal.sron.nl/~pault/).
     ncolors : int
         Number of distinct colours to use (applies to SRON colours only, default 4)
+    axislinewidths : float
+        Width of lines used to draw axes (default 1)
+    linewidths : float
+        Width of lines used to draw plot elements (default 2)
+    lenticks : float
+        Length of major tickmarks in points (default 6, minor tick marks adjusted automatically)
 
     Returns
     -------
@@ -41,12 +48,12 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4):
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
     rc('font', family=fontfam, size=18)
-    rc('xtick.major', size='6')
-    rc('xtick.minor', size='4')
-    rc('ytick.major', size='6')
-    rc('ytick.minor', size='4')
-    rc('lines', linewidth=2.0)
-    rc('axes', linewidth=1)
+    rc('xtick.major', size=lenticks)
+    rc('xtick.minor', size=lenticks*2/3)
+    rc('ytick.major', size=lenticks)
+    rc('ytick.minor', size=lenticks*2/3)
+    rc('lines', linewidth=linewidths)
+    rc('axes', linewidth=axislinewidths)
     if (sroncolours):
         rc('axes', prop_cycle=(cycler('color',line_colours)))
     else:
@@ -97,8 +104,8 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
     ax.yaxis.set_ticks_position('left')
     ax.xaxis.set_ticks_position('bottom')
     for axis in ['top','bottom','left','right']:
-        ax.spines[axis].set_linewidth(1.5)
-    ax.tick_params('both', width=1.5, which='both')
+        ax.spines[axis].set_linewidth(ax.spines[axis].get_linewidth())
+    ax.tick_params('both', width=ax.spines['bottom'].get_linewidth(), which='both')
     if withgrid:
         if (gridboth):
             ax.grid(which='both')
@@ -106,7 +113,4 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
             ax.grid()
     if minorticks:
         ax.minorticks_on()
-    for axis in ['top','bottom','left','right']:
-        ax.spines[axis].set_linewidth(1.5)
-    ax.tick_params('both', width=1.5, which='major')
     ax.set_facecolor('w')

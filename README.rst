@@ -19,9 +19,10 @@ problems if you have an older version installed.
 The following python packages are required:
 
 * `numpy <http://www.numpy.org/>`_
-* `scipy <http://www.scipy.org/>`_
-* `matplotlib <http://matplotlib.org/>`_
-* `scikit-learn <http://scikit-learn.org/stable/>`_
+* `scipy <https://www.scipy.org/>`_
+* `matplotlib <https://matplotlib.org/>`_
+* `scikit-learn <http://scikit-learn.org/stable/index.html>`_
+* `pandas <https://pandas.pydata.org/>`_
 * `setuptools <https://pypi.python.org/pypi/setuptools>`_
 
 Attribution

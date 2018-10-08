@@ -1,5 +1,11 @@
 .. :changelog:
 
+0.1.6 (Oct 2018)
+++++++++++++++++
+
+- Robust rolling statistics function added.
+- More options for useagab function in plotstyles.py.
+
 0.1.5 (Jan 2018)
 ++++++++++++++++
 
