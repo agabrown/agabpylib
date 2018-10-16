@@ -1,10 +1,10 @@
 """
 Python utilities.
 
-Anthony Brown Oct 2015 - Jun 2018
+Anthony Brown Oct 2015 - Oct 2018
 """
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 
 try:
     import numpy
@@ -20,5 +20,3 @@ try:
     import matplotlib
 except ImportError:
     raise ImportError('matplotlib does not seem to be installed.')
-
-#__modules__ = ['blah', 'foo']

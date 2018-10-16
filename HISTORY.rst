@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.1.7 (Oct 2018)
+++++++++++++++++
+
+- gaia package added, for now only with tools to calculate RUWE from UWE.
+
 0.1.6 (Oct 2018)
 ++++++++++++++++
 

@@ -1,7 +1,7 @@
 """
 Setup module for agabpylib
 
-Anthony Brown Oct 2015 - Jun 2018
+Anthony Brown Oct 2015 - Oct 2018
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
@@ -95,7 +95,8 @@ setup(
     # have to be included in MANIFEST.in as well.
     package_data={'': ['LICENSE', 'AUTHORS.rst', 'HISTORY.rst', 'INSTALL',
         'MANIFEST.in'], 'agabpylib':[], 'agabpylib':['data/*.txt'], 'agabpylib.plotting':['data/*.rgb'],
-        'agabpylib.plotting':['data/*'], 'agabpylib.simulation':['data/*']},
+        'agabpylib.plotting':['data/*'], 'agabpylib.simulation':['data/*'], 
+        'agabpylib.gaia':['data/*']},
     include_package_data=True,
 
     # Although 'package_data' is the preferred approach, in some case you may
