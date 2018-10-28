@@ -4,6 +4,7 @@
 ++++++++++++++++
 
 - gaia package added, for now only with tools to calculate RUWE from UWE.
+- Fixed bug in parallaxsurveys.py
 
 0.1.6 (Oct 2018)
 ++++++++++++++++

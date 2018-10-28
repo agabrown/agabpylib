@@ -21,6 +21,8 @@ from agabpylib.plotting.distinct_colours import get_distinct
 from agabpylib.tools.robuststats import rse
 from sklearn.neighbors import KernelDensity
 
+_ROOT = path.abspath(path.dirname(__file__))
+
 def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance):
     """
     Simulate distances for stars distributed uniformly in space around the Sun.
@@ -308,7 +310,7 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
         self.magnitudeErrorNormalizationMagnitude=13.0
         self.magnitudeErrorLogarithmicSlope=0.21
         self.magnitudeErrorLogCalibrationFloor=-3.4
-        self.tgasErrorsPdfFile = 'TGAS-parallax-errors-pdf.csv'
+        self.tgasErrorsPdfFile = path.join(_ROOT, 'data', 'TGAS-parallax-errors-pdf.csv')
         self.tgasErrPdf = None
         if path.isfile(self.tgasErrorsPdfFile):
             self.tgasErrPdf = np.genfromtxt(self.tgasErrorsPdfFile, comments='#', skip_header=1,
