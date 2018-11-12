@@ -1,7 +1,7 @@
 """
 Provides plotting styles.
 
-Anthony Brown Aug 2015 - Jan 2018
+Anthony Brown Aug 2015 - Oct 2018
 """
 
 import matplotlib.pyplot as plt

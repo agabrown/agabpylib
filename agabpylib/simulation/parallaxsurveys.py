@@ -398,7 +398,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
         logdens = kde.score_samples(samples)
         axA.plot(samples, np.exp(logdens), '-', lw=3, label='true')
     else:
-        axA.hist(simulatedSurvey.trueParallaxes, bins='auto', normed=True, histtype='step', lw=3,
+        axA.hist(simulatedSurvey.trueParallaxes, bins='auto', density=True, histtype='step', lw=3,
                 label='true')
 
     if usekde:
@@ -410,7 +410,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
         logdens = kde.score_samples(samples)
         axA.plot(samples, np.exp(logdens), '-', lw=3, label='observed')
     else:
-        axA.hist(simulatedSurvey.observedParallaxes, bins='auto', normed=True, histtype='step', lw=3,
+        axA.hist(simulatedSurvey.observedParallaxes, bins='auto', density=True, histtype='step', lw=3,
                 label='observed')
 
     axA.set_xlabel(r'$\varpi$,  $\varpi_\mathrm{true}$ [mas]')
@@ -435,7 +435,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
         logdens = kde.score_samples(samples)
         axB.plot(samples, np.exp(logdens), '-', label='true', lw=3)
     else:
-        axB.hist(simulatedSurvey.apparentMagnitudes, bins='auto', normed=True, histtype='step', lw=3,
+        axB.hist(simulatedSurvey.apparentMagnitudes, bins='auto', density=True, histtype='step', lw=3,
                 label='true')
 
     if usekde:
@@ -447,7 +447,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
         logdens = kde.score_samples(samples)
         axB.plot(samples, np.exp(logdens), '-', label='observed', lw=3)
     else:
-        axB.hist(simulatedSurvey.observedMagnitudes, bins='auto', normed=True, histtype='step', lw=3,
+        axB.hist(simulatedSurvey.observedMagnitudes, bins='auto', density=True, histtype='step', lw=3,
                 label='observed')
 
     axB.set_xlabel("$m$, $m_\mathrm{true}$")
@@ -474,7 +474,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
         logdens = kde.score_samples(samples)
         axC.plot(samples, np.exp(logdens), '-', label='true', lw=3)
     else:
-        axC.hist(simulatedSurvey.absoluteMagnitudes, bins='auto', normed=True, histtype='step', lw=3,
+        axC.hist(simulatedSurvey.absoluteMagnitudes, bins='auto', density=True, histtype='step', lw=3,
                 label='true')
 
     if (simulatedSurvey.absoluteMagnitudes[goodParallaxes].size >= 3):
@@ -488,7 +488,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
             logdens = kde.score_samples(samples)
             axC.plot(samples, np.exp(logdens), '-', label=r'$\varpi/\sigma_\varpi\geq{0:.1f}$'.format(plxSnrLim), lw=3)
         else:
-            axC.hist(simulatedSurvey.absoluteMagnitudes[goodParallaxes], bins='auto', normed=True, histtype='step', lw=3,
+            axC.hist(simulatedSurvey.absoluteMagnitudes[goodParallaxes], bins='auto', density=True, histtype='step', lw=3,
                     label=r'$\varpi/\sigma_\varpi\geq{0:.1f}$'.format(plxSnrLim))
     
     axC.set_xlabel("$M$")
