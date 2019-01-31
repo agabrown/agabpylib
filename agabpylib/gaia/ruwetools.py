@@ -1,6 +1,6 @@
 """
 Functions for handling the tables listing the normalization factor u0 needed to calculate the
-renormalized unit weight error (RUWE). The tables are provided on the Gaia DR@ Known Issues pages
+renormalized unit weight error (RUWE). The tables are provided on the Gaia DR2 Known Issues pages
 (https://www.cosmos.esa.int/web/gaia/dr2-known-issues).
 
 Anthony Brown Oct 2018 - Oct 2018
