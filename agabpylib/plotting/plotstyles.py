@@ -1,7 +1,7 @@
 """
 Provides plotting styles.
 
-Anthony Brown Aug 2015 - Oct 2018
+Anthony Brown Aug 2015 - Mar 2019
 """
 
 import matplotlib.pyplot as plt
@@ -57,7 +57,7 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4, axislinew
     if (sroncolours):
         rc('axes', prop_cycle=(cycler('color',line_colours)))
     else:
-        rc('axes', prop_cycle=(cycler('color',plt.cm.tab10.colors)))
+        rc('axes', prop_cycle=(cycler('color',plt.cm.tab10.colors[0:ncolors])))
     rc('xtick', direction='out')
     rc('ytick', direction='out')
     rc('grid', color='cbcbcb')
