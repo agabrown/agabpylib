@@ -42,7 +42,7 @@ def parseCommandLineArguments():
     parser = argparse.ArgumentParser(description="""Describe the plot.""")
     parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
     parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
-    args=vars(parser.parse_args())
+    args = vars(parser.parse_args())
     return args
 
 if __name__ in ('__main__'):
