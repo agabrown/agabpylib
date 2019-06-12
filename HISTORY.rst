@@ -1,5 +1,11 @@
 .. :changelog:
 
+0.1.8 (June 2019)
++++++++++++++++++
+
+- `stats` package added, follows `scipy.stats` structure.
+- Hoyt distribution implemented in `stats` package.
+
 0.1.7 (Oct 2018)
 ++++++++++++++++
 
