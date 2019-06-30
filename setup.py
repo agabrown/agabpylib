@@ -94,7 +94,7 @@ setup(
     # installed, specify them here.  If using Python 2.6 or less, then these
     # have to be included in MANIFEST.in as well.
     package_data={'': ['LICENSE', 'AUTHORS.rst', 'HISTORY.rst', 'INSTALL',
-        'MANIFEST.in'], 'agabpylib':[], 'agabpylib':['data/*.txt'], 'agabpylib.plotting':['data/*.rgb'],
+        'MANIFEST.in'], 'agabpylib':['data/*'],
         'agabpylib.plotting':['data/*'], 'agabpylib.simulation':['data/*'], 
         'agabpylib.gaia':['data/*']},
     include_package_data=True,
