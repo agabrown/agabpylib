@@ -7,6 +7,7 @@ Anthony Brown 2015-09-26
 
 from numpy import log, log10, pi, power
 
+
 def magnitude_improper_uniform_prior(observed_flux, relative_error, m, c):
     """
     Calculate the posterior on the magnitude m=-2.5*log10(flux)+C, given the observed flux and the
@@ -29,6 +30,7 @@ def magnitude_improper_uniform_prior(observed_flux, relative_error, m, c):
     flux = power(10.0,-0.4*(m-c))
     lnP = - 0.5*((flux/observed_flux-1.0)/relative_error)**2
     return lnP
+
 
 def magnitude_uniform_density_prior(observed_flux, relative_error, m, c):
     """

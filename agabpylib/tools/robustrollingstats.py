@@ -4,12 +4,12 @@ according to some attribute.
 
 Code originally writting in 2014 during Gaia commissioning.
 
-Anthony Brown Jan 2014 - June 2018
+Anthony Brown Jan 2014 - June 2019
 """
 
 import numpy as np
-from pandas.stats.moments import rolling_median, rolling_quantile
 from agabpylib.tools.robuststats import rse
+
 
 def robust_rolling_stats(series, window=5):
     """
@@ -29,19 +29,20 @@ def robust_rolling_stats(series, window=5):
   
     median, rse: both as pandas series
     """
-    rmedian = rolling_median(series, window)
-    lowerq = rolling_quantile(series, window, 0.1)
-    upperq = rolling_quantile(series, window, 0.9)
+    rmedian = series.rolling(window).median()
+    lowerq = series.rolling(window).quantile(0.1)
+    upperq = series.rolling(window).quantile(0.9)
     rolling_rse = 0.390152*(upperq-lowerq)
     #
     # treat first window data points
     #
-    m=median(series[0:window])
+    m=np.median(series[0:window])
     rrr=rse(series[0:window])
     rmedian[0:window]=m
     rolling_rse[0:window]=rrr
   
     return rmedian, rolling_rse
+
 
 def cleanup_data(dframe, colname, window=50):
     """

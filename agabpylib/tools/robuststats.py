@@ -8,6 +8,7 @@ Anthony Brown May 2015
 from numpy import median
 from scipy.stats import scoreatpercentile
 
+
 def rse(x):
   """
   Calculate the Robust Scatter Estimate for an array of values (see GAIA-C3-TN-ARI-HL-007).
@@ -24,6 +25,7 @@ def rse(x):
   90th percentile of the distribution of x.
   """
   return 0.390152*(scoreatpercentile(x,90)-scoreatpercentile(x,10))
+
 
 def robust_stats(x):
   """

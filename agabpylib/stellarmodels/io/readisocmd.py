@@ -7,6 +7,7 @@ the PADOVA web interface.
 from numpy import array, where, int32, float64, zeros, append, empty, log10
 import re
 
+
 class MIST:
 
     """
@@ -107,6 +108,7 @@ class MIST:
             print('The requested age is outside the range. Try between ' + str(min(self.ages)) + ' and ' + str(max(self.ages)))
             
         return age_index
+
 
 class PADOVA:
 

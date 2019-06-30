@@ -9,6 +9,7 @@ from matplotlib.patches import Ellipse
 from scipy.special import erf
 from math import atan2
 
+
 def error_ellipses(mu, covmat, sigma_levels, **kwargs):
     """
     Given a covariance matrix for a 2D Normal distribution calculate the error-ellipses and return
@@ -45,6 +46,7 @@ def error_ellipses(mu, covmat, sigma_levels, **kwargs):
         errEllipses.append( Ellipse(mu,2*np.sqrt(csqr*eigvalmax), 2*np.sqrt(csqr*eigvalmin), angle, **kwargs) )
 
     return errEllipses
+
 
 def convert_to_stdev_nan(logL):
     """

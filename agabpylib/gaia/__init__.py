@@ -1,7 +1,9 @@
 """
 Gaia related tools.
 
-This package containes tools for handling Gaia data.
+This package contains tools for handling Gaia data.
 """
 
-__modules__ = ['ruwetools']
+from .ruwetools import *
+
+__all__ =  [s for s in dir() if not s.startswith('_')]

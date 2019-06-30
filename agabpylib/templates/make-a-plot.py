@@ -1,7 +1,7 @@
 """
 Template for a simple script for making plots.
 
-Anthony Brown Jan 2018
+Anthony Brown Jan 2018 - Jun 2019
 """
 
 import numpy as np
@@ -10,6 +10,7 @@ import argparse
 
 from agabpylib.plotting.plotstyles import useagab, apply_tufte
 from agabpylib.plotting.distinct_colours import get_distinct
+
 
 def make_plot(args):
     """
@@ -35,6 +36,7 @@ def make_plot(args):
     else:
         plt.show()
 
+
 def parseCommandLineArguments():
     """
     Set up command line parsing.
@@ -44,6 +46,7 @@ def parseCommandLineArguments():
     parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
     args = vars(parser.parse_args())
     return args
+
 
 if __name__ in ('__main__'):
     args=parseCommandLineArguments()

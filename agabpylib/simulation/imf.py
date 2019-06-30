@@ -1,11 +1,12 @@
 """
 Provide classes and methods for the simulation of initial mass functions.
 
-Anthony Brown Sep 2017
+Anthony Brown Sep 2017 - Jun 2019
 """
 
 import numpy as np
 from scipy.stats import uniform
+
 
 class MultiPartPowerLaw:
     """

@@ -5,7 +5,7 @@ part on the fortran 90 implementation by F.X. Timmes
 (http://cococubed.asu.edu/code_pages/fermi_dirac.shtml, as included in the MESA equation of state
 libraries).
 
-Anthony Brown Aug 2017
+Anthony Brown Aug 2017 - Jun 2019
 """
 
 import numpy as np
@@ -32,6 +32,7 @@ _c3 = 7.5416e-1
 _d3 = 6.6558
 _e3 = -1.2819e-1
 
+
 def _calculate_breakpoints(eta):
     """
     Calculate the integration interval breakpoints (equations 6 and 7 in Aparicio (1998)) and return
@@ -49,22 +50,23 @@ def _calculate_breakpoints(eta):
     [s2,s3], [s3,+inf]
     """
     zz = np.array(eta)
-    smallexp = _sigma*(zz - _D) < 100.0
+    smallexp = _sigma * (zz - _D) < 100.0
     largeexp = np.logical_not(smallexp)
-    xi = np.zeros_like(zz)    
-    xi[smallexp] = np.log(1.0 + np.exp(_sigma*(zz[smallexp] - _D))) / _sigma
-    xi[largeexp] = (_sigma*(zz[largeexp] - _D)) / _sigma
+    xi = np.zeros_like(zz)
+    xi[smallexp] = np.log(1.0 + np.exp(_sigma * (zz[smallexp] - _D))) / _sigma
+    xi[largeexp] = (_sigma * (zz[largeexp] - _D)) / _sigma
 
-    xisqr = xi*xi
-    xa = (_a1 + _b1*xi + _c1*xisqr) / (1 + _c1*xi)
-    xb = (_a2 + _b2*xi + _c2*_d2*xisqr) / (1 + _e2*xi + _c2*xisqr)
-    xc = (_a3 + _b3*xi + _c3*_d3*xisqr) / (1 + _e3*xi + _c3*xisqr)
+    xisqr = xi * xi
+    xa = (_a1 + _b1 * xi + _c1 * xisqr) / (1 + _c1 * xi)
+    xb = (_a2 + _b2 * xi + _c2 * _d2 * xisqr) / (1 + _e2 * xi + _c2 * xisqr)
+    xc = (_a3 + _b3 * xi + _c3 * _d3 * xisqr) / (1 + _e3 * xi + _c3 * xisqr)
 
     s1 = xa - xb
     s2 = xa
     s3 = xa + xc
 
     return s1, s2, s3
+
 
 def _fd_integrand_nearzero(z, nu, eta, theta):
     """
@@ -85,17 +87,18 @@ def _fd_integrand_nearzero(z, nu, eta, theta):
     Value of the integrand.
     """
     zz = np.array(z)
-    zsqr = zz*zz
+    zsqr = zz * zz
     smallexp = (zsqr - eta) < 100.0
     largeexp = np.logical_not(smallexp)
     result = np.zeros_like(zz)
 
-    result[smallexp] = (2*np.power(zz[smallexp], 2*nu+1) * np.sqrt(1.0 + (zsqr[smallexp]*theta/2.0))) / \
-        (np.exp(zsqr[smallexp]-eta)+1)
-    result[largeexp] = 2*np.power(zz[largeexp], 2*nu+1) * np.sqrt(1.0 + (zsqr[largeexp]*theta/2.0)) * \
-        np.exp(eta-zsqr[largeexp])
+    result[smallexp] = (2 * np.power(zz[smallexp], 2 * nu + 1) * np.sqrt(1.0 + (zsqr[smallexp] * theta / 2.0))) / \
+                       (np.exp(zsqr[smallexp] - eta) + 1)
+    result[largeexp] = 2 * np.power(zz[largeexp], 2 * nu + 1) * np.sqrt(1.0 + (zsqr[largeexp] * theta / 2.0)) * \
+                       np.exp(eta - zsqr[largeexp])
 
     return result
+
 
 def _fd_integrand(x, nu, eta, theta):
     """
@@ -119,12 +122,13 @@ def _fd_integrand(x, nu, eta, theta):
     largeexp = np.logical_not(smallexp)
     result = np.zeros_like(xx)
 
-    result[smallexp] = (np.power(xx[smallexp], nu) * np.sqrt(1.0 + (xx[smallexp]*theta/2.0))) / \
-            (np.exp(xx[smallexp]-eta)+1)
-    result[largeexp] = np.power(xx[largeexp], nu) * np.sqrt(1.0 + (xx[largeexp]*theta/2.0)) * \
-            np.exp(eta-xx[largeexp])
+    result[smallexp] = (np.power(xx[smallexp], nu) * np.sqrt(1.0 + (xx[smallexp] * theta / 2.0))) / \
+                       (np.exp(xx[smallexp] - eta) + 1)
+    result[largeexp] = np.power(xx[largeexp], nu) * np.sqrt(1.0 + (xx[largeexp] * theta / 2.0)) * \
+                       np.exp(eta - xx[largeexp])
 
     return result
+
 
 def fd_evaluate(nu, eta, theta):
     """
@@ -164,4 +168,4 @@ def fd_evaluate(nu, eta, theta):
             i3[i], dummy = fixed_quad(_fd_integrand, s2[i], s3[i], args=(nu, eta[i], theta), n=order)
             i4[i], dummy = fixed_quad_laguerre(_fd_integrand, s3[i], args=(nu, eta[i], theta), n=order)
 
-    return i1+i2+i3+i4
+    return i1 + i2 + i3 + i4

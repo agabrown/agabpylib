@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from matplotlib import rc, cm
 
 from matplotlib.ticker import NullFormatter
-from astroML.plotting.mcmc import convert_to_stdev
+from agabpylib.plotting.inference import convert_to_stdev_nan
 
 from agabpylib.densityestimation.kde import kde2d_scikitlearn, kde_scikitlearn
 from distinct_colours import get_distinct
@@ -36,6 +36,7 @@ rc('grid', linestyle='-')
 rc('grid', linewidth=0.5)
 rc('grid', alpha=1.0)
 rc('figure', facecolor='ffffff')
+
 
 def plot_joint_kde_and_marginals(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None,
         xlims=None, ylims=None, Nx=100, Ny=100, lnpmin=-5, contourOnly=False, showData=False):
@@ -149,6 +150,7 @@ def plot_joint_kde_and_marginals(xdata, ydata, xname=None, yname=None, xunit=Non
 
     return fig
 
+
 def plot_joint_kde(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None, xlims=None, ylims=None,
         Nx=100, Ny=100, lnpmin=-5, contourOnly=False, showData=False):
     """
@@ -211,7 +213,7 @@ def plot_joint_kde(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None,
         kde_image = axJoint.imshow(log_dens, aspect='auto', cmap=cm.Blues, extent=[xmin,
             xmax, ymin, ymax], origin='lower')
         kde_image.set_clim(lnpmin,0)
-    axJoint.contour(Xsamples, Ysamples, convert_to_stdev(log_dens), levels=(0.01, 0.683, 0.955, 0.997),
+    axJoint.contour(Xsamples, Ysamples, convert_to_stdev_nan(log_dens), levels=(0.01, 0.683, 0.955, 0.997),
             colors='k')#line_colours[0])
     if showData:
         axJoint.plot(xdata, ydata, '+k')

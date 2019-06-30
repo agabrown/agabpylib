@@ -5,4 +5,7 @@ This package provides functions for very simple simulations of astronomical
 surveys etc.
 """
 
-__modules__ =  ['parallaxsurveys']
+from .parallaxsurveys import *
+from .imf import *
+
+__all__ = [s for s in dir() if not s.startswith('_')]

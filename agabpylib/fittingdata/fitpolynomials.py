@@ -3,11 +3,12 @@ Provides methods for the fitting of polynomials to (x,y) data, where both coordi
 correlated) Gaussian errors. Based on the ideas in the paper "Data analysis recipes: Fitting a model to
 data", by Hogg et al., arXiv:1008.4686v1.
 
-Anthony Brown 2015-02-28
+Anthony Brown Feb 2015 - Jun 2019
 """
 
 from numpy import pi, log, isreal, atleast_2d
 from numpy.polynomial.polynomial import Polynomial, polyder, polyroots, polyval
+
 
 def lnP2DGaussian(zObs, z, S):
     """
@@ -29,11 +30,12 @@ def lnP2DGaussian(zObs, z, S):
     """
 
     covmat = atleast_2d(S)
-    detS = covmat[:,0]*covmat[:,1]-covmat[:,2]*covmat[:,2]
-    delta_x = zObs[0]-z[0]
-    delta_y = zObs[1]-z[1]
-    innerzObsz = covmat[:,1]*delta_x**2 - 2*covmat[:,2]*delta_x*delta_y + covmat[:,0]*delta_y**2
-    return -0.5*innerzObsz/detS - 0.5*log(detS) - log(2.0*pi)
+    detS = covmat[:, 0] * covmat[:, 1] - covmat[:, 2] * covmat[:, 2]
+    delta_x = zObs[0] - z[0]
+    delta_y = zObs[1] - z[1]
+    innerzObsz = covmat[:, 1] * delta_x ** 2 - 2 * covmat[:, 2] * delta_x * delta_y + covmat[:, 0] * delta_y ** 2
+    return -0.5 * innerzObsz / detS - 0.5 * log(detS) - log(2.0 * pi)
+
 
 def lnL_polynomial(zObs, p, S):
     """
@@ -52,12 +54,13 @@ def lnL_polynomial(zObs, p, S):
 
     The array of ln(likelihood) polynomial coefficients.
     """
-    detS = S[0]*S[1]-S[2]*S[2]
-    poly_delta_x = Polynomial([zObs[0],-1])
+    detS = S[0] * S[1] - S[2] * S[2]
+    poly_delta_x = Polynomial([zObs[0], -1])
     poly_delta_y = Polynomial([zObs[1]]) - Polynomial(p)
-    poly_lnL = S[1]*poly_delta_x**2 - 2*S[2]*poly_delta_x*poly_delta_y +S[0]*poly_delta_y**2
-    poly_lnL = -0.5*poly_lnL/detS
+    poly_lnL = S[1] * poly_delta_x ** 2 - 2 * S[2] * poly_delta_x * poly_delta_y + S[0] * poly_delta_y ** 2
+    poly_lnL = -0.5 * poly_lnL / detS
     return poly_lnL.coef
+
 
 def maximize_lnL_polynomial(zObs, p, S):
     """
@@ -88,7 +91,7 @@ def maximize_lnL_polynomial(zObs, p, S):
     roots = polyroots(coeffs_der)
     realroots = roots[isreal(roots)]
     x = realroots.real
-    y = polyval(x,p)
+    y = polyval(x, p)
     lnL = lnP2DGaussian(zObs, (x, y), S)
     maxindex = lnL.argmax()
 

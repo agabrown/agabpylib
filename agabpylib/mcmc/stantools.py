@@ -1,12 +1,13 @@
 """
 Utility functions for using PyStan.
 
-Anthony Brown June 2017 - Jan 2018
+Anthony Brown June 2017 - Jun 2019
 """
 
 import pystan
 import pickle
 from hashlib import md5
+
 
 def load_stan_code(filename):
     """
@@ -26,6 +27,7 @@ def load_stan_code(filename):
     contents = f.read()
     f.close()
     return contents
+
 
 def stan_cache(model_code, model_name=None):
     """
@@ -53,7 +55,7 @@ def stan_cache(model_code, model_name=None):
         cache_fn = 'cached-model-{}.pkl'.format(code_hash)
     else:
         cache_fn = 'cached-{}-{}.pkl'.format(model_name, code_hash)
-    
+
     try:
         sm = pickle.load(open(cache_fn, 'rb'))
     except:

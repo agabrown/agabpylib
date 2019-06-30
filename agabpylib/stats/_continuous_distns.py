@@ -1,10 +1,11 @@
 #
-# Anthony Brown June 2019 = June 2019
+# Anthony Brown June 2019 - June 2019
 #
 
 import numpy as np
 from scipy.stats import rv_continuous
 from scipy.special import iv, ellipk, ellipe
+
 
 class hoyt_gen(rv_continuous):
     r"""
@@ -67,6 +68,7 @@ class hoyt_gen(rv_continuous):
         # distrribution)
         kurt = kurt - 3.0
         return mean, var, skew, kurt
+
 
 hoyt = hoyt_gen(name='hoyt')
 

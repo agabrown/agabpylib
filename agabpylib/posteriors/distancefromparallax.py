@@ -7,6 +7,7 @@ Anthony Brown 2015-05-04
 
 from numpy import log,arctan,pi
 
+
 def distance_improper_uniform_prior(observed_parallax, relative_error, d):
     """
     Calculate the posterior on the distance d_true=1/parallax_true, given the observed parallax and the
@@ -30,6 +31,7 @@ def distance_improper_uniform_prior(observed_parallax, relative_error, d):
     pctoau = 180*3600/pi
     #lnP = - 0.5*((arctan(1.0/(d*pctoau))/(observed_parallax/pctoau)-1.0)/relative_error)**2
     return lnP
+
 
 def distance_uniform_density_prior(observed_parallax, relative_error, d):
     """

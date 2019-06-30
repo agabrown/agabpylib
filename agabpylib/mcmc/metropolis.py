@@ -4,6 +4,7 @@ This module provides classes and functions that implement the Metropolis MCMC sa
 
 import numpy as np
 
+
 class MetropolisSampler:
     """
     Base class for Metropolis samplers. Can deal with multi-dimensional sampling problems.
@@ -80,17 +81,17 @@ class MetropolisSampler:
             self.samples = np.empty((n_iter, theta_init.size))
         self.samples[0] = theta_init
         for i in range(1, n_iter):
-            theta_prop = self.proposal_rvs(self.samples[i-1])
+            theta_prop = self.proposal_rvs(self.samples[i - 1])
             lnr = np.log(np.random.uniform())
-            lnpdf_theta_k = self.lnprob(self.samples[i-1])
+            lnpdf_theta_k = self.lnprob(self.samples[i - 1])
             lnpdf_theta_prop = self.lnprob(theta_prop)
             #   HANDLE THIS CASE!
-            #if (np.isinf(lnpdf_theta_prop) and np.isinf(lnpdf_theta_k)):
+            # if (np.isinf(lnpdf_theta_prop) and np.isinf(lnpdf_theta_k)):
             if (lnpdf_theta_prop - lnpdf_theta_k > lnr):
                 self.samples[i] = theta_prop
                 self.accepted_samples += 1
             else:
-                self.samples[i] = self.samples[i-1]
+                self.samples[i] = self.samples[i - 1]
 
     def get_samples(self):
         """
@@ -137,4 +138,4 @@ class MetropolisSampler:
         """
         if np.any(self.samples == None):
             raise Exception("No samples generated: Please invoke run_mcmc() first!")
-        return self.accepted_samples/self.numiter
+        return self.accepted_samples / self.numiter

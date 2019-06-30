@@ -2,7 +2,7 @@
 Provide classes and methods for simulating simple (magnitude limited) parallax surveys. These consist of
 measurements of the parallax and the apparent magnitude of the stars.
 
-Anthony Brown 2011-2018
+Anthony Brown 2011-2019
 """
 
 import numpy as np
@@ -22,6 +22,7 @@ from agabpylib.tools.robuststats import rse
 from sklearn.neighbors import KernelDensity
 
 _ROOT = path.abspath(path.dirname(__file__))
+
 
 def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance):
     """
@@ -44,6 +45,7 @@ def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance):
     maxDCubed=np.power(maxDistance,3.0)
     return np.power(minDCubed+x*(maxDCubed-minDCubed),1.0/3.0)
 
+
 def simGaussianAbsoluteMagnitude(numStars, mean, stddev):
     """
     Simulate absolute magnitudes following a Gaussian distribution.
@@ -61,6 +63,7 @@ def simGaussianAbsoluteMagnitude(numStars, mean, stddev):
     Vector of magnitudes.
     """
     return norm.rvs(loc=mean, scale=stddev, size=numStars)
+
 
 class ParallaxSurvey:
     """
@@ -137,6 +140,7 @@ class ParallaxSurvey:
         self.observedParallaxes=self.observedParallaxes[indices].flatten()
         self.observedMagnitudes=self.observedMagnitudes[indices].flatten()
         self.numberOfStarsInSurvey=len(self.observedMagnitudes)
+
 
 class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
     """
@@ -222,6 +226,7 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
         """
         return np.exp(self.apparentMagnitude_lpdf(m))
 
+
 class UniformDistributionSingleLuminosityHip(UniformSpaceDistributionSingleLuminosity):
     """
     Simulate a parallax survey for stars distributed uniformly in space around the sun. The stars all
@@ -278,6 +283,7 @@ class UniformDistributionSingleLuminosityHip(UniformSpaceDistributionSingleLumin
         indices = (errors < self.magnitudeErrorLogCalibrationFloor)
         errors[indices] = self.magnitudeErrorLogCalibrationFloor
         return np.power(10.0,errors)
+
 
 class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLuminosity):
     """
@@ -339,6 +345,7 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
         indices = (errors < self.magnitudeErrorLogCalibrationFloor)
         errors[indices] = self.magnitudeErrorLogCalibrationFloor
         return np.power(10.0,errors)
+
 
 def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=False):
     """
@@ -527,6 +534,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
     if (pdfFile is None and pngFile is None):
         plt.show()
 
+
 def marginal_pdf_distance(r, rmin, rmax, mu, sigma, mlim):
     """
     Calculate the expected marginal distribution of distances given the parallax survey parameters. The
@@ -558,6 +566,7 @@ def marginal_pdf_distance(r, rmin, rmax, mu, sigma, mlim):
     pdf = lambda x : np.exp(np.log(3) - np.log(A) + 2*np.log(x) + norm.logcdf(mlim-mu-5*np.log10(x)+5, scale=sigma))
     C, dummy = quad(pdf, rmin, rmax)
     return pdf(r)/C
+
 
 def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
     """

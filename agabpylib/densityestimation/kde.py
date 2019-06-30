@@ -2,13 +2,14 @@
 Provides wrappers around existing kernel density estimation methods. In addition some utility methods are
 provided.
 
-Anthony Brown May 2015
+Anthony Brown May 2015 - Jun 2019
 """
 
 import numpy as np
 from sklearn.neighbors import KernelDensity
 from sklearn.preprocessing import StandardScaler
 from agabpylib.tools.robuststats import rse
+
 
 def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0, **kwargs):
     """
@@ -38,7 +39,7 @@ def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0,
     
     log_dens: The log(density) evaluated for the data points (shape (data.size,)).
     """
-    if lims==None:
+    if lims == None:
         dmin = data.min()
         dmax = data.max()
     else:
@@ -46,17 +47,18 @@ def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0,
         dmax = lims[1]
 
     kde = KernelDensity(bandwidth=kde_bandwidth, **kwargs)
-    kde.fit(data[:,None])
-    if not(evalOnData):
-        Dsamples = np.linspace(dmin,dmax,N)[:,None]
+    kde.fit(data[:, None])
+    if not (evalOnData):
+        Dsamples = np.linspace(dmin, dmax, N)[:, None]
         log_dens = kde.score_samples(Dsamples)
         return Dsamples, log_dens
     else:
-        log_dens = kde.score_samples(data[:,None])
+        log_dens = kde.score_samples(data[:, None])
         return log_dens
 
+
 def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlims=None, ylims=None, evalOnData=False,
-        kde_bandwidth=1.0, **kwargs):
+                      kde_bandwidth=1.0, **kwargs):
     """
     Provide a 2D kernel density estimate for a set of data points (x_i, y_i). Make use of the
     scikit-learn scikitlearn.neighbours.KernelDensity class.
@@ -87,13 +89,13 @@ def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlim
     data points (shape (xdata.size,)).
     """
 
-    if xlims==None:
+    if xlims == None:
         xmin = xdata.min()
         xmax = xdata.max()
     else:
         xmin = xlims[0]
         xmax = xlims[1]
-    if ylims==None:
+    if ylims == None:
         ymin = ydata.min()
         ymax = ydata.max()
     else:
@@ -107,13 +109,13 @@ def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlim
     scaled_values = scaler.transform(data_values)
     kde = KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(scaled_values)
-    if not(evalOnData):
-        if not(xeval==None):
+    if not (evalOnData):
+        if not (xeval == None):
             positions = np.vstack([xeval.T.ravel(), yeval.T.ravel()]).T
             log_dens = kde.score_samples(scaler.transform(positions))
         else:
-            Xsamples = np.linspace(xmin,xmax,Nx)
-            Ysamples = np.linspace(ymin,ymax,Ny)
+            Xsamples = np.linspace(xmin, xmax, Nx)
+            Ysamples = np.linspace(ymin, ymax, Ny)
             X, Y = np.meshgrid(Xsamples, Ysamples)
             positions = np.vstack([X.T.ravel(), Y.T.ravel()]).T
             log_dens = kde.score_samples(scaler.transform(positions)).reshape((Nx, Ny)).T

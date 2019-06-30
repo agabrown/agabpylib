@@ -1,12 +1,13 @@
 """
 Optimization utility methods not available from scipy.optimize.
 
-Anthony Brown Aug 2017
+Anthony Brown Aug 2017 - Jun 2019
 """
 
 import numpy as np
 
 __all__ = ['bracket_root']
+
 
 def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
     """
@@ -40,14 +41,13 @@ def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
     f1 = func(x1, *args)
     f2 = func(x2, *args)
     for i in range(maxiter):
-        if (f1*f2 < 0.0):
+        if (f1 * f2 < 0.0):
             return x1, x2, True
         else:
             if np.abs(f1) < np.abs(f2):
-                x1 = x1 + grow_factor*(x1-x2)
+                x1 = x1 + grow_factor * (x1 - x2)
                 f1 = func(x1, *args)
             else:
-                x2 = x2 + grow_factor*(x2-x1)
+                x2 = x2 + grow_factor * (x2 - x1)
                 f2 = func(x2, *args)
     return x1, x2, False
-

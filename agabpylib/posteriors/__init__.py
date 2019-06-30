@@ -6,4 +6,8 @@ probability densities resulting from Bayesian analyses applied to astronomical
 problems.
 """
 
-__modules__ =  ['distancefromparallax', 'gaussian', 'magnitudefromflux']
+from .distancefromparallax import *
+from .gaussian import *
+from .magnitudefromflux import *
+
+__all__ =  [s for s in dir() if not s.startswith('_')]

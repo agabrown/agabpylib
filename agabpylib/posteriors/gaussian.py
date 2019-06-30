@@ -8,6 +8,7 @@ Anthony Brown 2015-01-17
 from numpy import log, zeros_like, sum, pi
 from scipy.special import gammaln
 
+
 def unknownMeanAndVarianceFlatPrior(n, xbar, V, mu, tau):
     """
     Calculate the joint posterior distribution for mu and =>tau=sigma^2<= over the input grid in (mu,
@@ -32,6 +33,7 @@ def unknownMeanAndVarianceFlatPrior(n, xbar, V, mu, tau):
             + 0.5*(log(n)-log(pi)) - n/2.0*log(2*tau) - 0.5*(n*(V+(mu-xbar)**2))/tau 
     return lnP
 
+
 def marginalMeanUMVFlatPrior(n, xbar, V, mu):
     """
     Calculate the marginal posterior distribution of mu for the case of unknown mean and unknown
@@ -54,6 +56,7 @@ def marginalMeanUMVFlatPrior(n, xbar, V, mu):
             - (n-2)/2.0*log(1+(mu-xbar)**2/V)
     return lnP
 
+
 def marginalTauUMVFlatPrior(n, xbar, V, tau):
     """
     Calculate the marginal posterior distribution of tau for the case of unknown mean and unknown
@@ -74,6 +77,7 @@ def marginalTauUMVFlatPrior(n, xbar, V, tau):
     """
     lnP = 0.5*(n-3)*(log(n*V)-log(2*tau)) - gammaln((n-3)/2.0) - log(tau) - n*V/(2*tau)
     return lnP
+
 
 def unknownMeanAndVarianceUnInfPrior(n, xbar, V, mu, tau):
     """
@@ -100,6 +104,7 @@ def unknownMeanAndVarianceUnInfPrior(n, xbar, V, mu, tau):
             + 0.5*(log(n)-log(pi)) - (n+2)/2.0*log(tau) - 0.5*(n*(V+(mu-xbar)**2))/tau
     return lnP
 
+
 def marginalMeanUMVUnInfPrior(n, xbar, V, mu):
     """
     Calculate the marginal posterior distribution of mu for the case of unknown mean and unknown
@@ -122,6 +127,7 @@ def marginalMeanUMVUnInfPrior(n, xbar, V, mu):
             - n/2.0*log(1+(mu-xbar)**2/V)
     return lnP
 
+
 def marginalTauUMVUnInfPrior(n, xbar, V, tau):
     """
     Calculate the marginal posterior distribution of tau for the case of unknown mean and unknown
@@ -142,6 +148,7 @@ def marginalTauUMVUnInfPrior(n, xbar, V, tau):
     """
     lnP = 0.5*(n-1)*(log(n*V)-log(2*tau)) - gammaln((n-1)/2.0) - log(tau) - n*V/(2*tau)
     return lnP
+
 
 def unknownMeanAndStddevFlatPrior(n, xbar, V, mu, sigma):
     """
@@ -167,6 +174,7 @@ def unknownMeanAndStddevFlatPrior(n, xbar, V, mu, sigma):
             + 0.5*(log(n)-log(pi)) - n*log(sigma) - 0.5*(n*(V+(mu-xbar)**2))/(sigma*sigma)
     return lnP
 
+
 def marginalMeanUMSFlatPrior(n, xbar, V, mu):
     """
     Calculate the marginal posterior distribution of mu for the case of unknown mean and unknown
@@ -189,6 +197,7 @@ def marginalMeanUMSFlatPrior(n, xbar, V, mu):
             - (n-1)/2.0*log(1+(mu-xbar)**2/V)
     return lnP
 
+
 def marginalSigmaUMSFlatPrior(n, xbar, V, sigma):
     """
     Calculate the marginal posterior distribution of sigma for the case of unknown mean and unknown
@@ -210,6 +219,7 @@ def marginalSigmaUMSFlatPrior(n, xbar, V, sigma):
     lnP = 0.5*(n-1)*(log(n*V)-log(2)-2*log(sigma)) - gammaln((n-2)/2.0) \
             -0.5*log(n*V) + 1.5*log(2) - n*V/(2*sigma*sigma)
     return lnP
+
 
 def unknownMeanAndStddevUnInfPrior(n, xbar, V, mu, sigma):
     """
@@ -237,6 +247,7 @@ def unknownMeanAndStddevUnInfPrior(n, xbar, V, mu, sigma):
             + 0.5*(log(n)-log(pi)) - (n+1)*log(sigma) - 0.5*(n*(V+(mu-xbar)**2))/(sigma*sigma)
     return lnP
 
+
 def marginalMeanUMSUnInfPrior(n, xbar, V, mu):
     """
     Calculate the marginal posterior distribution of mu for the case of unknown mean and unknown
@@ -258,6 +269,7 @@ def marginalMeanUMSUnInfPrior(n, xbar, V, mu):
     lnP = gammaln(n/2.0) - gammaln((n-1)/2.0) + 0.5*(log(n)-log(pi)) - 0.5*log(n*V) \
             - n/2.0*log(1+(mu-xbar)**2/V)
     return lnP
+
 
 def marginalSigmaUMSUnInfPrior(n, xbar, V, sigma):
     """

@@ -3,7 +3,7 @@ Functions for handling the tables listing the normalization factor u0 needed to 
 renormalized unit weight error (RUWE). The tables are provided on the Gaia DR2 Known Issues pages
 (https://www.cosmos.esa.int/web/gaia/dr2-known-issues).
 
-Anthony Brown Oct 2018 - Oct 2018
+Anthony Brown Oct 2018 - Jun 2019
 """
 
 import numpy as np
@@ -36,13 +36,14 @@ class U0Interpolator():
         self.minbprp = -1.0
         self.maxbprp = 10.0
 
-        u0data = np.genfromtxt(get_data('table_u0_g_col.txt'), names=['g_mag', 'bp_rp', 'u0'], skip_header=1, delimiter=',')
+        u0data = np.genfromtxt(get_data('table_u0_g_col.txt'), names=['g_mag', 'bp_rp', 'u0'], skip_header=1,
+                               delimiter=',')
         gmagmesh = np.reshape(u0data['g_mag'], (ngmagbins, ncolorbins))
         bprpmesh = np.reshape(u0data['bp_rp'], (ngmagbins, ncolorbins))
         u0mesh = np.reshape(u0data['u0'], (ngmagbins, ncolorbins))
 
-        gmag = gmagmesh[:,0]
-        bprp = bprpmesh[0,:]
+        gmag = gmagmesh[:, 0]
+        bprp = bprpmesh[0, :]
 
         self.gbprpinterpolator = RectBivariateSpline(gmag, bprp, u0mesh, kx=1, ky=1, s=0)
 
