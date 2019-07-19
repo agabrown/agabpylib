@@ -23,7 +23,7 @@ class MIST:
             filename: the name of .iso.cmd file.
         
         Usage:
-            >> isocmd = readmodelgrids.MIST('MIST_v1.0_feh_p0.00_afe_p0.0_vvcrit0.4.iso.cmd')
+            >> isocmd = readisocmd.MIST('MIST_v1.0_feh_p0.00_afe_p0.0_vvcrit0.4.iso.cmd')
             >> age_ind = isocmd.age_index(7.0)
             >> B = isocmd.isocmds[age_ind]['Bessell_B']
             >> V = isocmd.isocmds[age_ind]['Bessell_V']
@@ -110,10 +110,10 @@ class MIST:
         return age_index
 
 
-class PADOVA:
+class PARSEC:
 
     """
-    Reads PADOVA CMD files (http://stev.oapd.inaf.it/cmd). The code is taken and modified from
+    Reads PARSEC CMD files (http://stev.oapd.inaf.it/cmd). The code is taken and modified from
     https://github.com/jieunchoi/MIST_codes/blob/master/scripts/read_mist_models.py
     """
 
@@ -130,7 +130,7 @@ class PADOVA:
             otherwise PARSEC version 1.2S is assumed.
         
         Usage:
-            >> isocmd = readmodelgrids.PADOVA('PARSEC_1.2S_feh_p0.00_GGBPGRP.iso.cmd')
+            >> isocmd = readisocmd.PADOVA('PARSEC_1.2S_feh_p0.00_GGBPGRP.iso.cmd')
             >> age_ind = isocmd.age_index(7.0)
             >> G = isocmd.isocmds[age_ind]['G']
             >> G_BP = isocmd.isocmds[age_ind]['G_BP']
