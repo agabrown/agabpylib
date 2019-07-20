@@ -15,13 +15,14 @@ from os import path
 
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
 
+
 class StarAPs:
     """
     Class that generates the astrophysical parameters (mass, Teff, luminosity, colour, etc) for the stars
     in the cluster.
     """
 
-    def __init__(self, age, metallicity, alphafeh, isofiles, imf, iso="parsec"):
+    def __init__(self, age, metallicity, alphafeh, isofiles, imf, iso="mist"):
         """
         Class constructor/initializer
 
@@ -44,7 +45,7 @@ class StarAPs:
         --------
 
         iso : string
-            Which isochrone set to use: "mist" or "parsec", default "parsec".
+            Which isochrone set to use: "mist" or "parsec", default "mist".
         """
         self.age = age
         self.logage = np.log10(age.to(u.yr).value)
@@ -64,16 +65,22 @@ class StarAPs:
             afehsign = "m"
         else:
             afehsign = "p"
-        if iso=="mist":
+        if iso == "mist":
             self.isofilename = \
-            "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit0.4_UBVRIplus.iso.cmd".format(mehsign,
-                    np.abs(self.metallicity), afehsign, np.abs(self.afeh))
+                "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit0.0_UBVRIplus.iso.cmd".format(mehsign,
+                                                                                               np.abs(self.metallicity),
+                                                                                               afehsign,
+                                                                                               np.abs(self.afeh))
             isoreader = MIST
+            self.tabledict = {'initial_mass': 'initial_mass', 'mass': 'star_mass', 'log_L': 'log_L',
+                              'log_Teff': 'log_Teff',
+                              'log_g': 'log_g', 'G':'Gaia_G_MAW', 'G_BPb':'Gaia_BP_MAWb', 'G_BPf':'Gaia_BP_MAWf',
+                              'G_RP':'Gaia_RP_MAW', 'V':'Bessell_V', 'I':'Bessell_I'}
         else:
             self.isofilename = "PARSEC"
             isoreader = PARSEC
 
-        self.isocmd = isoreader(path.join(self.isofiles,self.isofilename))
+        self.isocmd = isoreader(path.join(self.isofiles, self.isofilename))
 
     def generate_aps(self, n):
         """
@@ -91,23 +98,24 @@ class StarAPs:
         Table with a list of stars and their properties.
         """
 
-        ids = np.arange(n)
-        ini_masses = self.imf.rvs(n)
         age_index = self.isocmd.age_index(self.logage)
-        iso_ini_masses = self.isocmd.isocmds[age_index]['initial_mass']
-        max_iso_ini_mass = iso_ini_masses.max()
+        iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
+        ids = np.arange(n)
+        print(iso_ini_masses.min(), iso_ini_masses.max())
+        ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
 
-        iso_masses = self.isocmd.isocmds[age_index]['star_mass']
+        iso_masses = self.isocmd.isocmds[age_index][self.tabledict['mass']]
         f = interp1d(iso_ini_masses, iso_masses)
-        masses = f(ini_masses)*u.Msun
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index]['log_L'])
+        masses = f(ini_masses) * u.Msun
+        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_L']])
         logL = f(ini_masses)
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index]['log_Teff'])
+        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_Teff']])
         logTeff = f(ini_masses)
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index]['log_g'])
+        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_g']])
         logg = f(ini_masses)
 
-        return Table([ids, masses, logL, logTeff, logg], names=('ID', 'mass', 'log_L', 'log_Teff', 'log_g'))
+        return Table([ids, ini_masses, masses, logL, logTeff, logg], names=('ID', 'initial_mass', 'mass', 'log_L',
+                                                                            'log_Teff', 'log_g'))
 
     def showinfo(self):
         """
@@ -121,7 +129,8 @@ class StarAPs:
         print("[M/H]: {0}".format(self.metallicity))
         print("[alpha/Fe]: {0}".format(self.afeh))
         print("IMF: {0}".format(self.imf.showinfo()))
-        print("Isochrone file: {0}".format(path.join(self.isofiles,self.isofilename)))
+        print("Isochrone file: {0}".format(path.join(self.isofiles, self.isofilename)))
+
 
 class StarCluster:
     """
@@ -163,7 +172,7 @@ class StarCluster:
         print()
         self.staraps.showinfo()
 
-    def write_star_table(self, filename):
+    def write_star_table(self, filename, **kwargs):
         """
         Write the star table to file in VOTable format.
 
@@ -173,4 +182,4 @@ class StarCluster:
         filename : string
             Name of the file to write to.
         """
-        self.star_table.write(filename, format="votable")
+        self.star_table.write(filename, format="votable", **kwargs)

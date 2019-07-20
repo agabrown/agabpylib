@@ -1,18 +1,19 @@
 """
 Provide classes and methods for the simulation of initial mass functions.
 
-Anthony Brown Sep 2017 - Jun 2019
+Anthony Brown Sep 2017 - Jul 2019
 """
 
 import numpy as np
 from scipy.stats import uniform
+
 
 class IMF:
     """
     Base class for implementations of initial mass function simulations.
     """
 
-    def pdf(self, mass, min_mass, max_mass):
+    def lnpdf(self, mass, min_mass, max_mass):
         """
         Evaluate the IMF (the probability density as a function of mass) for the input set of masses.
 
@@ -31,7 +32,7 @@ class IMF:
 
         Value of the natural logarithm of the IMF for each of the input masses.
         """
-        return self._pdf(mass, min_mass, max_mass)
+        return self._lnpdf(mass, min_mass, max_mass)
 
     def cdf(self, mass, min_mass, max_mass):
         """
@@ -81,6 +82,7 @@ class IMF:
         """
         return self._showinfo()
 
+
 class MultiPartPowerLaw(IMF):
     """
     This class represents a multi-part power-law IMF, such as the one defined by Kroupa
@@ -109,7 +111,7 @@ class MultiPartPowerLaw(IMF):
             self.slopes = np.array([slopes])
         else:
             self.slopes = slopes
-        if (self.slopes.size != self.break_points.size+1):
+        if (self.slopes.size != self.break_points.size + 1):
             raise ValueError("The break_points array should contain 1 element less than the slopes array.")
 
     def _initialize_constants(self, min_mass, max_mass):
@@ -124,29 +126,34 @@ class MultiPartPowerLaw(IMF):
         max_mass : float
             Maximum mass of interval over which to evaluate the IMF.
         """
-        active_breakpoints = np.where((self.break_points>min_mass) & (self.break_points<max_mass))
-        self.mass_limits = self.break_points[active_break_points]
-        self.mass_limits = np.concatenate(([min_mass], self.mass_limits, [max_mass]))
-        if self.mass_limits.size==2 and min_mass>self.break_points.max():
-            self.active_slopes = self.slopes[-1]
-        elif self.mass_limits.size==2 and max_mass<self.break_points.min():
-            self.active_slopes = self.slopes[0]
-        else
+        active_breakpoints = np.where((self.break_points > min_mass) & (self.break_points < max_mass))
+        mass_limits = self.break_points[active_breakpoints]
+        mass_limits = np.concatenate(([min_mass], mass_limits, [max_mass]))
+        if mass_limits.size == 2:
+            active_slopes = np.array([self.slopes[np.searchsorted(self.break_points, max_mass)]])
+            print(active_slopes)
+        else:
+            active_slope_indices = np.searchsorted(self.break_points, [min_mass, max_mass], side='right')
+            active_slope_indices[(active_slope_indices > self.slopes.size - 1)] = self.slopes.size - 1
+            active_slopes = self.slopes[active_slope_indices[0]:active_slope_indices[1] + 1]
+            print(active_slopes)
 
-        self.B = np.zeros(self.slopes.size)
-        self.xlimits = np.zeros(self.mass_limits.size)
-        self.gamma = 1.0-self.slopes
-        self.A = np.zeros(self.slopes.size)
-        self.B[0] = 1.0
-        self.A[0] = (self.mass_limits[1]**self.gamma[0] - self.mass_limits[0]**self.gamma[0]) / self.gamma[0]
-        for i in range(1, self.slopes.size):
-            self.B[i] = self.B[i-1] * self.mass_limits[i]**(self.slopes[i] - self.slopes[i-1])
-            self.A[i] = (self.mass_limits[i+1]**self.gamma[i] - self.mass_limits[i]**self.gamma[i]) / self.gamma[i]
-        self.normalization = np.sum(self.A*self.B)
-        for i in range(self.xlimits.size):
-            self.xlimits[i] = np.sum(self.A[0:i]*self.B[0:i])/self.normalization
+        B = np.zeros(active_slopes.size)
+        xlimits = np.zeros(mass_limits.size)
+        gamma = 1.0 - active_slopes
+        A = np.zeros(active_slopes.size)
+        B[0] = 1.0
+        A[0] = (mass_limits[1] ** gamma[0] - mass_limits[0] ** gamma[0]) / gamma[0]
+        for i in range(1, active_slopes.size):
+            B[i] = B[i - 1] * mass_limits[i] ** (active_slopes[i] - active_slopes[i - 1])
+            A[i] = (mass_limits[i + 1] ** gamma[i] - mass_limits[i] ** gamma[i]) / gamma[i]
+        normalization = np.sum(A * B)
+        for i in range(xlimits.size):
+            xlimits[i] = np.sum(A[0:i] * B[0:i]) / normalization
 
-    def _pdf(self, mass, min_mass, max_mass):
+        return mass_limits, active_slopes, A, B, gamma, xlimits, normalization
+
+    def _lnpdf(self, mass, min_mass, max_mass):
         """
         Evaluate the IMF (the probability density as a function of mass) for the input set of masses.
 
@@ -165,17 +172,17 @@ class MultiPartPowerLaw(IMF):
 
         Value of the natural logarithm of the IMF for each of the input masses.
         """
-        self._initialize_constants(min_mass, max_mass)
+        mass_limits, active_slopes, A, B, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         masses = np.array(mass)
-        if masses.min()<min_mass or masses.max()>max_mass:
+        if masses.min() < min_mass or masses.max() > max_mass:
             raise ValueError("Mass array contains values outside interval [min_mass, max_mass]")
         lnimf = np.empty(masses.size)
         lnimf.fill(-np.inf)
-        for i in range(self.slopes.size):
-            indices = (self.mass_limits[i] <= masses) & (masses < self.mass_limits[i+1])
-            lnimf[indices] = np.log(self.B[i]) - np.log(self.normalization) - self.slopes[i]*np.log(masses[indices])
-        indices = (masses == self.mass_limits[-1])
-        lnimf[indices] = np.log(self.B[-1]) - np.log(self.normalization) - self.slopes[-1]*np.log(masses[indices])
+        for i in range(active_slopes.size):
+            indices = (mass_limits[i] <= masses) & (masses < mass_limits[i + 1])
+            lnimf[indices] = np.log(B[i]) - np.log(normalization) - active_slopes[i] * np.log(masses[indices])
+        indices = (masses == mass_limits[-1])
+        lnimf[indices] = np.log(B[-1]) - np.log(normalization) - active_slopes[-1] * np.log(masses[indices])
 
         return lnimf
 
@@ -199,21 +206,21 @@ class MultiPartPowerLaw(IMF):
 
         Value of the cumulative mass distribution function for each of the input masses
         """
-        self._initialize_constants(min_mass, max_mass)
+        mass_limits, active_slopes, A, B, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         masses = np.array(mass)
-        if masses.min()<min_mass or masses.max()>max_mass:
+        if masses.min() < min_mass or masses.max() > max_mass:
             raise ValueError("Mass array contains values outside interval [min_mass, max_mass]")
         cimf = np.empty(masses.size)
         cimf.fill(-np.inf)
-        for i in range(self.slopes.size):
-            indices = (self.mass_limits[i] <= masses) & (masses < self.mass_limits[i+1])
-            cimf[indices] = (np.sum(self.A[0:i]*self.B[0:i]) + self.B[i] *
-                    (masses[indices]**self.gamma[i] \
-                            - self.mass_limits[i]**self.gamma[i]) / self.gamma[i]) / self.normalization
-        indices = (masses == self.mass_limits[-1])
-        cimf[indices] =  (np.sum(self.A[0:-1]*self.B[0:-1]) + self.B[-1] * \
-                (masses[indices]**self.gamma[-1] - self.mass_limits[-2]**self.gamma[-1]) \
-                / self.gamma[-1]) / self.normalization
+        for i in range(active_slopes.size):
+            indices = (mass_limits[i] <= masses) & (masses < mass_limits[i + 1])
+            cimf[indices] = (np.sum(A[0:i] * B[0:i]) + B[i] *
+                             (masses[indices] ** gamma[i] \
+                              - mass_limits[i] ** gamma[i]) / gamma[i]) / normalization
+        indices = (masses == mass_limits[-1])
+        cimf[indices] = (np.sum(A[0:-1] * B[0:-1]) + B[-1] * \
+                         (masses[indices] ** gamma[-1] - mass_limits[-2] ** gamma[-1]) \
+                         / gamma[-1]) / normalization
 
         return cimf
 
@@ -235,16 +242,16 @@ class MultiPartPowerLaw(IMF):
 
         Array of random mass values.
         """
-        self._initialize_constants(min_mass, max_mass)
+        mass_limits, active_slopes, A, B, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         x = uniform.rvs(size=n)
         masses = np.zeros(x.size)
-        for i in range(self.slopes.size):
-            indices = (self.xlimits[i] <= x) & (x < self.xlimits[i+1])
-            masses[indices] = ( (self.normalization*x[indices] - np.sum(self.A[0:i]*self.B[0:i])) / \
-                    self.B[i] * self.gamma[i] + self.mass_limits[i]**self.gamma[i] ) ** (1.0/self.gamma[i])
-        indices = (x == self.xlimits[-1])
-        masses[indices] = ( (self.normalization*x[indices] - np.sum(self.A[0:-1]*self.B[0:-1])) / \
-                    self.B[-1] * self.gamma[-1] + self.mass_limits[-1]**self.gamma[-1] ) ** (1.0/self.gamma[-1])
+        for i in range(active_slopes.size):
+            indices = (xlimits[i] <= x) & (x < xlimits[i + 1])
+            masses[indices] = ((normalization * x[indices] - np.sum(A[0:i] * B[0:i])) / \
+                               B[i] * gamma[i] + mass_limits[i] ** gamma[i]) ** (1.0 / gamma[i])
+        indices = (x == xlimits[-1])
+        masses[indices] = ((normalization * x[indices] - np.sum(A[0:-1] * B[0:-1])) / \
+                           B[-1] * gamma[-1] + mass_limits[-1] ** gamma[-1]) ** (1.0 / gamma[-1])
 
         return masses
 
@@ -252,4 +259,4 @@ class MultiPartPowerLaw(IMF):
         """
         Provide a string with information about the IMF.
         """
-        return "Multi-part power-law, slopes {0}, mass limits {1}".format(self.slopes, self.mass_limits)
+        return "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(self.slopes, self.break_points)
