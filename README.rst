@@ -3,7 +3,7 @@ agabpylib
 
 **Python library with Anthony's private python utilities for data analysis, simulation, plotting, etc.**
 
-*This library is not stable in any sense (interfaces, code), and broken code may be checked into GitHub
+*This library is not stable in any sense (functionality, interfaces, etc), and broken code may be checked into GitHub
 at anytime. Use at your own risk.*
 
 Documentation
