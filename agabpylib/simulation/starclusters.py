@@ -10,7 +10,7 @@ from sys import stderr
 from scipy.stats import norm, uniform
 from scipy.interpolate import interp1d
 import astropy.units as u
-from astropy.table import Table
+from astropy.table import Table, Column
 from os import path
 
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
@@ -74,8 +74,8 @@ class StarAPs:
             isoreader = MIST
             self.tabledict = {'initial_mass': 'initial_mass', 'mass': 'star_mass', 'log_L': 'log_L',
                               'log_Teff': 'log_Teff',
-                              'log_g': 'log_g', 'G':'Gaia_G_MAW', 'G_BPb':'Gaia_BP_MAWb', 'G_BPf':'Gaia_BP_MAWf',
-                              'G_RP':'Gaia_RP_MAW', 'V':'Bessell_V', 'I':'Bessell_I'}
+                              'log_g': 'log_g', 'G': 'Gaia_G_MAW', 'G_BPb': 'Gaia_BP_MAWb', 'G_BPf': 'Gaia_BP_MAWf',
+                              'G_RP': 'Gaia_RP_MAW', 'V': 'Bessell_V', 'I': 'Bessell_I'}
         else:
             self.isofilename = "PARSEC"
             isoreader = PARSEC
@@ -97,31 +97,28 @@ class StarAPs:
 
         Table with a list of stars and their properties.
         """
-
         age_index = self.isocmd.age_index(self.logage)
         iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
-        ids = np.arange(n)
-        print(iso_ini_masses.min(), iso_ini_masses.max())
+
+        aptable = Table()
+        aptable.add_column(Column(np.arange(n)), name='ID')
         ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
+        aptable.add_column(Column(ini_masses), name='initial_mass')
 
-        iso_masses = self.isocmd.isocmds[age_index][self.tabledict['mass']]
-        f = interp1d(iso_ini_masses, iso_masses)
-        masses = f(ini_masses) * u.Msun
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_L']])
-        logL = f(ini_masses)
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_Teff']])
-        logTeff = f(ini_masses)
-        f = interp1d(iso_ini_masses, self.isocmd.isocmds[age_index][self.tabledict['log_g']])
-        logg = f(ini_masses)
+        for item in list(self.tabledict.keys())[1:]:
+            y = self.isocmd.isocmds[age_index][self.tabledict[item]]
+            f = interp1d(iso_ini_masses, y)
+            if item == 'mass':
+                aptable.add_column(Column(f(ini_masses) * u.M_sun), name=item)
+            else:
+                aptable.add_column(Column(f(ini_masses)), name=item)
 
-        return Table([ids, ini_masses, masses, logL, logTeff, logg], names=('ID', 'initial_mass', 'mass', 'log_L',
-                                                                            'log_Teff', 'log_g'))
+        return aptable
 
     def showinfo(self):
         """
         Print out some information on the simulation of the astrophysical parameters.
         """
-
         print("Astrophysical parameters")
         print("------------------------")
         print()

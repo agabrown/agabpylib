@@ -131,12 +131,10 @@ class MultiPartPowerLaw(IMF):
         mass_limits = np.concatenate(([min_mass], mass_limits, [max_mass]))
         if mass_limits.size == 2:
             active_slopes = np.array([self.slopes[np.searchsorted(self.break_points, max_mass)]])
-            print(active_slopes)
         else:
             active_slope_indices = np.searchsorted(self.break_points, [min_mass, max_mass], side='right')
             active_slope_indices[(active_slope_indices > self.slopes.size - 1)] = self.slopes.size - 1
             active_slopes = self.slopes[active_slope_indices[0]:active_slope_indices[1] + 1]
-            print(active_slopes)
 
         B = np.zeros(active_slopes.size)
         xlimits = np.zeros(mass_limits.size)
