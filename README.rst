@@ -1,9 +1,10 @@
 agabpylib
 =========
 
-**Python library with Anthony's private plotting and data analysis utilities.** 
+**Python library with Anthony's private python utilities for data analysis, simulation, plotting, etc.**
 
-Mostly code for trying out stuff or for producing examples for my private astronomy research notes.
+*This library is not stable in any sense (interfaces, code), and broken code may be checked into GitHub
+at anytime. Use at your own risk.*
 
 Documentation
 -------------
@@ -28,12 +29,12 @@ The following python packages are required:
 Attribution
 -----------
 
-Please acknowlegde the authors if you use this code in your research.
+Please acknowledge the authors if you use this code in your research.
 
 License
 -------
 
-Copyright (c) 2015-2018 Anthony Brown, Leiden Observatory
+Copyright (c) 2015-2019 Anthony Brown, Leiden Observatory
 
 agabpylib is open source and free software: you can redistribute it and/or
 modify it under the terms of MIT license.

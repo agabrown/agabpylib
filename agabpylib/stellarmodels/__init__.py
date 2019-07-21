@@ -5,4 +5,6 @@ The package provides modules for using stellar models (isochrones, stellar
 tracks, etc).
 """
 
-__modules__ = ['io']
+from .io import *
+
+__all__ = [s for s in dir() if not s.startswith('_')]
