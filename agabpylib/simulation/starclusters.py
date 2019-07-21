@@ -22,7 +22,7 @@ class StarAPs:
     in the cluster.
     """
 
-    def __init__(self, age, metallicity, alphafeh, isofiles, imf, iso="mist"):
+    def __init__(self, age, metallicity, alphafeh, vvcrit, isofiles, imf, iso="mist"):
         """
         Class constructor/initializer
 
@@ -36,8 +36,14 @@ class StarAPs:
         alphafeh : float
             Cluster alpha-element enhancement (afe parameter for MIST isochrones, not relevant for
             PARSEC)
+        vvcrit : float
+            v/vcrit parameter for the MIST isochrone set. This is ignored for the PARSEC isochrones.
         isofiles : string
-            Path to folder with isochrone files. Should be compatible with isochrone set choice.
+            Path to folder with isochrone files. The folder is expected to contain the following sub-folders:
+                MIST_v1.2_vvcrit0.0_UBVRIplus
+                MIST_v1.2_vvcrit0.4_UBVRIplus
+                PARSEC_v1.2S_GaiaMAW_UBVRIJHK
+            The latter is for PARSEC files that where joined between the Gaia and UBVRIJHK photometric systems.
         imf : agabpylib.simulations.imf.IMF
             Instance of the agabpylib.simulations.imf.IMF class.
 
@@ -51,6 +57,8 @@ class StarAPs:
         self.logage = np.log10(age.to(u.yr).value)
         self.metallicity = metallicity
         self.afeh = alphafeh
+        self.vvcrit = vvcrit
+        self.modelset = iso
         if path.exists(isofiles):
             self.isofiles = path.abspath(isofiles)
         else:
@@ -65,22 +73,27 @@ class StarAPs:
             afehsign = "m"
         else:
             afehsign = "p"
-        if iso == "mist":
-            self.isofilename = \
-                "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit0.0_UBVRIplus.iso.cmd".format(mehsign,
-                                                                                               np.abs(self.metallicity),
-                                                                                               afehsign,
-                                                                                               np.abs(self.afeh))
+        if self.modelset == "mist":
+            subfolder = "MIST_v1.2_vvcrit{0:3.1f}_UBVRIplus".format(self.vvcrit)
+            fstring = "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit{4:3.1f}_UBVRIplus.iso.cmd"
+            self.isofilename = fstring.format(mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh),
+                                              self.vvcrit)
             isoreader = MIST
             self.tabledict = {'initial_mass': 'initial_mass', 'mass': 'star_mass', 'log_L': 'log_L',
-                              'log_Teff': 'log_Teff',
-                              'log_g': 'log_g', 'G': 'Gaia_G_MAW', 'G_BPb': 'Gaia_BP_MAWb', 'G_BPf': 'Gaia_BP_MAWf',
-                              'G_RP': 'Gaia_RP_MAW', 'V': 'Bessell_V', 'I': 'Bessell_I'}
+                              'log_Teff': 'log_Teff', 'log_g': 'log_g', 'G': 'Gaia_G_MAW', 'G_BPb': 'Gaia_BP_MAWb',
+                              'G_BPf': 'Gaia_BP_MAWf', 'G_RP': 'Gaia_RP_MAW', 'V': 'Bessell_V', 'I': 'Bessell_I'}
+            self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
         else:
-            self.isofilename = "PARSEC"
+            subfolder = "PARSEC_v1.2S_GaiaMAW_UBVRIJHK"
+            fstring = "PARSEC_v1.2S_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_GaiaMAW_UBVRIJHK.iso.cmd"
+            self.isofilename = fstring.format(mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh))
             isoreader = PARSEC
+            self.tabledict = {'initial_mass': 'Mini', 'mass': 'Mass', 'log_L': 'logL',
+                              'log_Teff': 'logTe', 'log_g': 'logg', 'G': 'Gmag', 'G_BPb': 'G_BPbrmag',
+                              'G_BPf': 'G_BPftmag', 'G_RP': 'G_RPmag', 'V': 'Vmag', 'I': 'Imag'}
+            self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
 
-        self.isocmd = isoreader(path.join(self.isofiles, self.isofilename))
+        self.isocmd = isoreader(path.join(self.isofullpath))
 
     def generate_aps(self, n):
         """
@@ -98,6 +111,7 @@ class StarAPs:
         Table with a list of stars and their properties.
         """
         age_index = self.isocmd.age_index(self.logage)
+        self.logageloaded = self.isocmd.ages[age_index]
         iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
 
         aptable = Table()
@@ -116,17 +130,22 @@ class StarAPs:
         return aptable
 
     def showinfo(self):
+
         """
         Print out some information on the simulation of the astrophysical parameters.
         """
         print("Astrophysical parameters")
         print("------------------------")
         print()
-        print("Age: {0}".format(self.age))
+        print("Isochrone models: {0}".format(self.modelset))
+        print("Age, log(Age) specified: {0}, {1}".format(self.age, self.logage))
+        print("log(Age) loaded: {0}".format(self.logageloaded))
         print("[M/H]: {0}".format(self.metallicity))
         print("[alpha/Fe]: {0}".format(self.afeh))
+        if self.modelset=='mist':
+            print("[v/vcrit]: {0}".format(self.afeh))
         print("IMF: {0}".format(self.imf.showinfo()))
-        print("Isochrone file: {0}".format(path.join(self.isofiles, self.isofilename)))
+        print("Isochrone file: {0}".format(self.isofullpath))
 
 
 class StarCluster:
