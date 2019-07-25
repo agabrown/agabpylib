@@ -6,8 +6,6 @@ Pieter van der Meer, 2011
 SRON - Netherlands Institute for Space Research
 """
 
-from __future__ import print_function
-
 # colour table in HTML hex format
 hexcols = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77',
            '#CC6677', '#882255', '#AA4499', '#661100', '#6699CC', '#AA4466',

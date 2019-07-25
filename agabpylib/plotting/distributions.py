@@ -2,18 +2,19 @@
 Provides methods to plot the distribution of data. This can be univariate distributions, such as
 histograms, or multivariate distributions, such as 2D histograms.
 
-Anthony Brown May 2015
+Anthony Brown May 2015 - Jul 2019
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
+from cycler import cycler
 from matplotlib import rc, cm
 
 from matplotlib.ticker import NullFormatter
 from agabpylib.plotting.inference import convert_to_stdev_nan
 
 from agabpylib.densityestimation.kde import kde2d_scikitlearn, kde_scikitlearn
-from distinct_colours import get_distinct
+from agabpylib.plotting.distinct_colours import get_distinct
 
 line_colours = get_distinct(4)
 
@@ -28,7 +29,7 @@ rc('lines', linewidth=1.5)
 rc('axes', linewidth=1)
 rc('axes', facecolor='f0f0f0')
 rc('axes', axisbelow=True)
-rc('axes', color_cycle=line_colours)
+rc('axes', prop_cycle=cycler('color',line_colours))
 rc('xtick', direction='out')
 rc('ytick', direction='out')
 rc('grid', color='cbcbcb')
