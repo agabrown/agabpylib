@@ -28,7 +28,6 @@ class StarAPs:
 
         Parameters
         ----------
-
         age : float
             Cluster age.
         metallicity : float
@@ -46,15 +45,12 @@ class StarAPs:
             The latter is for PARSEC files that where joined between the Gaia and UBVRIJHK photometric systems.
         imf : agabpylib.simulations.imf.IMF
             Instance of the agabpylib.simulations.imf.IMF class.
-
-        Keywords
-        --------
-
-        iso : string
+        iso : string, optional
             Which isochrone set to use: "mist" or "parsec", default "mist".
         """
         self.age = age
         self.logage = np.log10(age.to(u.yr).value)
+        self.logageloaded = self.logage
         self.metallicity = metallicity
         self.afeh = alphafeh
         self.vvcrit = vvcrit
@@ -101,13 +97,11 @@ class StarAPs:
 
         Parameters
         ----------
-
         n : int
             Number of stars for which to generate the APs
 
         Returns
         -------
-
         Table with a list of stars and their properties.
         """
         age_index = self.isocmd.age_index(self.logage)
@@ -130,7 +124,6 @@ class StarAPs:
         return aptable
 
     def showinfo(self):
-
         """
         Print out some information on the simulation of the astrophysical parameters.
         """
@@ -142,7 +135,7 @@ class StarAPs:
         print("log(Age) loaded: {0}".format(self.logageloaded))
         print("[M/H]: {0}".format(self.metallicity))
         print("[alpha/Fe]: {0}".format(self.afeh))
-        if self.modelset=='mist':
+        if self.modelset == 'mist':
             print("[v/vcrit]: {0}".format(self.afeh))
         print("IMF: {0}".format(self.imf.showinfo()))
         print("Isochrone file: {0}".format(self.isofullpath))
@@ -150,10 +143,11 @@ class StarAPs:
 
 class StarCluster:
     """
-    Base class for simulation of a star cluster. The cluster stars are assumed to be single (no binaries
-    or multiples) and drawn from a single isochrone, implying the same age and chemical composition for
-    all cluster members. The PARSEC or MIST isochrone sets can be used to generate the simulated stars.
-    The focus is on simulating Gaia observations of the clusters.
+    Base class for simulation of a star cluster.
+
+    The cluster stars are assumed to be single (no binaries or multiples) and drawn from a single isochrone,
+    implying the same age and chemical composition for all cluster members. The PARSEC or MIST isochrone sets can be
+    used to generate the simulated stars.The focus is on simulating Gaia observations of the clusters.
     """
 
     def __init__(self, n_stars, staraps):
@@ -162,15 +156,10 @@ class StarCluster:
 
         Parameters
         ----------
-
         n_stars : int
             Number of stars in the cluster.
         staraps : agabpylib.simulation.starclusters.StarAPs
             Class that generates the astrophysical parameters for the cluster stars.
-
-        Keywords
-        --------
-
         """
         self.n_stars = n_stars
         self.staraps = staraps
@@ -180,7 +169,6 @@ class StarCluster:
         """
         Print out some information on the simulated cluster.
         """
-
         print("Simulated cluster paramaters")
         print("----------------------------")
         print()
@@ -188,14 +176,13 @@ class StarCluster:
         print()
         self.staraps.showinfo()
 
-    def write_star_table(self, filename, **kwargs):
+    def write_star_table(self, filename):
         """
         Write the star table to file in VOTable format.
 
         Parameters
         ----------
-
         filename : string
             Name of the file to write to.
         """
-        self.star_table.write(filename, format="votable", **kwargs)
+        self.star_table.write(filename, format="votable")

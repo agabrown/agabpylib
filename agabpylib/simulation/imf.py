@@ -11,7 +11,7 @@ from abc import ABC, abstractmethod
 
 class IMF(ABC):
     """
-    Base class for implementations of initial mass function simulations.
+    Abstract base class for implementations of initial mass function simulations.
     """
 
     @abstractmethod
@@ -21,7 +21,6 @@ class IMF(ABC):
 
         Parameters
         ----------
-
         mass : float or float array
             The mass value or array of mass values for which to evaluate the IMF.
         min_mass : float
@@ -31,8 +30,8 @@ class IMF(ABC):
 
         Returns
         -------
-
-        Value of the natural logarithm of the IMF for each of the input masses.
+        float array
+            Value of the natural logarithm of the IMF for each of the input masses.
         """
         pass
 
@@ -43,7 +42,6 @@ class IMF(ABC):
 
         Parameters
         ----------
-
         mass : float or float array
             The mass value or array of mass values for which to evaluate the cumulative mass distribution
             function.
@@ -54,8 +52,8 @@ class IMF(ABC):
 
         Returns
         -------
-
-        Value of the cumulative mass distribution function for each of the input masses
+        float array
+            Value of the cumulative mass distribution function for each of the input masses
         """
         pass
 
@@ -66,7 +64,6 @@ class IMF(ABC):
 
         Parameters
         ----------
-
         n : Number of random mass values to generate.
         min_mass : float
             Minimum mass of interval over which to evaluate the IMF.
@@ -75,8 +72,8 @@ class IMF(ABC):
 
         Returns
         -------
-
-        Array of random mass values.
+        float array
+            Array of random mass values.
         """
         pass
 
@@ -90,6 +87,8 @@ class IMF(ABC):
 
 class MultiPartPowerLaw(IMF):
     """
+    Multi-part power-law IMF.
+
     This class represents a multi-part power-law IMF, such as the one defined by Kroupa
     (https://ui.adsabs.harvard.edu/#abs/2001MNRAS.322..231K/abstract).
     """
@@ -100,7 +99,6 @@ class MultiPartPowerLaw(IMF):
 
         Parameters
         ----------
-
         slopes : float array
             The slopes alpha for each part of the power law, where the IMF is proportional to
             mass^(-alpha).
@@ -125,7 +123,6 @@ class MultiPartPowerLaw(IMF):
 
         Parameters
         ----------
-
         min_mass : float
             Minimum mass of interval over which to evaluate the IMF.
         max_mass : float

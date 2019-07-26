@@ -29,7 +29,7 @@ rc('lines', linewidth=1.5)
 rc('axes', linewidth=1)
 rc('axes', facecolor='f0f0f0')
 rc('axes', axisbelow=True)
-rc('axes', prop_cycle=cycler('color',line_colours))
+rc('axes', prop_cycle=cycler('color', line_colours))
 rc('xtick', direction='out')
 rc('ytick', direction='out')
 rc('grid', color='cbcbcb')
@@ -40,7 +40,8 @@ rc('figure', facecolor='ffffff')
 
 
 def plot_joint_kde_and_marginals(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None,
-        xlims=None, ylims=None, Nx=100, Ny=100, lnpmin=-5, contourOnly=False, showData=False):
+                                 xlims=None, ylims=None, nx=100, ny=100, lnpmin=-5, contour_only=False,
+                                 show_data=False):
     """
     Plot the joint distribution of two variables, X and Y, for which the data set {(x_i, y_i)} is
     available. The joint and marginal distributions and show in one plot, where the distributions are
@@ -48,42 +49,49 @@ def plot_joint_kde_and_marginals(xdata, ydata, xname=None, yname=None, xunit=Non
 
     Parameters
     ----------
-
-    xdata - 1D array of values of x_i
-    ydata - 1D array of values of y_i
-
-    Keyword Arguments
-    -----------------
-
-    xname - Name of the X variable
-    yname - Name of Y variable
-    xunit - Units for the X variable
-    yunit - Units for the Y variable
-    xlims - Tuple with limits in x to use (min, max)
-    ylims - Tuple with limits in y to use (min, max)
-    Nx - Number of KDE samples in X
-    Ny - Number of KDE samples in Y
-    lnpmin - minimum value of the log of the KDE density (relative to maximum) to include in colour image
-    contourOnly - If true plot only the contours enclosing constant levels of cumulative probability
-    showData - If true plot the data points
+    xdata : array_like
+        1D array of values of x_i
+    ydata : array_like
+        1D array of values of y_i
+    xname : str, optional
+        Name of the X variable
+    yname : str, optional
+        Name of Y variable
+    xunit : str, optional
+        Units for the X variable.
+    yunit : str, optional
+        Units for the Y variable.
+    xlims : tuple, optional
+        Limits in x to use (min, max).
+    ylims : tuple, optional
+        Limits in y to use (min, max).
+    nx : int, optional
+        Number of KDE samples in X.
+    ny : int, optional
+        Number of KDE samples in Y.
+    lnpmin : float, optional
+        minimum value of the log of the KDE density (relative to maximum) to include in colour image.
+    contour_only : bool, optional
+        If true plot only the contours enclosing constant levels of cumulative probability.
+    show_data : bool, optional
+        If true plot the data points.
 
     Returns
     -------
-
     Figure object with the plot.
     """
 
-    if xname==None:
+    if xname is None:
         xname = r'$X$'
-    if yname==None:
+    if yname is None:
         yname = r'$Y$'
-    if xlims==None:
+    if xlims is None:
         xmin = xdata.min()
         xmax = xdata.max()
     else:
         xmin = xlims[0]
         xmax = xlims[1]
-    if ylims==None:
+    if ylims is None:
         ymin = ydata.min()
         ymax = ydata.max()
     else:
@@ -91,69 +99,65 @@ def plot_joint_kde_and_marginals(xdata, ydata, xname=None, yname=None, xunit=Non
         ymax = ylims[1]
 
     # Set up the rectangles for the three panels of the plot
-    axJoint_rect = [0.12, 0.12, 0.5, 0.5]
-    padding =  0.02
+    ax_joint_rect = [0.12, 0.12, 0.5, 0.5]
+    padding = 0.02
     marginal_h = 0.2
-    axMarginalX_rect = [axJoint_rect[0], axJoint_rect[1]+axJoint_rect[3]+padding, axJoint_rect[2],
-            marginal_h]
-    axMarginalY_rect = [axJoint_rect[0]+axJoint_rect[2]+padding, axJoint_rect[1], marginal_h,
-            axJoint_rect[2]]
+    ax_marginal_x_rect = [ax_joint_rect[0], ax_joint_rect[1] + ax_joint_rect[3] + padding, ax_joint_rect[2],
+                          marginal_h]
+    ax_marginal_y_rect = [ax_joint_rect[0] + ax_joint_rect[2] + padding, ax_joint_rect[1], marginal_h,
+                          ax_joint_rect[2]]
     nullfmt = NullFormatter()
 
-    Xsamples = np.linspace(xmin,xmax,Nx)
-    Ysamples = np.linspace(ymin,ymax,Ny)
+    fig = plt.figure(figsize=(6, 6), dpi=144)
 
-    fig = plt.figure(figsize=(6,6), dpi=144)
-
-    axJoint = fig.add_axes(axJoint_rect)
     plot_joint_kde(xdata, ydata, xname=xname, yname=yname, xunit=xunit, yunit=yunit, xlims=xlims,
-            ylims=ylims, Nx=Nx, Ny=Ny, lnpmin=lnpmin, contourOnly=contourOnly, showData=showData)
+                   ylims=ylims, nx=nx, ny=ny, lnpmin=lnpmin, contour_only=contour_only, show_data=show_data)
 
     # Marginal over X
-    axMarginalX = fig.add_axes(axMarginalX_rect)
-    axMarginalX.xaxis.set_major_formatter(nullfmt)
-    Xsamples, log_dens = kde_scikitlearn(xdata, lims=(xmin,xmax), N=200)
+    ax_marginal_x = fig.add_axes(ax_marginal_x_rect)
+    ax_marginal_x.xaxis.set_major_formatter(nullfmt)
+    xsamples, log_dens = kde_scikitlearn(xdata, lims=(xmin, xmax), N=200)
     dens_kde = np.exp(log_dens)
-    axMarginalX.fill_between(Xsamples[:,0], dens_kde, y2=0, alpha=0.5, facecolor=line_colours[0],
-            edgecolor='none')
-    axMarginalX.plot(Xsamples[:,0], dens_kde, '-')
-    axMarginalX.set_ylabel("$P($"+xname+"$)$")
-    axMarginalX.set_xlim(xmin,xmax)
-    axMarginalX.set_ylim(ymin=0.0)
-    axMarginalX.grid()
-    axMarginalX.spines['left'].set_position(('outward', 5))
-    axMarginalX.spines['bottom'].set_visible(False)
-    axMarginalX.spines['right'].set_visible(False)
-    axMarginalX.spines['top'].set_visible(False)
-    axMarginalX.yaxis.set_ticks_position('left')
-    axMarginalX.xaxis.set_ticks_position('none')
+    ax_marginal_x.fill_between(xsamples[:, 0], dens_kde, y2=0, alpha=0.5, facecolor=line_colours[0],
+                               edgecolor='none')
+    ax_marginal_x.plot(xsamples[:, 0], dens_kde, '-')
+    ax_marginal_x.set_ylabel("$P($" + xname + "$)$")
+    ax_marginal_x.set_xlim(xmin, xmax)
+    ax_marginal_x.set_ylim(ymin=0.0)
+    ax_marginal_x.grid()
+    ax_marginal_x.spines['left'].set_position(('outward', 5))
+    ax_marginal_x.spines['bottom'].set_visible(False)
+    ax_marginal_x.spines['right'].set_visible(False)
+    ax_marginal_x.spines['top'].set_visible(False)
+    ax_marginal_x.yaxis.set_ticks_position('left')
+    ax_marginal_x.xaxis.set_ticks_position('none')
 
     # Marginal over Y
-    axMarginalY = fig.add_axes(axMarginalY_rect)
-    axMarginalY.yaxis.set_major_formatter(nullfmt)
-    Ysamples, log_dens = kde_scikitlearn(ydata, lims=(ymin,ymax), N=200)
+    ax_marginal_y = fig.add_axes(ax_marginal_y_rect)
+    ax_marginal_y.yaxis.set_major_formatter(nullfmt)
+    ysamples, log_dens = kde_scikitlearn(ydata, lims=(ymin, ymax), N=200)
     dens_kde = np.exp(log_dens)
-    axMarginalY.fill_betweenx(Ysamples[:,0], 0, dens_kde, alpha=0.5, facecolor=line_colours[0],
-            edgecolor='none')
-    axMarginalY.plot(dens_kde, Ysamples[:,0], '-')
-    axMarginalY.set_xlabel("$P($"+yname+"$)$")
-    axMarginalY.set_ylim(ymin,ymax)
-    axMarginalY.set_xlim(xmin=0.0)
-    axMarginalY.grid()
-    axMarginalY.spines['left'].set_visible(False)
-    axMarginalY.spines['bottom'].set_position(('outward', 5))
-    axMarginalY.spines['right'].set_visible(False)
-    axMarginalY.spines['top'].set_visible(False)
-    axMarginalY.yaxis.set_ticks_position('none')
-    axMarginalY.xaxis.set_ticks_position('bottom')
-    for xticklab in axMarginalY.get_xticklabels():
+    ax_marginal_y.fill_betweenx(ysamples[:, 0], 0, dens_kde, alpha=0.5, facecolor=line_colours[0],
+                                edgecolor='none')
+    ax_marginal_y.plot(dens_kde, ysamples[:, 0], '-')
+    ax_marginal_y.set_xlabel("$P($" + yname + "$)$")
+    ax_marginal_y.set_ylim(ymin, ymax)
+    ax_marginal_y.set_xlim(xmin=0.0)
+    ax_marginal_y.grid()
+    ax_marginal_y.spines['left'].set_visible(False)
+    ax_marginal_y.spines['bottom'].set_position(('outward', 5))
+    ax_marginal_y.spines['right'].set_visible(False)
+    ax_marginal_y.spines['top'].set_visible(False)
+    ax_marginal_y.yaxis.set_ticks_position('none')
+    ax_marginal_y.xaxis.set_ticks_position('bottom')
+    for xticklab in ax_marginal_y.get_xticklabels():
         xticklab.set_rotation(-90)
 
     return fig
 
 
 def plot_joint_kde(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None, xlims=None, ylims=None,
-        Nx=100, Ny=100, lnpmin=-5, contourOnly=False, showData=False):
+                   nx=100, ny=100, lnpmin=-5, contour_only=False, show_data=False):
     """
     Plot the joint distribution of two variables, X and Y, for which the data set {(x_i, y_i)} is
     available. The joint distribution are estimated using Kernel Density Estimation (KDE). The plot is
@@ -161,80 +165,87 @@ def plot_joint_kde(xdata, ydata, xname=None, yname=None, xunit=None, yunit=None,
 
     Parameters
     ----------
-
-    xdata - 1D array of values of x_i
-    ydata - 1D array of values of y_i
-
-    Keyword Arguments
-    -----------------
-
-    xname - Name of the X variable
-    yname - Name of Y variable
-    xunit - Units for the X variable
-    yunit - Units for the Y variable
-    xlims - Tuple with limits in x to use (min, max)
-    ylims - Tuple with limits in y to use (min, max)
-    Nx - Number of KDE samples in X
-    Ny - Number of KDE samples in Y
-    lnpmin - minimum value of the log of the KDE density (relative to maximum) to include in colour image
-    contourOnly - If true plot only the contours enclosing constant levels of cumulative probability
-    showData - If true plot the data points
+    xdata : array_like
+        1D array of values of x_i
+    ydata : array_like
+        1D array of values of y_i
+    xname : str, optional
+        Name of the X variable
+    yname : str, optional
+        Name of Y variable
+    xunit :str, optional
+        Units for the X variable
+    yunit : str, optional
+        Units for the Y variable
+    xlims : tuple, optional
+        Tuple with limits in x to use (min, max)
+    ylims : tuple, optional
+        Tuple with limits in y to use (min, max)
+    nx : int, optional
+        Number of KDE samples in X
+    ny : int, optional
+        Number of KDE samples in Y
+    lnpmin : float, optional
+        minimum value of the log of the KDE density (relative to maximum) to include in colour image
+    contour_only : bool, optional
+        If true plot only the contours enclosing constant levels of cumulative probability
+    show_data : bool, optional
+        If true plot the data points
 
     Returns
     -------
-
     Axis object with the plot.
     """
 
-    if xname==None:
+    if xname is None:
         xname = r'$X$'
-    if yname==None:
+    if yname is None:
         yname = r'$Y$'
-    if xlims==None:
+    if xlims is None:
         xmin = xdata.min()
         xmax = xdata.max()
     else:
         xmin = xlims[0]
         xmax = xlims[1]
-    if ylims==None:
+    if ylims is None:
         ymin = ydata.min()
         ymax = ydata.max()
     else:
         ymin = ylims[0]
         ymax = ylims[1]
 
-    Xsamples = np.linspace(xmin,xmax,Nx)
-    Ysamples = np.linspace(ymin,ymax,Ny)
-    log_dens = kde2d_scikitlearn(xdata, ydata, xlims=(xmin,xmax), ylims=(ymin,ymax))
-    log_dens = log_dens-log_dens.max()
+    xsamples = np.linspace(xmin, xmax, nx)
+    ysamples = np.linspace(ymin, ymax, ny)
+    log_dens = kde2d_scikitlearn(xdata, ydata, xlims=(xmin, xmax), ylims=(ymin, ymax))
+    log_dens = log_dens - log_dens.max()
 
-    axJoint = plt.gca()
+    ax_joint = plt.gca()
 
-    if np.logical_not(contourOnly):
-        kde_image = axJoint.imshow(log_dens, aspect='auto', cmap=cm.Blues, extent=[xmin,
-            xmax, ymin, ymax], origin='lower')
-        kde_image.set_clim(lnpmin,0)
-    axJoint.contour(Xsamples, Ysamples, convert_to_stdev_nan(log_dens), levels=(0.01, 0.683, 0.955, 0.997),
-            colors='k')#line_colours[0])
-    if showData:
-        axJoint.plot(xdata, ydata, '+k')
-    if xunit==None:
-        axJoint.set_xlabel(xname)
+    if np.logical_not(contour_only):
+        kde_image = ax_joint.imshow(log_dens, aspect='auto', cmap=cm.Blues, extent=[xmin,
+                                                                                    xmax, ymin, ymax], origin='lower')
+        kde_image.set_clim(lnpmin, 0)
+    ax_joint.contour(xsamples, ysamples, convert_to_stdev_nan(log_dens), levels=(0.01, 0.683, 0.955, 0.997),
+                     colors='k')  # line_colours[0])
+    if show_data:
+        ax_joint.plot(xdata, ydata, '+k')
+    if xunit is None:
+        ax_joint.set_xlabel(xname)
     else:
-        axJoint.set_xlabel(xname+" ["+xunit+"]")
-    if yunit==None:
-        axJoint.set_ylabel(yname)
+        ax_joint.set_xlabel(xname + " [" + xunit + "]")
+    if yunit is None:
+        ax_joint.set_ylabel(yname)
     else:
-        axJoint.set_ylabel(yname+" ["+yunit+"]")
-    axJoint.grid()
+        ax_joint.set_ylabel(yname + " [" + yunit + "]")
+    ax_joint.grid()
     # Move left and bottom spines outward by 10 points
-    axJoint.spines['left'].set_position(('outward', 5))
-    axJoint.spines['bottom'].set_position(('outward', 5))
+    ax_joint.spines['left'].set_position(('outward', 5))
+    ax_joint.spines['bottom'].set_position(('outward', 5))
     # Hide the right and top spines
-    axJoint.spines['right'].set_visible(False)
-    axJoint.spines['top'].set_visible(False)
+    ax_joint.spines['right'].set_visible(False)
+    ax_joint.spines['top'].set_visible(False)
     # Only show ticks on the left and bottom spines
-    axJoint.yaxis.set_ticks_position('left')
-    axJoint.xaxis.set_ticks_position('bottom')
+    ax_joint.yaxis.set_ticks_position('left')
+    ax_joint.xaxis.set_ticks_position('bottom')
 
-    return axJoint
+    return ax_joint

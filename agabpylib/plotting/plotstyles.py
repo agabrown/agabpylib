@@ -7,57 +7,50 @@ Anthony Brown Aug 2015 - Mar 2019
 import matplotlib.pyplot as plt
 from matplotlib import rc
 from cycler import cycler
-
 from agabpylib.plotting.distinct_colours import get_distinct
 
+
 def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4, axislinewidths=1, linewidths=2,
-        lenticks=6):
+            lenticks=6):
     """
     Configure the plotting style to my liking.
 
     Parameters
     ----------
-
-    None
-
-    Keywords
-    --------
-
-    usetex : boolean
+    usetex : boolean, optional
         Whether or not to use LaTeX text (default True).
-    fontfam : boolean
+    fontfam : boolean, optional
         Font family to use (default 'serif')
-    sroncolours : boolean
+    sroncolours : boolean, optional
         If true use colour-blind proof distinct colours (https://personal.sron.nl/~pault/).
-    ncolors : int
+    ncolors : int, optional
         Number of distinct colours to use (applies to SRON colours only, default 4)
-    axislinewidths : float
+    axislinewidths : float, optional
         Width of lines used to draw axes (default 1)
-    linewidths : float
+    linewidths : float, optional
         Width of lines used to draw plot elements (default 2)
-    lenticks : float
+    lenticks : float, optional
         Length of major tickmarks in points (default 6, minor tick marks adjusted automatically)
 
     Returns
     -------
-
     Nothing
     """
     line_colours = get_distinct(ncolors)
-    if (usetex):
+    if usetex:
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
     rc('font', family=fontfam, size=18)
     rc('xtick.major', size=lenticks)
-    rc('xtick.minor', size=lenticks*2/3)
+    rc('xtick.minor', size=lenticks * 2 / 3)
     rc('ytick.major', size=lenticks)
-    rc('ytick.minor', size=lenticks*2/3)
+    rc('ytick.minor', size=lenticks * 2 / 3)
     rc('lines', linewidth=linewidths)
     rc('axes', linewidth=axislinewidths)
-    if (sroncolours):
-        rc('axes', prop_cycle=(cycler('color',line_colours)))
+    if sroncolours:
+        rc('axes', prop_cycle=(cycler('color', line_colours)))
     else:
-        rc('axes', prop_cycle=(cycler('color',plt.cm.tab10.colors[0:ncolors])))
+        rc('axes', prop_cycle=(cycler('color', plt.cm.tab10.colors[0:ncolors])))
     rc('xtick', direction='out')
     rc('ytick', direction='out')
     rc('grid', color='cbcbcb')
@@ -68,29 +61,26 @@ def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4, axislinew
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
 
+
 def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
     """
-    Apply the "Tufte" style to the plot axes contained in the input axis object. This mimics the sparse
-    style advocated by Tufte in his book "The Visual Display of Quantitative Information".
+    Apply the "Tufte" style to the plot axes contained in the input axis object.
+
+    This mimics the sparse style advocated by Tufte in his book "The Visual Display of Quantitative Information".
 
     Parameters
     ----------
-
-    ax - The axis object to configure.
-
-    Keywords
-    --------
-
-    withgrid : boolean
+    ax : matplotlib.axes instance
+     The axis object to configure.
+    withgrid : boolean, optional
         When true a grid is displayed in the plot background
-    minorticks : boolean
+    minorticks : boolean, optional
         When true minor tickmarks are drawn.
-    gridboth : boolean
+    gridboth : boolean, optional
         When true minor tickmarks are also used for the grid
 
     Returns
     -------
-
     Nothing.
     """
 
@@ -103,11 +93,11 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
     # Only show ticks on the left and bottom spines
     ax.yaxis.set_ticks_position('left')
     ax.xaxis.set_ticks_position('bottom')
-    for axis in ['top','bottom','left','right']:
+    for axis in ['top', 'bottom', 'left', 'right']:
         ax.spines[axis].set_linewidth(ax.spines[axis].get_linewidth())
     ax.tick_params('both', width=ax.spines['bottom'].get_linewidth(), which='both')
     if withgrid:
-        if (gridboth):
+        if gridboth:
             ax.grid(which='both')
         else:
             ax.grid()
