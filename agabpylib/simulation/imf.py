@@ -157,24 +157,6 @@ class MultiPartPowerLaw(IMF):
         return mass_limits, active_slopes, a, b, gamma, xlimits, normalization
 
     def lnpdf(self, mass, min_mass, max_mass):
-        """
-        Evaluate the IMF (the probability density as a function of mass) for the input set of masses.
-
-        Parameters
-        ----------
-
-        mass : float or float array
-            The mass value or array of mass values for which to evaluate the IMF.
-        min_mass : float
-            Minimum mass of interval over which to evaluate the IMF.
-        max_mass : float
-            Maximum mass of interval over which to evaluate the IMF.
-
-        Returns
-        -------
-
-        Value of the natural logarithm of the IMF for each of the input masses.
-        """
         mass_limits, active_slopes, a, b, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         masses = np.array(mass)
         if masses.min() < min_mass or masses.max() > max_mass:
@@ -190,25 +172,6 @@ class MultiPartPowerLaw(IMF):
         return lnimf
 
     def cdf(self, mass, min_mass, max_mass):
-        """
-        Evaluate the IMF in its cumulative form for the input set of masses.
-
-        Parameters
-        ----------
-
-        mass : float or float array
-            The mass value or array of mass values for which to evaluate the cumulative mass distribution
-            function.
-        min_mass : float
-            Minimum mass of interval over which to evaluate the IMF.
-        max_mass : float
-            Maximum mass of interval over which to evaluate the IMF.
-
-        Returns
-        -------
-
-        Value of the cumulative mass distribution function for each of the input masses
-        """
         mass_limits, active_slopes, a, b, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         masses = np.array(mass)
         if masses.min() < min_mass or masses.max() > max_mass:
@@ -228,23 +191,6 @@ class MultiPartPowerLaw(IMF):
         return cimf
 
     def rvs(self, n, min_mass, max_mass):
-        """
-        Generate random masses from this IMF.
-
-        Parameters
-        ----------
-
-        n : Number of random mass values to generate.
-        min_mass : float
-            Minimum mass of interval over which to evaluate the IMF.
-        max_mass : float
-            Maximum mass of interval over which to evaluate the IMF.
-
-        Returns
-        -------
-
-        Array of random mass values.
-        """
         mass_limits, active_slopes, a, b, gamma, xlimits, normalization = self._initialize_constants(min_mass, max_mass)
         x = uniform.rvs(size=n)
         masses = np.zeros(x.size)
@@ -259,7 +205,4 @@ class MultiPartPowerLaw(IMF):
         return masses
 
     def showinfo(self):
-        """
-        Provide a string with information about the IMF.
-        """
         return "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(self.slopes, self.break_points)
