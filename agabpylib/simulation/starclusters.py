@@ -6,13 +6,11 @@ Anthony Brown Jul 2019 - Jul 2019
 """
 
 import numpy as np
-from sys import stderr
-from scipy.stats import norm, uniform
 from scipy.interpolate import interp1d
 import astropy.units as u
 from astropy.table import Table, Column
 from os import path
-
+from datetime import datetime
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
 
 
@@ -20,6 +18,30 @@ class StarAPs:
     """
     Class that generates the astrophysical parameters (mass, Teff, luminosity, colour, etc) for the stars
     in the cluster.
+
+    Attributes
+    ----------
+    age : astropy.units.Quantity
+        Cluster age.
+    logage : float
+        Log10(age).
+    logageloaded : float
+        Value of logage of the actual isochrone used to simulate the cluster (which may be slightly different from
+        requested logage).
+    metallicity : float
+        Cluster metallicity ([Fe/H] parameter in MIST/PARSEC isochrones)
+    alphafeh : float
+        Cluster alpha-element enhancement (afe parameter for MIST isochrones, not relevant for PARSEC)
+    vvcrit : float
+        v/vcrit parameter for the MIST isochrone set. This is ignored for the PARSEC isochrones.
+    isofiles : str
+        Path to folder with isochrone files.
+    imf : agabpylib.simulations.imf.IMF
+        Instance of the agabpylib.simulations.imf.IMF class.
+    modelset : str
+        Which isochrone set is used.
+    meta : dict
+        Metadata describing the astrophysical modelling.
     """
 
     def __init__(self, age, metallicity, alphafeh, vvcrit, isofiles, imf, iso="mist"):
@@ -28,7 +50,7 @@ class StarAPs:
 
         Parameters
         ----------
-        age : float
+        age : astropy.units.Quantity
             Cluster age.
         metallicity : float
             Cluster metallicity ([Fe/H] parameter in MIST/PARSEC isochrones)
@@ -109,7 +131,7 @@ class StarAPs:
         iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
 
         aptable = Table()
-        aptable.add_column(Column(np.arange(n)), name='ID')
+        aptable.add_column(Column(np.arange(n)), name='source_id')
         ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
         aptable.add_column(Column(ini_masses), name='initial_mass')
 
@@ -123,22 +145,39 @@ class StarAPs:
 
         return aptable
 
-    def showinfo(self):
+    def getmeta(self):
         """
-        Print out some information on the simulation of the astrophysical parameters.
+        Returns
+        -------
+        dict :
+            Dictionary containing metadata describing the astrophysical parameter model.
         """
-        print("Astrophysical parameters")
-        print("------------------------")
-        print()
-        print("Isochrone models: {0}".format(self.modelset))
-        print("Age, log(Age) specified: {0}, {1}".format(self.age, self.logage))
-        print("log(Age) loaded: {0}".format(self.logageloaded))
-        print("[M/H]: {0}".format(self.metallicity))
-        print("[alpha/Fe]: {0}".format(self.afeh))
+        meta = {'ID':'Simulated_cluster', 'age': self.age, 'logage': self.logage, 'logageloaded': self.logageloaded,
+                     'metallicity': self.metallicity, 'alpha_over_fe': self.afeh, 'vvcrit': self.vvcrit,
+                     'stellarmodels':self.modelset, 'isochronefile': self.isofullpath}
+        meta.update(self.imf.getmeta())
+        return meta
+
+    def getinfo(self):
+        """
+        Returns
+        -------
+        str :
+            String with information on the simulation of the astrophysical parameters.
+        """
+        info = ""
+        info = info + "Astrophysical parameters\n" + \
+               "------------------------\n" + \
+               "Isochrone models: {0}\n".format(self.modelset) + \
+               "Age, log(Age) specified: {0}, {1}\n".format(self.age, self.logage) + \
+               "log(Age) loaded: {0}\n".format(self.logageloaded) + \
+               "[M/H]: {0}\n".format(self.metallicity) + \
+               "[alpha/Fe]: {0}\n".format(self.afeh)
         if self.modelset == 'mist':
-            print("[v/vcrit]: {0}".format(self.afeh))
-        print("IMF: {0}".format(self.imf.showinfo()))
-        print("Isochrone file: {0}".format(self.isofullpath))
+            info = info + "[v/vcrit]: {0}\n".format(self.afeh)
+        info = info + "Isochrone file: {0}\n\n".format(self.isofullpath)
+        info = info + self.imf.getinfo()
+        return info
 
 
 class StarCluster:
@@ -150,7 +189,7 @@ class StarCluster:
     used to generate the simulated stars.The focus is on simulating Gaia observations of the clusters.
     """
 
-    def __init__(self, n_stars, staraps):
+    def __init__(self, n_stars, staraps, starpos):
         """
         Class constructor/initializer
 
@@ -160,29 +199,53 @@ class StarCluster:
             Number of stars in the cluster.
         staraps : agabpylib.simulation.starclusters.StarAPs
             Class that generates the astrophysical parameters for the cluster stars.
+        starpos: agabpylib.simulation.starclusters.SpaceDistribution
+            The class that will generate the space positions of the stars with respect to the cluster (bary)centre.
         """
         self.n_stars = n_stars
         self.staraps = staraps
+        self.starpos = starpos
         self.star_table = self.staraps.generate_aps(self.n_stars)
+        x, y, z = starpos.generate_positions(self.n_stars)
+        self.star_table.add_columns([x, y, z], names=['x', 'y', 'z'])
+        self.star_table.meta = {}
+        self.star_table.meta.update({'timestamp': datetime.now().strftime('%Y-%m-%d-%H:%M:%S')})
+        self.star_table.meta.update(staraps.getmeta())
+        self.star_table.meta.update(starpos.getmeta())
 
-    def showinfo(self):
+    def getinfo(self):
         """
-        Print out some information on the simulated cluster.
+        Returns
+        -------
+        str:
+            Information on the simulated cluster.
         """
-        print("Simulated cluster paramaters")
-        print("----------------------------")
-        print()
-        print("Number of stars: {0}".format(self.n_stars))
-        print()
-        self.staraps.showinfo()
+        return "Simulated cluster parameters\n" + \
+               "============================\n" + \
+               "Number of stars: {0}\n\n".format(self.n_stars) + \
+               self.staraps.getinfo() + "\n\n" + \
+               self.starpos.getinfo()
 
-    def write_star_table(self, filename):
+    def getmeta(self):
         """
-        Write the star table to file in VOTable format.
+        Returns
+        -------
+        dict :
+            Metadata on the simulated star cluster.
+        """
+        return self.star_table.meta
+
+    def write_star_table(self, filename, ffmt, **kwargs):
+        """
+        Write the star table to file in the requested format.
 
         Parameters
         ----------
         filename : string
             Name of the file to write to.
+        ffmt : str
+            File format. See astropy.Table.write.
+        **kwargs : optional
+            Further keyword arguments for astropy.table.Table.write()
         """
-        self.star_table.write(filename, format="votable")
+        self.star_table.write(filename, format=ffmt, **kwargs)

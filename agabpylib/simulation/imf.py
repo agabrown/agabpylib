@@ -78,11 +78,23 @@ class IMF(ABC):
         pass
 
     @abstractmethod
-    def showinfo(self):
+    def getinfo(self):
         """
-        Provide a string with information about the IMF.
+        Returns
+        -------
+        str :
+            String with information about the IMF.
         """
         pass
+
+    @abstractmethod
+    def getmeta(self):
+        """
+        Returns
+        -------
+        dict :
+            Metadata about the IMF.
+        """
 
 
 class MultiPartPowerLaw(IMF):
@@ -201,5 +213,10 @@ class MultiPartPowerLaw(IMF):
 
         return masses
 
-    def showinfo(self):
-        return "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(self.slopes, self.break_points)
+    def getinfo(self):
+        return "Initial Mass Function\n" + \
+               "---------------------\n" + \
+               "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(self.slopes, self.break_points)
+
+    def getmeta(self):
+        return {'IMF':'Multi-part powerlaw', 'IMF_slopes':self.slopes, 'IMF_break_points':self.break_points}
