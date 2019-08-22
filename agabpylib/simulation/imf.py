@@ -219,4 +219,4 @@ class MultiPartPowerLaw(IMF):
                "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(self.slopes, self.break_points)
 
     def getmeta(self):
-        return {'IMF':'Multi-part powerlaw', 'IMF_slopes':self.slopes, 'IMF_break_points':self.break_points}
+        return {'IMF': 'Multi-part powerlaw', 'IMF_slopes': self.slopes, 'IMF_break_points': self.break_points}

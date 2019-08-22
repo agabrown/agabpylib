@@ -1,7 +1,7 @@
 .. :changelog:
 
-0.1.9 (July 2019)
-+++++++++++++++++
+0.1.9 (July-Aug 2019)
++++++++++++++++++++++
 
 - Star cluster simulations added.
 
