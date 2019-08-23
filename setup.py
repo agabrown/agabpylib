@@ -1,7 +1,7 @@
 """
 Setup module for agabpylib
 
-Anthony Brown Oct 2015 - Jun 2019
+Anthony Brown Oct 2015 - Aug 2019
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
@@ -82,7 +82,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['numpy','scipy', 'matplotlib', 'scikit-learn', 'pandas'],
+    install_requires=['numpy','scipy', 'matplotlib', 'scikit-learn', 'pandas', 'astropy'],
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,

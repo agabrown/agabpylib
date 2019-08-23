@@ -8,7 +8,7 @@ Anthony Brown Jul 2019 - Jul 2019
 import numpy as np
 from scipy.interpolate import interp1d
 import astropy.units as u
-from astropy.table import Table, Column
+from astropy.table import QTable, Column
 from os import path
 from datetime import datetime
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
@@ -130,7 +130,7 @@ class StarAPs:
         self.logageloaded = self.isocmd.ages[age_index]
         iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
 
-        aptable = Table()
+        aptable = QTable()
         aptable.add_column(Column(np.arange(n)), name='source_id')
         ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
         aptable.add_column(Column(ini_masses), name='initial_mass')
@@ -152,9 +152,9 @@ class StarAPs:
         dict :
             Dictionary containing metadata describing the astrophysical parameter model.
         """
-        meta = {'ID':'Simulated_cluster', 'age': self.age, 'logage': self.logage, 'logageloaded': self.logageloaded,
-                     'metallicity': self.metallicity, 'alpha_over_fe': self.afeh, 'vvcrit': self.vvcrit,
-                     'stellarmodels':self.modelset, 'isochronefile': self.isofullpath}
+        meta = {'ID': 'Simulated_cluster', 'age': self.age, 'logage': self.logage, 'logageloaded': self.logageloaded,
+                'metallicity': self.metallicity, 'alpha_over_fe': self.afeh, 'vvcrit': self.vvcrit,
+                'stellarmodels': self.modelset, 'isochronefile': self.isofullpath}
         meta.update(self.imf.getmeta())
         return meta
 
@@ -189,7 +189,7 @@ class StarCluster:
     used to generate the simulated stars.The focus is on simulating Gaia observations of the clusters.
     """
 
-    def __init__(self, n_stars, staraps, starpos):
+    def __init__(self, n_stars, staraps, starpos, starkin):
         """
         Class constructor/initializer
 
@@ -201,17 +201,25 @@ class StarCluster:
             Class that generates the astrophysical parameters for the cluster stars.
         starpos: agabpylib.simulation.starclusters.SpaceDistribution
             The class that will generate the space positions of the stars with respect to the cluster (bary)centre.
+        starkin : agabpylib.simulation.starclusters.Kinematics
+            The instance of the class that will generate the cluster kinematics.
         """
         self.n_stars = n_stars
         self.staraps = staraps
         self.starpos = starpos
+        self.starkin = starkin
         self.star_table = self.staraps.generate_aps(self.n_stars)
         x, y, z = starpos.generate_positions(self.n_stars)
         self.star_table.add_columns([x, y, z], names=['x', 'y', 'z'])
+        vx, vy, vz = starkin.generate_kinematics(x, y, z)
+        self.star_table.add_columns([vx, vy, vz], names=['v_x', 'v_y', 'v_z'])
+
         self.star_table.meta = {}
-        self.star_table.meta.update({'timestamp': datetime.now().strftime('%Y-%m-%d-%H:%M:%S')})
+        self.star_table.meta.update(
+            {'timestamp': datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), 'n_stars': self.n_stars})
         self.star_table.meta.update(staraps.getmeta())
         self.star_table.meta.update(starpos.getmeta())
+        self.star_table.meta.update(starkin.getmeta())
 
     def getinfo(self):
         """
@@ -224,7 +232,8 @@ class StarCluster:
                "============================\n" + \
                "Number of stars: {0}\n\n".format(self.n_stars) + \
                self.staraps.getinfo() + "\n\n" + \
-               self.starpos.getinfo()
+               self.starpos.getinfo() + "\n\n" + \
+               self.starkin.getinfo()
 
     def getmeta(self):
         """
