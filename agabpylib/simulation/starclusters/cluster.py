@@ -98,8 +98,9 @@ class StarAPs:
                                               self.vvcrit)
             isoreader = MIST
             self.tabledict = {'initial_mass': 'initial_mass', 'mass': 'star_mass', 'log_L': 'log_L',
-                              'log_Teff': 'log_Teff', 'log_g': 'log_g', 'G': 'Gaia_G_MAW', 'G_BPb': 'Gaia_BP_MAWb',
-                              'G_BPf': 'Gaia_BP_MAWf', 'G_RP': 'Gaia_RP_MAW', 'V': 'Bessell_V', 'I': 'Bessell_I'}
+                              'log_Teff': 'log_Teff', 'log_g': 'log_g', 'Gabs': 'Gaia_G_MAW',
+                              'Gabs_BPb': 'Gaia_BP_MAWb', 'Gabs_BPf': 'Gaia_BP_MAWf', 'Gabs_RP': 'Gaia_RP_MAW',
+                              'Vabs': 'Bessell_V', 'Iabs': 'Bessell_I'}
             self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
         else:
             subfolder = "PARSEC_v1.2S_GaiaMAW_UBVRIJHK"
@@ -107,8 +108,8 @@ class StarAPs:
             self.isofilename = fstring.format(mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh))
             isoreader = PARSEC
             self.tabledict = {'initial_mass': 'Mini', 'mass': 'Mass', 'log_L': 'logL',
-                              'log_Teff': 'logTe', 'log_g': 'logg', 'G': 'Gmag', 'G_BPb': 'G_BPbrmag',
-                              'G_BPf': 'G_BPftmag', 'G_RP': 'G_RPmag', 'V': 'Vmag', 'I': 'Imag'}
+                              'log_Teff': 'logTe', 'log_g': 'logg', 'Gabs': 'Gmag', 'Gabs_BPb': 'G_BPbrmag',
+                              'Gabs_BPf': 'G_BPftmag', 'Gabs_RP': 'G_RPmag', 'Vabs': 'Vmag', 'Iabs': 'Imag'}
             self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
 
         self.isocmd = isoreader(path.join(self.isofullpath))
@@ -133,7 +134,7 @@ class StarAPs:
         aptable = QTable()
         aptable.add_column(Column(np.arange(n)), name='source_id')
         ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
-        aptable.add_column(Column(ini_masses), name='initial_mass')
+        aptable.add_column(Column(ini_masses) * u.M_sun, name='initial_mass')
 
         for item in list(self.tabledict.keys())[1:]:
             y = self.isocmd.isocmds[age_index][self.tabledict[item]]
