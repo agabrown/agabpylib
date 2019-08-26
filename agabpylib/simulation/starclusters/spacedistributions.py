@@ -98,7 +98,7 @@ class ConstantDensitySphere(SpaceDistribution):
         return "Uniform space density distribution over sphere of radius {0}\n".format(self.radius)
 
     def getmeta(self):
-        return {'space_distribution':'uniform density sphere', 'space_distribution_radius':self.radius}
+        return {'space_distribution': 'uniform density sphere', 'space_distribution_radius': self.radius}
 
 
 class PlummerSphere(SpaceDistribution):
@@ -106,12 +106,12 @@ class PlummerSphere(SpaceDistribution):
     Plummer density distribution.
 
     Implements a spherical Plummer distribution:
-        density = C * (1+(r^2/a^2))^(-5/2)
+        density = C * (1+(r/a)^2)^(-5/2)
     Note that the mass of the cluster is ignored in this implementation.
 
     The density of stars in this model as a function of distance from the cluster centre (at (0,0,0)),
     expressed as a probability density, is given by
-        rho(r) = (3/a^3) * (1/(1+(r/a)^2)^(-5/2)
+        rho(r) = (3/a^3) * (1+(r/a)^2)^(-5/2)
     while the number of stars per distance interval, expressed as a probability density, is:
         n(r) = (1/a)*(1+(r/a)^2)^(-3/2)
 
@@ -136,7 +136,7 @@ class PlummerSphere(SpaceDistribution):
         phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
         theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
         h = uniform.rvs(loc=0, scale=1, size=n)
-        r = self.core_radius * h / np.sqrt(1 - h * h)
+        r = self.core_radius / np.sqrt(h ** (-2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)
@@ -146,4 +146,4 @@ class PlummerSphere(SpaceDistribution):
         return "Plummer density distribution with core radius {0}".format(self.core_radius)
 
     def getmeta(self):
-        return {'space_distribution':'Plummer sphere', 'plummer_core_radius':self.core_radius}
+        return {'space_distribution': 'Plummer sphere', 'plummer_core_radius': self.core_radius}
