@@ -111,9 +111,9 @@ class PlummerSphere(SpaceDistribution):
 
     The density of stars in this model as a function of distance from the cluster centre (at (0,0,0)),
     expressed as a probability density, is given by
-        rho(r) = (3/a^3) * (1+(r/a)^2)^(-5/2)
+        rho(r) = 3/(4*pi*a^3) * (1+(r/a)^2)^(-5/2)
     while the number of stars per distance interval, expressed as a probability density, is:
-        n(r) = (1/a)*(1+(r/a)^2)^(-3/2)
+        n(r) = 4*pi*r^2*rho(r)
 
     Attributes
     ----------
