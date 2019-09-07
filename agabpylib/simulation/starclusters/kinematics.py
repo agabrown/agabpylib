@@ -121,7 +121,7 @@ class LinearVelocityField(Kinematics):
     def generate_kinematics(self, x, y, z):
         positions = np.array([x, y, z]) * x.unit
         covmat = np.zeros((3, 3))
-        covmat[np.diag_indices(3)] = self.s
+        covmat[np.diag_indices(3)] = self.s*self.s
         v_x, v_y, v_z = multivariate_normal.rvs(cov=covmat, size=x.size).T * u.km / u.s + np.matmul(self.tmat,
                                                                                                     positions)
         return v_x + self.v[0], v_y + self.v[1], v_z + self.v[2]
