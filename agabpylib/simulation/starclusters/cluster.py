@@ -2,7 +2,7 @@
 Provide classes and methods for basic simulations of star clusters, where the main aim is to support
 kinematic modelling studies.
 
-Anthony Brown Jul 2019 - Jul 2019
+Anthony Brown Jul 2019 - Aug 2019
 """
 
 import numpy as np

@@ -1,7 +1,7 @@
 """
 Provides classes and methods to simulate the space distributions of stars in clusters
 
-Anthony Brown Jul 2019 - Jul 2019
+Anthony Brown Jul 2019 - Aug 2019
 """
 
 import numpy as np
