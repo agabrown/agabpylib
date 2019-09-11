@@ -106,17 +106,18 @@ class GaiaSurvey(Observables):
         self.bright_faint_sep = 10.87
 
     def generate_observations(self, cluster):
-        x_c, y_c, z_c = sphericalToCartesian(self.cluster_distance, self.cluster_ra.to(u.deg),
-                                             self.cluster_dec.to(u.deg))
-        star_dist = np.sqrt((cluster['x'] - x_c) ** 2 + (cluster['y'] - y_c) ** 2 + (cluster['z'] - z_c))
-        dmod = 5 * np.log10(star_dist) - 5
+        x_c, y_c, z_c = sphericalToCartesian(self.cluster_distance, self.cluster_ra.to(u.rad),
+                                             self.cluster_dec.to(u.rad))
+        star_dist = np.sqrt((cluster['x'] + x_c) ** 2 + (cluster['y'] + y_c) ** 2 + (cluster['z'] + z_c) ** 2)
+        dmod = 5 * np.log10(star_dist.value) - 5
         gmag = cluster['Gabs'] + dmod
         vmag = cluster['Vabs'] + dmod
         bpmag = np.where(gmag < self.bright_faint_sep, cluster['Gabs_BPb'], cluster['Gabs_BPf']) + dmod
         rpmag = cluster['Gabs_RP'] + dmod
         vmini = cluster['Vabs'] - cluster['Iabs']
-        ra, dec, plx, pmra, pmdec, vrad = phaseSpaceToAstrometry(cluster['x'], cluster['y'], cluster['z'],
-                                                                 cluster['v_x'], cluster['v_y'], cluster['v_z'])
+        ra, dec, plx, pmra, pmdec, vrad = phaseSpaceToAstrometry((cluster['x'] + x_c).value, (cluster['y'] + y_c).value,
+                                                                 (cluster['z'] + z_c).value, cluster['v_x'].value,
+                                                                 cluster['v_y'].value, cluster['v_z'].value)
 
         mission_extension = (self.observation_interval - 60.0) / 12.0
         nobs_scaled = np.round(self.observation_interval / 60.0 * 70)
@@ -153,21 +154,27 @@ class GaiaSurvey(Observables):
         pmra_obs = norm.rvs(loc=pmra, scale=pmra_error)
         pmdec_obs = norm.rvs(loc=pmdec, scale=pmdec_error)
 
-        cluster.add_columns([gmag, bpmag, rpmag, (ra * u.rad).to(u.deg), (dec * u.rad).to(u.deg), plx * u.mas,
-                             pmra * u.mas / u.yr, pmdec * u.mas / u.yr, vrad * u.km / u.s],
-                            names=['G', 'GBP', 'GRP', 'ra', 'dec', 'parallax', 'pmra', 'pmdec', 'radial_velocity'])
-        cluster.add_columns([gmag_obs, gmag_error, bpmag_obs, bpmag_error, rpmag_obs, rpmag_error],
+        cluster.add_columns(
+            [gmag * u.dimensionless_unscaled, bpmag * u.dimensionless_unscaled, rpmag * u.dimensionless_unscaled],
+            names=['G', 'GBP', 'GRP'])
+        cluster.add_columns(
+            [(ra * u.rad).to(u.deg), (dec * u.rad).to(u.deg), plx * u.mas, pmra * u.mas / u.yr, pmdec * u.mas / u.yr,
+             vrad * u.km / u.s], names=['ra', 'dec', 'parallax', 'pmra', 'pmdec', 'radial_velocity'])
+        cluster.add_columns([gmag_obs * u.dimensionless_unscaled, gmag_error * u.dimensionless_unscaled,
+                             bpmag_obs * u.dimensionless_unscaled, bpmag_error * u.dimensionless_unscaled,
+                             rpmag_obs * u.dimensionless_unscaled, rpmag_error * u.dimensionless_unscaled],
                             names=['G_obs', 'G_error', 'GBP_obs', 'GBP_error', 'GRP_obs', 'GRP_error'])
-        cluster.add_columns([ra_obs, ra_error, dec_obs, dec_error, plx_obs, plx_error, pmra_obs, pmra_error,
-                             pmdec_obs, pmdec_error, vrad_obs, vrad_error],
-                            names=['ra_obs', 'ra_error', 'dec_obs', 'dec_error', 'parallax_obs', 'parallax_error',
-                                   'pmra_obs', 'pmra_error', 'pmdec_obs', 'pmdec_error', 'radial_velocity_obs',
-                                   'radial_velocity_error'])
+        cluster.add_columns(
+            [(ra_obs * u.rad).to(u.deg), ra_error * u.mas, (dec_obs * u.rad).to(u.deg), dec_error * u.mas,
+             plx_obs * u.mas, plx_error * u.mas, pmra_obs * u.mas / u.yr, pmra_error * u.mas / u.yr,
+             pmdec_obs * u.mas / u.yr, pmdec_error * u.mas / u.yr, vrad_obs * u.km / u.s, vrad_error * u.km / u.s],
+            names=['ra_obs', 'ra_error', 'dec_obs', 'dec_error', 'parallax_obs', 'parallax_error', 'pmra_obs',
+                   'pmra_error', 'pmdec_obs', 'pmdec_error', 'radial_velocity_obs', 'radial_velocity_error'])
 
     def addinfo(self):
-        return "Gaia data for {0} months of data collection\n" + " Cluster distance: {1} pc\n" + \
-               " Cluster position: ({2}, {3})".format(self.observation_interval, self.cluster_distance,
-                                                      self.cluster_ra, self.cluster_dec)
+        return ("Gaia data for {0} months of data collection\n" + " Cluster distance: {1}\n" + \
+                " Cluster position: ({2}, {3})").format(self.observation_interval, self.cluster_distance,
+                                                        self.cluster_ra, self.cluster_dec)
 
     def getmeta(self):
         return {'simulated_survey': 'Gaia', 'data_collection_interval': self.observation_interval,
