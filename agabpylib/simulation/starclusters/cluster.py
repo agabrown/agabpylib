@@ -190,7 +190,7 @@ class StarCluster:
     used to generate the simulated stars.The focus is on simulating Gaia observations of the clusters.
     """
 
-    def __init__(self, n_stars, staraps, starpos, starkin):
+    def __init__(self, n_stars, staraps, starpos, starkin, simobs):
         """
         Class constructor/initializer
 
@@ -204,16 +204,20 @@ class StarCluster:
             The class that will generate the space positions of the stars with respect to the cluster (bary)centre.
         starkin : agabpylib.simulation.starclusters.Kinematics
             The instance of the class that will generate the cluster kinematics.
+        simobs :: agabpylib.simulation.starclusters.observables
+            The instance of the class that will simulate the observations of the cluster.
         """
         self.n_stars = n_stars
         self.staraps = staraps
         self.starpos = starpos
         self.starkin = starkin
+        self.simobs = simobs
         self.star_table = self.staraps.generate_aps(self.n_stars)
         x, y, z = starpos.generate_positions(self.n_stars)
         self.star_table.add_columns([x, y, z], names=['x', 'y', 'z'])
         vx, vy, vz = starkin.generate_kinematics(x, y, z)
         self.star_table.add_columns([vx, vy, vz], names=['v_x', 'v_y', 'v_z'])
+        simobs.generate_observations(self.star_table)
 
         self.star_table.meta = {}
         self.star_table.meta.update(
@@ -221,6 +225,7 @@ class StarCluster:
         self.star_table.meta.update(staraps.getmeta())
         self.star_table.meta.update(starpos.getmeta())
         self.star_table.meta.update(starkin.getmeta())
+        self.star_table.meta.update(simobs.getmeta())
 
     def getinfo(self):
         """
@@ -234,7 +239,8 @@ class StarCluster:
                "Number of stars: {0}\n\n".format(self.n_stars) + \
                self.staraps.getinfo() + "\n\n" + \
                self.starpos.getinfo() + "\n\n" + \
-               self.starkin.getinfo()
+               self.starkin.getinfo() + "\n\n" + \
+               self.simobs.getinfo()
 
     def getmeta(self):
         """

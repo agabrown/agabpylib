@@ -5,7 +5,7 @@ Anthony Brown Sep 2019 - Sep 2019
 """
 
 import numpy as np
-from scipy.stats import norm, multivariate_normal
+from scipy.stats import norm
 from abc import ABC, abstractmethod
 import astropy.units as u
 from pygaia.astrometry.vectorastrometry import phaseSpaceToAstrometry, sphericalToCartesian
@@ -21,7 +21,7 @@ class Observables(ABC):
     """
 
     @abstractmethod
-    def generate_observations(self, cluster, distance_c, ra_c, dec_c):
+    def generate_observations(self, cluster):
         """
         Generate simulated observations of the star cluster.
 
@@ -29,12 +29,6 @@ class Observables(ABC):
         ----------
         cluster : astropy.table.QTable
             Table with the simulated astrophysical properties of the cluster stars.
-        distance_c : astropy.units.Quantity
-            Distance to cluster centre (of mass) in pc.
-        ra_c : astropy.units.Quantity
-            Right ascension of cluster centre (of mass) in degrees.
-        dec_c : astropy.units.Quantity
-            Declination of cluster centre (of mass) in degrees.
 
         Returns
         -------
@@ -90,13 +84,13 @@ class GaiaSurvey(Observables):
         Declination of cluster centre (of mass) in degrees.
     """
 
-    def __init__(self, o, distance_c, ra_c, dec_c, ):
+    def __init__(self, obs_interval, distance_c, ra_c, dec_c):
         """
         Class constructor/initializer.
 
         Parameters
         ----------
-        o : int
+        obs_interval : int
              Number of months of data collected by Gaia.
         distance_c : astropy.units.Quantity
             Distance to cluster centre (of mass) in pc
@@ -105,7 +99,7 @@ class GaiaSurvey(Observables):
         dec_c : astropy.units.Quantity
             Declination of cluster centre (of mass) in degrees.
         """
-        self.observation_interval = o
+        self.observation_interval = obs_interval
         self.cluster_distance = distance_c
         self.cluster_ra = ra_c
         self.cluster_dec = dec_c
