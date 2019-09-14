@@ -101,6 +101,44 @@ class ConstantDensitySphere(SpaceDistribution):
         return {'space_distribution': 'uniform density sphere', 'space_distribution_radius': self.radius}
 
 
+class SphericalShell(SpaceDistribution):
+    """
+    Stars are distributed in a spherical shell around the cluster centre (of mass) the shell has zero thickness. This
+    space distribution is useful for investigating the correct simulation of kinematics (for example).
+
+    Attributes
+    ----------
+    radius : astropy.units.Quantity
+        Radius of the shell in pc.
+    """
+
+    def __init__(self, r):
+        """
+        Class constructor/initializer.
+
+        Parameters
+        ----------
+        r : astropy.units.Quantity
+            Radius of the shell in pc
+        """
+        self.radius = r
+
+    def generate_positions(self, n):
+        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
+        r = self.radius
+        x = r * np.cos(phi) * np.cos(theta)
+        y = r * np.sin(phi) * np.cos(theta)
+        z = r * np.sin(theta)
+        return x, y, z
+
+    def addinfo(self):
+        return "Spherical shell of radius {0}\n".format(self.radius)
+
+    def getmeta(self):
+        return {'space_distribution': 'spherical shell', 'space_distribution_radius': self.radius}
+
+
 class PlummerSphere(SpaceDistribution):
     """
     Plummer density distribution.
@@ -147,3 +185,50 @@ class PlummerSphere(SpaceDistribution):
 
     def getmeta(self):
         return {'space_distribution': 'Plummer sphere', 'plummer_core_radius': self.core_radius}
+
+
+class TruncatedPlummerSphere(SpaceDistribution):
+    """
+    Truncated Plummer density distribution. A Plummer sphere truncated at a certain radius.
+
+    Attributes
+    ----------
+    core_radius : astropy.units.Quantity
+        Core radius in pc.
+    truncation_radius : astropy.units.Quantity
+        Truncation radius in pc.
+    """
+
+    def __init__(self, a, t):
+        """
+        Class constructor/initializer.
+
+        Parameters
+        ----------
+        a : astropy.units.Quantity
+            Core radius of the cluster in pc
+        t : astropy.units.Quantity
+            Truncation radius of the cluster in pc
+        """
+        self.core_radius = a
+        self.truncation_radius = t
+
+    def generate_positions(self, n):
+        c = (1 + (self.truncation_radius / self.core_radius) ** 2) ** (1.5) / (
+                    self.truncation_radius / self.core_radius) ** 3
+        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
+        h = uniform.rvs(loc=0, scale=1, size=n)
+        r = self.core_radius / np.sqrt((c/h) ** (-2 / 3) - 1)
+        x = r * np.cos(phi) * np.cos(theta)
+        y = r * np.sin(phi) * np.cos(theta)
+        z = r * np.sin(theta)
+        return x, y, z
+
+    def addinfo(self):
+        return "Truncated Plummer density distribution: core radius {0}, truncation radius {1}".format(
+            self.core_radius, self.truncation_radius)
+
+    def getmeta(self):
+        return {'space_distribution': 'Truncated Plummer sphere', 'plummer_core_radius': self.core_radius,
+                'plummer_truncation_radius':self.truncation_radius}
