@@ -217,8 +217,7 @@ class TruncatedPlummerSphere(SpaceDistribution):
         self.truncation_radius = t
 
     def generate_positions(self, n):
-        c = (1 + (self.truncation_radius / self.core_radius) ** 2) ** (1.5) / (
-                    self.truncation_radius / self.core_radius) ** 3
+        c = (1 + (self.core_radius / self.truncation_radius) ** 2) ** (1.5)
         phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
         theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
         h = uniform.rvs(loc=0, scale=1, size=n)
