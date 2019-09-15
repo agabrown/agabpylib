@@ -1,7 +1,10 @@
 """
-Provides classes and methods to simulate the space distributions of stars in clusters
+Provides classes and methods to simulate the space distributions of stars in clusters.
 
-Anthony Brown Jul 2019 - Aug 2019
+NOTE: The classes below only generate star positions according to a number density distribution. Only for equal mass
+stars will this result in a mass-distribution consistent with the number density distribution.
+
+Anthony Brown Jul 2019 - Sep 2019
 """
 
 import numpy as np
@@ -219,7 +222,7 @@ class TruncatedPlummerSphere(SpaceDistribution):
         phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
         theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
         h = uniform.rvs(loc=0, scale=1, size=n)
-        r = self.core_radius / np.sqrt((c/h) ** (-2 / 3) - 1)
+        r = self.core_radius / np.sqrt((c/h) ** (2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)

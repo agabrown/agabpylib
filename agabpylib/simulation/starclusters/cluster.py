@@ -2,7 +2,10 @@
 Provide classes and methods for basic simulations of star clusters, where the main aim is to support
 kinematic modelling studies.
 
-Anthony Brown Jul 2019 - Aug 2019
+The cluster simulations are focused on generating realistic observables and are NOT intended for the simulation of
+dynamically self-consistent clusters (i.e. where the mass distribution, potential, and kinematics are consistent).
+
+Anthony Brown Jul 2019 - Sep 2019
 """
 
 import numpy as np
