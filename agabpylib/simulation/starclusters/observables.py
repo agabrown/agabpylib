@@ -136,9 +136,19 @@ class GaiaSurvey(Observables):
         ra_error, dec_error = positionErrorSkyAvg(gmag, vmini, extension=mission_extension)
         plx_error = parallaxErrorSkyAvg(gmag, vmini, extension=mission_extension)
         pmra_error, pmdec_error = properMotionErrorSkyAvg(gmag, vmini, extension=mission_extension)
-        # TODO more sophisticated radial velocity uncertainty modelling
+
         errscaling = errorScalingMissionLength(mission_extension, -0.5)
-        vrad_error = vradErrorSkyAvg(vmag, 'F0V')
+        teff = 10 ** cluster['log_Teff']
+        logg = cluster['log_g']
+        ms = (3.5 <= logg) & (logg <= 6.0)
+        condlist = [logg < 3.5, logg > 6.0, ms & (teff >= 30000), ms & ((teff < 30000) & (teff >= 15000)),
+                    ms & ((teff < 15000) & (teff >= 10000)), ms & ((teff < 10000) & (teff >= 8000)),
+                    ms & ((teff < 8000) & (teff >= 7000)), ms & ((teff < 7000) & (teff >= 6000)),
+                    ms & ((teff < 6000) & (teff >= 5500)), ms & ((teff < 5500) & (teff >= 5000)),
+                    ms & (teff < 5000)]
+        choicelist = ['K1III', 'B0V', 'B0V', 'B5V', 'A0V', 'A5V', 'F0V', 'G0V', 'G5V', 'K0V', 'K4V']
+        spt = np.select(condlist, choicelist)
+        vrad_error = vradErrorSkyAvg(vmag, spt)
         # TODO Fix PyGaia to allow for shorter or longer mission lifetimes for vrad errors
         vrad_error = (vrad_error - _vradCalibrationFloor) * errscaling + _vradCalibrationFloor
 
