@@ -112,6 +112,7 @@ class GaiaSurvey(Observables):
         self.cluster_ra = ra_c
         self.cluster_dec = dec_c
         self.rvslim = rvslim
+        self.survey_limit = 20.7
         self.bright_faint_sep = 10.87
 
     def generate_observations(self, cluster):
@@ -183,27 +184,43 @@ class GaiaSurvey(Observables):
         cluster.add_columns(
             [(ra * u.rad).to(u.deg), (dec * u.rad).to(u.deg), plx * u.mas, pmra * u.mas / u.yr, pmdec * u.mas / u.yr,
              vrad * u.km / u.s], names=['ra', 'dec', 'parallax', 'pmra', 'pmdec', 'radial_velocity'])
+
+        phot_observables = ['G_obs', 'G_obs_error', 'GBP_obs', 'GBP_obs_error', 'GRP_obs', 'GRP_obs_error']
         cluster.add_columns([gmag_obs * u.dimensionless_unscaled, gmag_error * u.dimensionless_unscaled,
                              bpmag_obs * u.dimensionless_unscaled, bpmag_error * u.dimensionless_unscaled,
                              rpmag_obs * u.dimensionless_unscaled, rpmag_error * u.dimensionless_unscaled],
-                            names=['G_obs', 'G_obs_error', 'GBP_obs', 'GBP_obs_error', 'GRP_obs', 'GRP_obs_error'])
+                            names=phot_observables)
+        astrom_observables = ['ra_obs', 'ra_error', 'dec_obs', 'dec_error', 'parallax_obs', 'parallax_error',
+                              'pmra_obs', 'pmra_error', 'pmdec_obs', 'pmdec_error']
+        rvs_observables = ['radial_velocity_obs', 'radial_velocity_error']
         cluster.add_columns(
             [(ra_obs * u.rad).to(u.deg), ra_error * u.mas, (dec_obs * u.rad).to(u.deg), dec_error * u.mas,
              plx_obs * u.mas, plx_error * u.mas, pmra_obs * u.mas / u.yr, pmra_error * u.mas / u.yr,
              pmdec_obs * u.mas / u.yr, pmdec_error * u.mas / u.yr, vrad_obs * u.km / u.s, vrad_error * u.km / u.s],
-            names=['ra_obs', 'ra_error', 'dec_obs', 'dec_error', 'parallax_obs', 'parallax_error', 'pmra_obs',
-                   'pmra_error', 'pmdec_obs', 'pmdec_error', 'radial_velocity_obs', 'radial_velocity_error'])
-        cluster['radial_velocity_obs'][(grvs > self.rvslim)] = np.NAN
-        cluster['radial_velocity_error'][(grvs > self.rvslim)] = np.NAN
+            names=astrom_observables + rvs_observables)
+
+        # Apply survey limits to the observables.
+        for field in (astrom_observables + phot_observables):
+            cluster[field][gmag_obs > self.survey_limit] = np.NAN
+        for field in rvs_observables:
+            cluster[field][(grvs > self.rvslim)] = np.NAN
+        self.n_astrophoto = plx_obs[gmag_obs <= self.survey_limit].size
+        self.n_rvs = vrad_obs[grvs <= self.rvslim].size
+        self.n_plxpos = plx_obs[(gmag_obs <= self.survey_limit) & (plx_obs > 0)].size
 
     def addinfo(self):
         return ("Gaia data for {0} months of data collection\n" + " Cluster distance: {1}\n" + \
-                " Cluster position: ({2}, {3})\n" + " RVS Survey limit: Grvs={4}").format(self.observation_interval,
-                                                                                          self.cluster_distance,
-                                                                                          self.cluster_ra,
-                                                                                          self.cluster_dec, self.rvslim)
+                " Cluster position: ({2}, {3})\n" + " RVS Survey limit: Grvs={4}\n" + \
+                " Number of stars with astrometry and photometry: {5}\n" + \
+                " Number of stars with positive observed parallax: {6}\n" + \
+                " Number of stars with radial velocity: {7}\n").format(self.observation_interval,
+                                                                       self.cluster_distance,
+                                                                       self.cluster_ra,
+                                                                       self.cluster_dec,
+                                                                       self.rvslim, self.n_astrophoto, self.n_plxpos,
+                                                                       self.n_rvs)
 
     def getmeta(self):
         return {'simulated_survey': 'Gaia', 'data_collection_interval': self.observation_interval,
                 'cluster_distance': self.cluster_distance, 'cluster_ra': self.cluster_ra,
-                'cluster_dec': self.cluster_dec, 'rvs_survey_limit': self.rvslim}
+                'cluster_dec': self.cluster_dec, 'rvs_survey_limit': self.rvslim, 'num_astrophoto': self.n_astrophoto}
