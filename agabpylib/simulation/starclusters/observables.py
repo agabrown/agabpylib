@@ -133,12 +133,10 @@ class GaiaSurvey(Observables):
                                                                  cluster['v_y'].value, cluster['v_z'].value)
 
         mission_extension = (self.observation_interval - 60.0) / 12.0
-        nobs_scaled = np.round(self.observation_interval / 60.0 * 70)
         ra_error, dec_error = positionErrorSkyAvg(gmag, vmini, extension=mission_extension)
         plx_error = parallaxErrorSkyAvg(gmag, vmini, extension=mission_extension)
         pmra_error, pmdec_error = properMotionErrorSkyAvg(gmag, vmini, extension=mission_extension)
 
-        errscaling = errorScalingMissionLength(mission_extension, -0.5)
         teff = 10 ** cluster['log_Teff']
         logg = cluster['log_g']
         ms = (3.5 <= logg) & (logg <= 6.0)
@@ -149,14 +147,11 @@ class GaiaSurvey(Observables):
                     ms & (teff < 5000)]
         choicelist = ['K1III', 'B0V', 'B0V', 'B5V', 'A0V', 'A5V', 'F0V', 'G0V', 'G5V', 'K0V', 'K4V']
         spt = np.select(condlist, choicelist)
-        vrad_error = vradErrorSkyAvg(vmag, spt)
-        # TODO Fix PyGaia to allow for shorter or longer mission lifetimes for vrad errors
-        vrad_error = (vrad_error - _vradCalibrationFloor) * errscaling + _vradCalibrationFloor
+        vrad_error = vradErrorSkyAvg(vmag, spt, extension=mission_extension)
 
-        # TODO Fix PyGaia to allow for shorter or longer mission lifetimes for photometric errors.
-        gmag_error = gMagnitudeErrorEoM(gmag, nobs=nobs_scaled)
-        bpmag_error = bpMagnitudeErrorEoM(gmag, vmini, nobs=nobs_scaled)
-        rpmag_error = rpMagnitudeErrorEoM(gmag, vmini, nobs=nobs_scaled)
+        gmag_error = gMagnitudeErrorEoM(gmag, extension=mission_extension)
+        bpmag_error = bpMagnitudeErrorEoM(gmag, vmini, extension=mission_extension)
+        rpmag_error = rpMagnitudeErrorEoM(gmag, vmini, extension=mission_extension)
 
         # convert astrometric uncertainties to milliarcsec(/yr)
         ra_error = ra_error / 1000.0
@@ -179,8 +174,9 @@ class GaiaSurvey(Observables):
 
         cluster.add_columns(
             [gmag * u.dimensionless_unscaled, bpmag * u.dimensionless_unscaled, rpmag * u.dimensionless_unscaled,
-             grvs * u.dimensionless_unscaled, gminv * u.dimensionless_unscaled, vmini * u.dimensionless_unscaled],
-            names=['G', 'GBP', 'GRP', 'GRVS', 'GminV', 'VminI'])
+             grvs * u.dimensionless_unscaled, gminv * u.dimensionless_unscaled, vmag * u.dimensionless_unscaled,
+             imag * u.dimensionless_unscaled, vmini * u.dimensionless_unscaled],
+            names=['G', 'GBP', 'GRP', 'GRVS', 'GminV', 'V', 'I', 'VminI'])
         cluster.add_columns(
             [(ra * u.rad).to(u.deg), (dec * u.rad).to(u.deg), plx * u.mas, pmra * u.mas / u.yr, pmdec * u.mas / u.yr,
              vrad * u.km / u.s], names=['ra', 'dec', 'parallax', 'pmra', 'pmdec', 'radial_velocity'])
