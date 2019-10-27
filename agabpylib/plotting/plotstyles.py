@@ -10,7 +10,7 @@ from cycler import cycler
 from agabpylib.plotting.distinct_colours import get_distinct
 
 
-def useagab(usetex=True, fontfam='serif', sroncolours=True, ncolors=4, axislinewidths=1, linewidths=2,
+def useagab(usetex=False, fontfam='sans-serif', sroncolours=False, ncolors=4, axislinewidths=1, linewidths=2,
             lenticks=6):
     """
     Configure the plotting style to my liking.
