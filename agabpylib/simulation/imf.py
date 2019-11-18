@@ -97,6 +97,41 @@ class IMF(ABC):
         """
 
 
+class Uniform(IMF):
+    """
+    Uniform (constant probability density) IMF. Highly unphysical but useful for experiments in simulations.
+    """
+
+    def __init__(self):
+        """
+        Class constructor/initializer.
+        """
+
+    def lnpdf(self, mass, min_mass, max_mass):
+        masses = np.array(mass)
+        if masses.min() < min_mass or masses.max() > max_mass:
+            raise ValueError("Mass array contains values outside interval [min_mass, max_mass]")
+        p = 1.0 / (max_mass - min_mass)
+        return np.zeros_like(masses) + np.log(p)
+
+    def cdf(self, mass, min_mass, max_mass):
+        masses = np.array(mass)
+        if masses.min() < min_mass or masses.max() > max_mass:
+            raise ValueError("Mass array contains values outside interval [min_mass, max_mass]")
+        return (masses - min_mass) / (max_mass - min_mass)
+
+    def rvs(self, n, min_mass, max_mass):
+        return uniform.rvs(size=n) * (max_mass - min_mass) + min_mass
+
+    def getinfo(self):
+        return "Initial Mass Function\n" + \
+               "---------------------\n" + \
+               "Uniform in mass"
+
+    def getmeta(self):
+        return {'IMF': 'Uniform'}
+
+
 class MultiPartPowerLaw(IMF):
     """
     Multi-part power-law IMF.

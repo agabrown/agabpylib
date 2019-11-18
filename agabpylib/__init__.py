@@ -4,7 +4,7 @@ Python utilities.
 Anthony Brown Oct 2015 - Jul 2019
 """
 
-__version__ = "0.1.9"
+__version__ = "0.1.10"
 
 try:
     import numpy
