@@ -62,7 +62,7 @@ def useagab(usetex=False, fontfam='sans-serif', sroncolours=False, ncolors=4, ax
     rc('figure.subplot', bottom=0.125)
 
 
-def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
+def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='left'):
     """
     Apply the "Tufte" style to the plot axes contained in the input axis object.
 
@@ -78,21 +78,35 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False):
         When true minor tickmarks are drawn.
     gridboth : boolean, optional
         When true minor tickmarks are also used for the grid
+    yspine : string, optional
+        'left' set the vertical axis on the left, 'right' set vertical axis on right (default 'left')
 
     Returns
     -------
     Nothing.
     """
 
-    # Move left and bottom spines outward by 5 points
-    ax.spines['left'].set_position(('outward', 5))
-    ax.spines['bottom'].set_position(('outward', 5))
-    # Hide the right and top spines
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
-    # Only show ticks on the left and bottom spines
-    ax.yaxis.set_ticks_position('left')
-    ax.xaxis.set_ticks_position('bottom')
+    if (yspine=='right'):
+        # Move left and bottom spines outward by 5 points
+        ax.spines['right'].set_position(('outward', 5))
+        ax.spines['bottom'].set_position(('outward', 5))
+        # Hide the right and top spines
+        ax.spines['left'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('right')
+        ax.xaxis.set_ticks_position('bottom')
+    else:
+        # Move left and bottom spines outward by 5 points
+        ax.spines['left'].set_position(('outward', 5))
+        ax.spines['bottom'].set_position(('outward', 5))
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+
     for axis in ['top', 'bottom', 'left', 'right']:
         ax.spines[axis].set_linewidth(ax.spines[axis].get_linewidth())
     ax.tick_params('both', width=ax.spines['bottom'].get_linewidth(), which='both')
