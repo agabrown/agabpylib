@@ -10,8 +10,8 @@ from cycler import cycler
 from agabpylib.plotting.distinct_colours import get_distinct
 
 
-def useagab(usetex=False, fontfam='sans-serif', sroncolours=False, ncolors=4, axislinewidths=1, linewidths=2,
-            lenticks=6):
+def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=4, axislinewidths=1,
+            linewidths=2, lenticks=6):
     """
     Configure the plotting style to my liking.
 
@@ -19,8 +19,10 @@ def useagab(usetex=False, fontfam='sans-serif', sroncolours=False, ncolors=4, ax
     ----------
     usetex : boolean, optional
         Whether or not to use LaTeX text (default True).
-    fontfam : boolean, optional
+    fontfam : str, optional
         Font family to use (default 'serif')
+    fontsize : int, optional
+        Font size (default 18)
     sroncolours : boolean, optional
         If true use colour-blind proof distinct colours (https://personal.sron.nl/~pault/).
     ncolors : int, optional
@@ -40,13 +42,14 @@ def useagab(usetex=False, fontfam='sans-serif', sroncolours=False, ncolors=4, ax
     if usetex:
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
-    rc('font', family=fontfam, size=18)
+    rc('font', family=fontfam, size=fontsize)
     rc('xtick.major', size=lenticks)
     rc('xtick.minor', size=lenticks * 2 / 3)
     rc('ytick.major', size=lenticks)
     rc('ytick.minor', size=lenticks * 2 / 3)
     rc('lines', linewidth=linewidths)
     rc('axes', linewidth=axislinewidths)
+    rc('axes', facecolor='white')
     if sroncolours:
         rc('axes', prop_cycle=(cycler('color', line_colours)))
     else:
@@ -117,4 +120,4 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='le
             ax.grid()
     if minorticks:
         ax.minorticks_on()
-    ax.set_facecolor('w')
+    #ax.set_facecolor('w')
