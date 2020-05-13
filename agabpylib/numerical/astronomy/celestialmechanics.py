@@ -7,28 +7,48 @@ Anthony Brown May 2020 - May 2020
 import numpy as np
 from scipy.optimize import toms748
 
-__all__ = ['kepler_equation']
+__all__ = ['kepler_equation_solver']
 
-def kepler_equation(e, M):
+_kepler_equation = lambda EE, ee, MM: EE - ee * np.sin(EE) - MM
+
+
+def kepler_equation_solver(e, M):
     """
     Solve the Kepler equation for the input values of eccentricity and mean anomaly. Use a root-finding method.
 
-    :param e: array-like
+    :param e: scalar or 1D array
         Values of the eccentricity
-    :param M: array-like
+    :param M: scalar or 1D array
         Values of the mean anomaly
     :return:
         Array of eccentric anomaly values.
     """
+    if np.ndim(e) > 1 or np.ndim(M) > 1:
+        raise RuntimeError("Only scalars or 1D arrays allowed as input.")
 
-    f = lambda E, e, M: E-e*np.sin(E)-M
-    E = []
-    for ecc, meanA in zip(e, M):
-        if (ecc==0 or np.mod(meanA,np.pi)==0):
-            E.append(meanA)
+    if np.ndim(e)==0 and np.ndim(M)==0:
+        if (e == 0 or np.mod(M, np.pi) == 0):
+            return np.mod(M, 2*np.pi)
         else:
-            E.append(toms748(f, 0, 2*np.pi, args=(ecc,meanA)))
-    if (len(E)=1):
-        return E[0]
+            return toms748(_kepler_equation, 0, 2 * np.pi, args=(e, np.mod(M,2*np.pi)))
+
+    if np.ndim(e) == 0 and np.ndim(M) == 1:
+        ecc = np.repeat(e, M.size)
+        meanano = M
+    elif np.ndim(e) == 1 and np.ndim(M) == 0:
+        meanano = np.repeat(M, e.size)
+        ecc = e
     else:
-        return np.asarray(E)
+        if e.size != M.size:
+            raise RuntimeError("The two input arrays must be of the same size.")
+        ecc = e
+        meanano = M
+
+    E = []
+    for el, Ml in zip(ecc, meanano):
+        if (el == 0 or np.mod(Ml, np.pi) == 0):
+            E.append(np.mod(Ml, 2*np.pi))
+        else:
+            E.append(toms748(_kepler_equation, 0, 2 * np.pi, args=(el, np.mod(Ml,2*np.pi))))
+
+    return np.squeeze(np.asarray(E))
