@@ -1,7 +1,7 @@
 """
 Provides plotting styles.
 
-Anthony Brown Aug 2015 - Mar 2019
+Anthony Brown Aug 2015 - Jun 2020
 """
 
 import matplotlib.pyplot as plt
@@ -42,6 +42,8 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     if usetex:
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
+    else:
+        rc('text', usetex=False)
     rc('font', family=fontfam, size=fontsize)
     rc('xtick.major', size=lenticks)
     rc('xtick.minor', size=lenticks * 2 / 3)
