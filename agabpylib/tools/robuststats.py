@@ -2,7 +2,7 @@
 Provides various methods for robust estimates of simple statistics such as the mean and variance, which
 in this case are estimated through the median and RSE.
 
-Anthony Brown May 2015
+Anthony Brown May 2015 - Oct 2020
 """
 
 from numpy import median
@@ -47,6 +47,8 @@ def robust_stats(x):
   therse=rse(x)
   lowerq=scoreatpercentile(x,25)
   upperq=scoreatpercentile(x,75)
+  lowerten=scoreatpercentile(x,10)
+  upperten=scoreatpercentile(x,90)
 
-  return {'median':med, 'rse':therse, 'lowerq':lowerq, 'upperq':upperq, 'min':x.min(), 'max':x.max(),
-      'ndata':x.size}
+  return {'median':med, 'rse':therse, 'lowerq':lowerq, 'upperq':upperq, 'lower10':lowerten, 'upper10':upperten,
+          'min':x.min(), 'max':x.max(), 'ndata':x.size}
