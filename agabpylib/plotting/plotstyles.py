@@ -11,7 +11,7 @@ from agabpylib.plotting.distinct_colours import get_distinct
 
 
 def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=4, axislinewidths=1,
-            linewidths=2, lenticks=6):
+            linewidths=2, lenticks=6, backgr='white'):
     """
     Configure the plotting style to my liking.
 
@@ -33,6 +33,8 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
         Width of lines used to draw plot elements (default 2)
     lenticks : float, optional
         Length of major tickmarks in points (default 6, minor tick marks adjusted automatically)
+    backgr: str
+        Figure background colour
 
     Returns
     -------
@@ -51,7 +53,8 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     rc('ytick.minor', size=lenticks * 2 / 3)
     rc('lines', linewidth=linewidths)
     rc('axes', linewidth=axislinewidths)
-    rc('axes', facecolor='white')
+    rc('axes', facecolor=backgr)
+    rc('axes', edgecolor=backgr)
     if sroncolours:
         rc('axes', prop_cycle=(cycler('color', line_colours)))
     else:
@@ -62,7 +65,8 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     rc('grid', linestyle='-')
     rc('grid', linewidth=0.5)
     rc('grid', alpha=1.0)
-    rc('figure', facecolor='ffffff')
+    rc('figure', facecolor=backgr)
+    rc('figure', edgecolor=backgr)
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
 
@@ -91,7 +95,7 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='le
     Nothing.
     """
 
-    if (yspine=='right'):
+    if yspine == 'right':
         # Move left and bottom spines outward by 5 points
         ax.spines['right'].set_position(('outward', 5))
         ax.spines['bottom'].set_position(('outward', 5))
@@ -122,4 +126,4 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='le
             ax.grid()
     if minorticks:
         ax.minorticks_on()
-    #ax.set_facecolor('w')
+    # ax.set_facecolor('w')
