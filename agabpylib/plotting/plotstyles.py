@@ -11,7 +11,7 @@ from agabpylib.plotting.distinct_colours import get_distinct
 
 
 def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=4, axislinewidths=1,
-            linewidths=2, lenticks=6, backgr='white'):
+            linewidths=2, lenticks=6):
     """
     Configure the plotting style to my liking.
 
@@ -33,14 +33,11 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
         Width of lines used to draw plot elements (default 2)
     lenticks : float, optional
         Length of major tickmarks in points (default 6, minor tick marks adjusted automatically)
-    backgr: str
-        Figure background colour
 
     Returns
     -------
-    Nothing
+    The list of colours used by the colour cycler.
     """
-    line_colours = get_distinct(ncolors)
     if usetex:
         rc('text', usetex=True)
         rc('text.latex', preamble=r'\usepackage{amsmath}')
@@ -53,22 +50,21 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     rc('ytick.minor', size=lenticks * 2 / 3)
     rc('lines', linewidth=linewidths)
     rc('axes', linewidth=axislinewidths)
-    rc('axes', facecolor=backgr)
-    rc('axes', edgecolor=backgr)
+    rc('axes', facecolor='white')
     if sroncolours:
-        rc('axes', prop_cycle=(cycler('color', line_colours)))
+        line_colours = get_distinct(ncolors)
     else:
-        rc('axes', prop_cycle=(cycler('color', plt.cm.tab10.colors[0:ncolors])))
+        line_colours = plt.cm.get_cmap('tab10').colors[0:ncolors]
+    rc('axes', prop_cycle=(cycler('color', line_colours)))
     rc('xtick', direction='out')
     rc('ytick', direction='out')
     rc('grid', color='cbcbcb')
     rc('grid', linestyle='-')
     rc('grid', linewidth=0.5)
     rc('grid', alpha=1.0)
-    rc('figure', facecolor=backgr)
-    rc('figure', edgecolor=backgr)
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
+    return line_colours
 
 
 def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='left'):
