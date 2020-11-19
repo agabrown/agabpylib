@@ -10,8 +10,8 @@ from abc import ABC, abstractmethod
 import astropy.units as u
 from astropy.table import MaskedColumn
 from pygaia.astrometry.vectorastrometry import phaseSpaceToAstrometry, sphericalToCartesian
-from pygaia.errors.astrometric import parallaxErrorSkyAvg, positionErrorSkyAvg, properMotionErrorSkyAvg, \
-    errorScalingMissionLength
+from pygaia.errors.astrometric import parallax_uncertainty_sky_avg, positionErrorSkyAvg, properMotionErrorSkyAvg, \
+    uncertainty_scaling_mission_length
 from pygaia.errors.photometric import gMagnitudeErrorEoM, bpMagnitudeErrorEoM, rpMagnitudeErrorEoM
 from pygaia.errors.spectroscopic import vradErrorSkyAvg, _vradCalibrationFloor
 
@@ -134,7 +134,7 @@ class GaiaSurvey(Observables):
 
         mission_extension = (self.observation_interval - 60.0) / 12.0
         ra_error, dec_error = positionErrorSkyAvg(gmag, vmini, extension=mission_extension)
-        plx_error = parallaxErrorSkyAvg(gmag, vmini, extension=mission_extension)
+        plx_error = parallax_uncertainty_sky_avg(gmag, vmini, extension=mission_extension)
         pmra_error, pmdec_error = properMotionErrorSkyAvg(gmag, vmini, extension=mission_extension)
 
         teff = 10 ** cluster['log_Teff']
