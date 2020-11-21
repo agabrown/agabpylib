@@ -12,8 +12,8 @@ from astropy.table import MaskedColumn
 from pygaia.astrometry.vectorastrometry import phaseSpaceToAstrometry, sphericalToCartesian
 from pygaia.errors.astrometric import parallax_uncertainty_sky_avg, positionErrorSkyAvg, properMotionErrorSkyAvg, \
     uncertainty_scaling_mission_length
-from pygaia.errors.photometric import gMagnitudeErrorEoM, bpMagnitudeErrorEoM, rpMagnitudeErrorEoM
-from pygaia.errors.spectroscopic import vradErrorSkyAvg, _vradCalibrationFloor
+from pygaia.errors.photometric import g_magnitude_uncertainty_eom, bp_magnitude_uncertainty_eom, rp_magnitude_uncertainty_eom
+from pygaia.errors.spectroscopic import vrad_error_sky_avg, _vradCalibrationFloor
 
 
 class Observables(ABC):
@@ -147,11 +147,11 @@ class GaiaSurvey(Observables):
                     ms & (teff < 5000)]
         choicelist = ['K1III', 'B0V', 'B0V', 'B5V', 'A0V', 'A5V', 'F0V', 'G0V', 'G5V', 'K0V', 'K4V']
         spt = np.select(condlist, choicelist)
-        vrad_error = vradErrorSkyAvg(vmag, spt, extension=mission_extension)
+        vrad_error = vrad_error_sky_avg(vmag, spt, extension=mission_extension)
 
-        gmag_error = gMagnitudeErrorEoM(gmag, extension=mission_extension)
-        bpmag_error = bpMagnitudeErrorEoM(gmag, vmini, extension=mission_extension)
-        rpmag_error = rpMagnitudeErrorEoM(gmag, vmini, extension=mission_extension)
+        gmag_error = g_magnitude_uncertainty_eom(gmag, extension=mission_extension)
+        bpmag_error = bp_magnitude_uncertainty_eom(gmag, vmini, extension=mission_extension)
+        rpmag_error = rp_magnitude_uncertainty_eom(gmag, vmini, extension=mission_extension)
 
         # convert astrometric uncertainties to milliarcsec(/yr)
         ra_error = ra_error / 1000.0
