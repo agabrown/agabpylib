@@ -9,7 +9,7 @@ from scipy.stats import norm
 from abc import ABC, abstractmethod
 import astropy.units as u
 from astropy.table import MaskedColumn
-from pygaia.astrometry.vectorastrometry import phaseSpaceToAstrometry, sphericalToCartesian
+from pygaia.astrometry.vectorastrometry import phase_space_to_astrometry, spherical_to_cartesian
 from pygaia.errors.astrometric import parallax_uncertainty_sky_avg, positionErrorSkyAvg, properMotionErrorSkyAvg, \
     uncertainty_scaling_mission_length
 from pygaia.errors.photometric import g_magnitude_uncertainty_eom, bp_magnitude_uncertainty_eom, rp_magnitude_uncertainty_eom
@@ -116,8 +116,8 @@ class GaiaSurvey(Observables):
         self.bright_faint_sep = 10.87
 
     def generate_observations(self, cluster):
-        x_c, y_c, z_c = sphericalToCartesian(self.cluster_distance, self.cluster_ra.to(u.rad),
-                                             self.cluster_dec.to(u.rad))
+        x_c, y_c, z_c = spherical_to_cartesian(self.cluster_distance, self.cluster_ra.to(u.rad),
+                                               self.cluster_dec.to(u.rad))
         star_dist = np.sqrt((cluster['x'] + x_c) ** 2 + (cluster['y'] + y_c) ** 2 + (cluster['z'] + z_c) ** 2)
         dmod = 5 * np.log10(star_dist.value) - 5
         gmag = cluster['Gabs'] + dmod
@@ -128,9 +128,9 @@ class GaiaSurvey(Observables):
         gminv = gmag - vmag
         vmini = vmag - imag
         grvs = gmag - (-0.0138 + 1.1168 * vmini - 0.1811 * vmini ** 2 + 0.0085 * vmini ** 3)
-        ra, dec, plx, pmra, pmdec, vrad = phaseSpaceToAstrometry((cluster['x'] + x_c).value, (cluster['y'] + y_c).value,
-                                                                 (cluster['z'] + z_c).value, cluster['v_x'].value,
-                                                                 cluster['v_y'].value, cluster['v_z'].value)
+        ra, dec, plx, pmra, pmdec, vrad = phase_space_to_astrometry((cluster['x'] + x_c).value, (cluster['y'] + y_c).value,
+                                                                    (cluster['z'] + z_c).value, cluster['v_x'].value,
+                                                                    cluster['v_y'].value, cluster['v_z'].value)
 
         mission_extension = (self.observation_interval - 60.0) / 12.0
         ra_error, dec_error = positionErrorSkyAvg(gmag, vmini, extension=mission_extension)
