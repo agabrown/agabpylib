@@ -1,10 +1,10 @@
 """
 Python utilities.
 
-Anthony Brown Oct 2015 - Jul 2019
+Anthony Brown Oct 2015 - Jan 2021
 """
 
-__version__ = "0.1.11"
+__version__ = "0.1.12"
 
 try:
     import numpy

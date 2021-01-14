@@ -1,19 +1,18 @@
 """
 Generate the Gaia observables for a given simulated cluster.
 
-Anthony Brown Sep 2019 - Sep 2019
+Anthony Brown Sep 2019 - Jan 2020
 """
 
-import numpy as np
-from scipy.stats import norm
 from abc import ABC, abstractmethod
+
 import astropy.units as u
-from astropy.table import MaskedColumn
+import numpy as np
 from pygaia.astrometry.vectorastrometry import phase_space_to_astrometry, spherical_to_cartesian
-from pygaia.errors.astrometric import parallax_uncertainty_sky_avg, positionErrorSkyAvg, properMotionErrorSkyAvg, \
-    uncertainty_scaling_mission_length
-from pygaia.errors.photometric import g_magnitude_uncertainty_eom, bp_magnitude_uncertainty_eom, rp_magnitude_uncertainty_eom
-from pygaia.errors.spectroscopic import vrad_error_sky_avg, _vradCalibrationFloor
+from pygaia.errors.astrometric import parallax_uncertainty, position_uncertainty, proper_motion_uncertainty
+from pygaia.errors.photometric import g_magnitude_uncertainty_eom, bp_magnitude_uncertainty_eom, \
+    rp_magnitude_uncertainty_eom
+from pygaia.errors.spectroscopic import vrad_error_sky_avg
 
 
 class Observables(ABC):
@@ -87,14 +86,15 @@ class GaiaSurvey(Observables):
         RVS survey limit (default 16.0)
     """
 
-    def __init__(self, obs_interval, distance_c, ra_c, dec_c, rvslim=16.0):
+    def __init__(self, release, distance_c, ra_c, dec_c, rvslim=16.0):
         """
         Class constructor/initializer.
 
         Parameters
         ----------
-        obs_interval : int
-             Number of months of data collected by Gaia.
+        release : str
+            Specify the Gaia data release for which the performance is to be simulated. 'dr3' -> Gaia (E)DR3,
+            'dr4' -> Gaia DR4, 'dr5' -> Gaia DR5.
         distance_c : astropy.units.Quantity
             Distance to cluster centre (of mass) in pc
         ra_c : astropy.units.Quantity
@@ -102,18 +102,26 @@ class GaiaSurvey(Observables):
         dec_c : astropy.units.Quantity
             Declination of cluster centre (of mass) in degrees.
 
-        Keywords
-        --------
         rvslim : float
             RVS survey limit (default 16.0)
         """
-        self.observation_interval = obs_interval
+        self.gaia_release = release
         self.cluster_distance = distance_c
         self.cluster_ra = ra_c
         self.cluster_dec = dec_c
         self.rvslim = rvslim
         self.survey_limit = 20.7
         self.bright_faint_sep = 10.87
+        self.n_rvs = 0
+        self.n_astrophoto = 0
+        self.n_plxpos = 0
+        if release == 'dr3':
+            self.mission_extension = -26.0/12.0
+        elif release == 'dr5':
+            self.mission_extension = 5.0
+        else:
+            self.mission_extension = 0.0
+        self.rng = np.random.default_rng()
 
     def generate_observations(self, cluster):
         x_c, y_c, z_c = spherical_to_cartesian(self.cluster_distance, self.cluster_ra.to(u.rad),
@@ -128,14 +136,14 @@ class GaiaSurvey(Observables):
         gminv = gmag - vmag
         vmini = vmag - imag
         grvs = gmag - (-0.0138 + 1.1168 * vmini - 0.1811 * vmini ** 2 + 0.0085 * vmini ** 3)
-        ra, dec, plx, pmra, pmdec, vrad = phase_space_to_astrometry((cluster['x'] + x_c).value, (cluster['y'] + y_c).value,
+        ra, dec, plx, pmra, pmdec, vrad = phase_space_to_astrometry((cluster['x'] + x_c).value,
+                                                                    (cluster['y'] + y_c).value,
                                                                     (cluster['z'] + z_c).value, cluster['v_x'].value,
                                                                     cluster['v_y'].value, cluster['v_z'].value)
 
-        mission_extension = (self.observation_interval - 60.0) / 12.0
-        ra_error, dec_error = positionErrorSkyAvg(gmag, vmini, extension=mission_extension)
-        plx_error = parallax_uncertainty_sky_avg(gmag, vmini, extension=mission_extension)
-        pmra_error, pmdec_error = properMotionErrorSkyAvg(gmag, vmini, extension=mission_extension)
+        ra_error, dec_error = position_uncertainty(gmag, release=self.gaia_release)
+        plx_error = parallax_uncertainty(gmag)
+        pmra_error, pmdec_error = proper_motion_uncertainty(gmag)
 
         teff = 10 ** cluster['log_Teff']
         logg = cluster['log_g']
@@ -147,11 +155,11 @@ class GaiaSurvey(Observables):
                     ms & (teff < 5000)]
         choicelist = ['K1III', 'B0V', 'B0V', 'B5V', 'A0V', 'A5V', 'F0V', 'G0V', 'G5V', 'K0V', 'K4V']
         spt = np.select(condlist, choicelist)
-        vrad_error = vrad_error_sky_avg(vmag, spt, extension=mission_extension)
+        vrad_error = vrad_error_sky_avg(vmag, spt, extension=self.mission_extension)
 
-        gmag_error = g_magnitude_uncertainty_eom(gmag, extension=mission_extension)
-        bpmag_error = bp_magnitude_uncertainty_eom(gmag, vmini, extension=mission_extension)
-        rpmag_error = rp_magnitude_uncertainty_eom(gmag, vmini, extension=mission_extension)
+        gmag_error = g_magnitude_uncertainty_eom(gmag, extension=self.mission_extension)
+        bpmag_error = bp_magnitude_uncertainty_eom(gmag, vmini, extension=self.mission_extension)
+        rpmag_error = rp_magnitude_uncertainty_eom(gmag, vmini, extension=self.mission_extension)
 
         # convert astrometric uncertainties to milliarcsec(/yr)
         ra_error = ra_error / 1000.0
@@ -160,17 +168,17 @@ class GaiaSurvey(Observables):
         pmra_error = pmra_error / 1000.0
         pmdec_error = pmdec_error / 1000.0
 
-        gmag_obs = norm.rvs(loc=gmag, scale=gmag_error)
-        bpmag_obs = norm.rvs(loc=bpmag, scale=bpmag_error)
-        rpmag_obs = norm.rvs(loc=rpmag, scale=rpmag_error)
-        vrad_obs = norm.rvs(loc=vrad, scale=vrad_error)
+        gmag_obs = self.rng.normal(loc=gmag, scale=gmag_error)
+        bpmag_obs = self.rng.normal(loc=bpmag, scale=bpmag_error)
+        rpmag_obs = self.rng.normal(loc=rpmag, scale=rpmag_error)
+        vrad_obs = self.rng.normal(loc=vrad, scale=vrad_error)
 
         mastorad = (1 * u.mas).to(u.rad).value
-        ra_obs = norm.rvs(loc=ra, scale=ra_error * mastorad)
-        dec_obs = norm.rvs(loc=dec, scale=dec_error * mastorad)
-        plx_obs = norm.rvs(loc=plx, scale=plx_error)
-        pmra_obs = norm.rvs(loc=pmra, scale=pmra_error)
-        pmdec_obs = norm.rvs(loc=pmdec, scale=pmdec_error)
+        ra_obs = self.rng.normal(loc=ra, scale=ra_error * mastorad)
+        dec_obs = self.rng.normal(loc=dec, scale=dec_error * mastorad)
+        plx_obs = self.rng.normal(loc=plx, scale=plx_error)
+        pmra_obs = self.rng.normal(loc=pmra, scale=pmra_error)
+        pmdec_obs = self.rng.normal(loc=pmdec, scale=pmdec_error)
 
         cluster.add_columns(
             [gmag * u.dimensionless_unscaled, bpmag * u.dimensionless_unscaled, rpmag * u.dimensionless_unscaled,
@@ -205,11 +213,11 @@ class GaiaSurvey(Observables):
         self.n_plxpos = plx_obs[(gmag_obs <= self.survey_limit) & (plx_obs > 0)].size
 
     def addinfo(self):
-        return ("Gaia data for {0} months of data collection\n" + " Cluster distance: {1}\n" + \
-                " Cluster position: ({2}, {3})\n" + " RVS Survey limit: Grvs={4}\n" + \
-                " Number of stars with astrometry and photometry: {5}\n" + \
-                " Number of stars with positive observed parallax: {6}\n" + \
-                " Number of stars with radial velocity: {7}\n").format(self.observation_interval,
+        return ("Gaia data release {0}\n" + " Cluster distance: {1}\n" +
+                " Cluster position: ({2}, {3})\n" + " RVS Survey limit: Grvs={4}\n" +
+                " Number of stars with astrometry and photometry: {5}\n" +
+                " Number of stars with positive observed parallax: {6}\n" +
+                " Number of stars with radial velocity: {7}\n").format(self.gaia_release,
                                                                        self.cluster_distance,
                                                                        self.cluster_ra,
                                                                        self.cluster_dec,
@@ -217,6 +225,6 @@ class GaiaSurvey(Observables):
                                                                        self.n_rvs)
 
     def getmeta(self):
-        return {'simulated_survey': 'Gaia', 'data_collection_interval': self.observation_interval,
+        return {'simulated_survey': 'Gaia', 'data_release': self.gaia_release,
                 'cluster_distance': self.cluster_distance, 'cluster_ra': self.cluster_ra,
                 'cluster_dec': self.cluster_dec, 'rvs_survey_limit': self.rvslim, 'num_astrophoto': self.n_astrophoto}

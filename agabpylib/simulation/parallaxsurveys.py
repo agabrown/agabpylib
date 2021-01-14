@@ -9,7 +9,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from sys import stderr
-from scipy import isscalar
 from scipy.stats import norm, uniform
 from scipy.special import erf
 from scipy.integrate import quad
@@ -598,7 +597,7 @@ def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
     A = rmax**3-rmin**3
     def _pdf(x):
         rlim = np.power(10,0.2*(mlim-x+5))
-        if isscalar(rlim):
+        if np.isscalar(rlim):
             if rlim>rmax:
                 rlim=rmax
         else:
