@@ -17,7 +17,7 @@ from pygaia.errors.spectroscopic import vrad_error_sky_avg
 
 class Observables(ABC):
     """
-    Abstract base class for classes representing the observations made of stars in a smulated cluster.
+    Abstract base class for classes representing the observations made of stars in a simulated cluster.
     """
 
     @abstractmethod
