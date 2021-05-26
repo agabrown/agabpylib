@@ -26,7 +26,7 @@ def correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean
     -------
 
     The corrected G-band magnitudes and fluxes. The corrections are only applied to
-    sources with a 6-parameter astrometric solution fainter than G=13, for which a
+    sources with a 2-parameter or 6-parameter astrometric solution fainter than G=13, for which a
     (BP-RP) colour is available.
 
     Example
@@ -45,7 +45,7 @@ def correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean
     if not (bp_rp.shape == astrometric_params_solved.shape == phot_g_mean_mag.shape == phot_g_mean_flux.shape):
         raise ValueError('Function parameters must be of the same shape!')
 
-    do_not_correct = np.isnan(bp_rp) | (phot_g_mean_mag <= 13) | (astrometric_params_solved != 95)
+    do_not_correct = np.isnan(bp_rp) | (phot_g_mean_mag <= 13) | (astrometric_params_solved == 31)
     bright_correct = np.logical_not(do_not_correct) & (phot_g_mean_mag > 13) & (phot_g_mean_mag <= 16)
     faint_correct = np.logical_not(do_not_correct) & (phot_g_mean_mag > 16)
     bp_rp_c = np.clip(bp_rp, 0.25, 3.0)
