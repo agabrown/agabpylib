@@ -8,6 +8,7 @@ Anthony Brown Jan 2014 - June 2019
 """
 
 import numpy as np
+
 from agabpylib.stats.robuststats import rse
 
 
@@ -19,9 +20,6 @@ def robust_rolling_stats(series, window=5):
     ----------
     series - Pandas series with the data. ASSUMED TO HAVE BEEN SORTED IN THE PROPER ORDER.
   
-    Keywords
-    --------
-  
     Window - Number of data points to include in rolling stats. Default 5
   
     Returns
@@ -32,15 +30,15 @@ def robust_rolling_stats(series, window=5):
     rmedian = series.rolling(window).median()
     lowerq = series.rolling(window).quantile(0.1)
     upperq = series.rolling(window).quantile(0.9)
-    rolling_rse = 0.390152*(upperq-lowerq)
+    rolling_rse = 0.390152 * (upperq - lowerq)
     #
     # treat first window data points
     #
-    m=np.median(series[0:window])
-    rrr=rse(series[0:window])
-    rmedian[0:window]=m
-    rolling_rse[0:window]=rrr
-  
+    m = np.median(series[0:window])
+    rrr = rse(series[0:window])
+    rmedian[0:window] = m
+    rolling_rse[0:window] = rrr
+
     return rmedian, rolling_rse
 
 
@@ -53,10 +51,7 @@ def cleanup_data(dframe, colname, window=50):
     ----------
     dframe - Pandas data frame with the data. ASSUMED TO HAVE BEEN SORTED IN THE PROPER ORDER.
     colname - Name of column for which the data is to be cleaned.
-  
-    Keywords
-    --------
-  
+
     Window - Number of data points from which to calculate the local median. 
   
     Return
@@ -67,6 +62,6 @@ def cleanup_data(dframe, colname, window=50):
     """
     series = dframe[colname]
     rmedian, rolling_rse = robust_rolling_stats(series, window=window)
-  
-    cleanset = abs(series-rmedian)<=3*rolling_rse
+
+    cleanset = abs(series - rmedian) <= 3 * rolling_rse
     return dframe[cleanset], rmedian[cleanset], rolling_rse[cleanset], cleanset
