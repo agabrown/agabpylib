@@ -8,7 +8,6 @@ Anthony Brown May 2015 - Jun 2019
 import numpy as np
 from sklearn.neighbors import KernelDensity
 from sklearn.preprocessing import StandardScaler
-from agabpylib.tools.robuststats import rse
 
 
 def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0, **kwargs):

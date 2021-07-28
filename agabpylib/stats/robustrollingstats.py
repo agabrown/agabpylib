@@ -8,7 +8,7 @@ Anthony Brown Jan 2014 - June 2019
 """
 
 import numpy as np
-from agabpylib.tools.robuststats import rse
+from agabpylib.stats.robuststats import rse
 
 
 def robust_rolling_stats(series, window=5):

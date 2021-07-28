@@ -17,7 +17,7 @@ from os import path
 
 from agabpylib.plotting.plotstyles import useagab, apply_tufte
 from agabpylib.plotting.distinct_colours import get_distinct
-from agabpylib.tools.robuststats import rse
+from agabpylib.stats.robuststats import rse
 from sklearn.neighbors import KernelDensity
 
 _ROOT = path.abspath(path.dirname(__file__))
