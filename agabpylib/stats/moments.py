@@ -45,4 +45,6 @@ def weighted_mean_twod(x, y, sx, sy, cxy):
         cov[j + 1, j] = sx[k] * sy[k] * cxy[k]
         cov[j, j + 1] = cov[j + 1, j]
     cinv = inv(cov)
-    return np.dot(inv(np.dot(mat_a.T, np.dot(cinv, mat_a))), np.dot(mat_a.T, np.dot(cinv, vec_b)))
+    covw = inv(np.dot(mat_a.T, np.dot(cinv, mat_a)))
+    wx, wy = np.dot(covw, np.dot(mat_a.T, np.dot(cinv, vec_b)))
+    return wx, wy, covw
