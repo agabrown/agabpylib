@@ -3,8 +3,10 @@ agabpylib
 
 **Python library with Anthony's private python utilities for data analysis, simulation, plotting, etc.**
 
-*This library is not stable in any sense (functionality, interfaces, etc), and broken code may be checked into GitHub
-at anytime. Use at your own risk.*
+*This library is not stable in any sense (functionality, interfaces, etc), and
+broken code may be checked into GitHub at anytime. There is likely to be
+outdated, or badly performing code, and there is no committment to fixing
+issue. Use at your own risk.*
 
 Documentation
 -------------
@@ -13,9 +15,6 @@ Included with most of the python code, so read the comments or use python's help
 
 Installation notes
 ------------------
-
-This package was developed in a python 3.4+ environment and you may experience
-problems if you have an older version installed.
 
 The following python packages are required:
 
@@ -31,12 +30,12 @@ The following python packages are required:
 Attribution
 -----------
 
-Please acknowledge the authors if you use this code in your research.
+Please acknowledge the author if you use this code.
 
 License
 -------
 
-Copyright (c) 2015-2019 Anthony Brown, Leiden Observatory
+Copyright (c) 2015-2021 Anthony Brown, Leiden Observatory, Leiden University
 
 agabpylib is open source and free software: you can redistribute it and/or
 modify it under the terms of MIT license.
