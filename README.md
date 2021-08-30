@@ -37,3 +37,9 @@ modify it under the terms of MIT license.
 
 You should have received a copy of the MIT licence with this source code. If not, see
 [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT).
+
+## Visualization of this repository
+
+Made with [repo-visualizer](https://github.com/githubocto/repo-visualizer)
+
+![Visualization of this repo](./diagram.svg)
