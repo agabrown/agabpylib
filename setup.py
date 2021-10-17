@@ -1,7 +1,7 @@
 """
 Setup module for agabpylib
 
-Anthony Brown Oct 2015 - Aug 2019
+Anthony Brown Oct 2015 - Oct 2021
 
 Based on:
 https://packaging.python.org/en/latest/distributing.html
@@ -18,7 +18,7 @@ import re
 this_folder = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README and HISTORY files
-with open(path.join(this_folder, 'README.rst'), encoding='utf-8') as f:
+with open(path.join(this_folder, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 with open(path.join(this_folder, 'HISTORY.rst'), encoding='utf-8') as f:
     history = f.read()
