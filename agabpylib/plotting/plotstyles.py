@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 from matplotlib import rc
 from cycler import cycler
 from agabpylib.plotting.distinct_colours import get_distinct
+from agabpylib.plotting.agabcolormaps import register_maps
 
 
 def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=4, axislinewidths=1,
             linewidths=2, lenticks=6):
     """
-    Configure the plotting style to my liking.
+    Configure the plotting style to my liking. Also generate and register the custom color maps.
 
     Parameters
     ----------
@@ -64,6 +65,9 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     rc('grid', alpha=1.0)
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
+
+    register_maps()
+
     return line_colours
 
 

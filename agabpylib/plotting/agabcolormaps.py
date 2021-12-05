@@ -5,8 +5,7 @@ run agabcolormaps.show_color_maps() to see what these colormaps look like.
 """
 
 from matplotlib import rcParams, colors
-import numpy as np
-from numpy import genfromtxt, linspace, empty, flipud, vstack, power, clip, where, floor
+from numpy import genfromtxt, linspace, empty, flipud, vstack, clip, where, floor
 import matplotlib.pyplot as plt
 import os
 
@@ -22,7 +21,7 @@ def get_data(path):
 _Blackbody_data = genfromtxt(get_data('bbr_color.txt'), dtype=None, skip_header=19, comments='#',
                              names=('temp', 'cmf', 'x', 'y', 'P', 'r', 'g', 'b', 'R', 'G', 'B', 'hexRGB'),
                              encoding=None)
-npoints = (int)(len(_Blackbody_data['temp']) / 2)
+npoints = int(len(_Blackbody_data['temp']) / 2)
 indices = where(_Blackbody_data['cmf'] == '10deg')
 r_bb = _Blackbody_data['r'][indices]
 g_bb = _Blackbody_data['g'][indices]
@@ -37,7 +36,7 @@ _Planckian_data[:, 2] = b_bb
 #
 # Planckian locus in CIE space translated to RGB. Gives the colours of blackbodies in the range
 # 1000 < T < 40000 K
-def planckian_locus(T):
+def planckian_locus(tbb):
     """
     Interpolate the RGB values of the CIE colour on the Planckian locus in CIE space. Use the table
     http://www.vendian.org/mncharity/dir3/blackbody/UnstableURLs/bbr_color.html. Input temperatures
@@ -46,7 +45,7 @@ def planckian_locus(T):
     Parameters
     ----------
 
-    T - Blackbody temperature in Kelvin
+    tbb - Blackbody temperature in Kelvin
 
     Returns
     -------
@@ -54,10 +53,10 @@ def planckian_locus(T):
     sRGB R, G, B values normalized to [0,1]
     """
 
-    temp = clip(T, 1000.0, 40000.0)
-    if (temp == 1000.0):
+    temp = clip(tbb, 1000.0, 40000.0)
+    if temp == 1000.0:
         return tuple(_Planckian_data[0])
-    elif (temp == 40000.0):
+    elif temp == 40000.0:
         return tuple(_Planckian_data[-1])
     else:
         index = where(_Planckian_temperatures == floor(temp / 100.0) * 100.0)[0][0]
@@ -275,43 +274,20 @@ LightBlueToDarkBlue10 = colors.ListedColormap(_LightBlueToDarkBlue10_data, name=
 LightBlueToDarkBlue = colors.LinearSegmentedColormap('LightBlueToDarkBlue', _LightBlueToDarkBlue_data, _LUTSIZE)
 Cat12 = colors.ListedColormap(_Cat12_data, name='Cat12')
 
-datad = {}
-datad['PlanckianLocus'] = _Planckian_data
-datad['WhiteBlueYellowRed'] = _WBYR_data
-datad['UnsBlueSatBlueYellowRed'] = _UBBYR_data
-datad['UnsBlueYellowRed'] = _UBYR_data
-datad['BerryPosNeg'] = _BerryPosNeg_data
-datad['BerryPos'] = _BerryPos_data
-datad['BlueDarkOrange18'] = _BlueDarkOrange18_data
-datad['BlueDarkOrange'] = _BlueDarkOrange_data
-datad['BluesAgab'] = _BluesAgab_data
-datad['BlueGreen14'] = _BlueGreen14_data
-datad['StepSeq25'] = _StepSeq25_data
-datad['CyanOrange14'] = _CyanOrange14_data
-datad['BlueDarkYellow18'] = _BlueDarkYellow18_data
-datad['BlueYellow14'] = _BlueYellow14_data
-datad['LightBlueToDarkBlue10'] = _LightBlueToDarkBlue10_data
-datad['LightBlueToDarkBlue'] = _LightBlueToDarkBlue_data
-datad['Cat12'] = _Cat12_data
+datad = {'PlanckianLocus': _Planckian_data, 'WhiteBlueYellowRed': _WBYR_data, 'UnsBlueSatBlueYellowRed': _UBBYR_data,
+         'UnsBlueYellowRed': _UBYR_data, 'BerryPosNeg': _BerryPosNeg_data, 'BerryPos': _BerryPos_data,
+         'BlueDarkOrange18': _BlueDarkOrange18_data, 'BlueDarkOrange': _BlueDarkOrange_data,
+         'BluesAgab': _BluesAgab_data, 'BlueGreen14': _BlueGreen14_data, 'StepSeq25': _StepSeq25_data,
+         'CyanOrange14': _CyanOrange14_data, 'BlueDarkYellow18': _BlueDarkYellow18_data,
+         'BlueYellow14': _BlueYellow14_data, 'LightBlueToDarkBlue10': _LightBlueToDarkBlue10_data,
+         'LightBlueToDarkBlue': _LightBlueToDarkBlue_data, 'Cat12': _Cat12_data}
 
-cmapd = {}
-cmapd['PlanckianLocus'] = PlanckianLocus
-cmapd['WhiteBlueYellowRed'] = WhiteBlueYellowRed
-cmapd['UnsBlueSatBlueYellowRed'] = UnsBlueSatBlueYellowRed
-cmapd['UnsBlueYellowRed'] = UnsBlueYellowRed
-cmapd['BerryPosNeg'] = BerryPosNeg
-cmapd['BerryPos'] = BerryPos
-cmapd['BlueDarkOrange18'] = BlueDarkOrange18
-cmapd['BlueDarkOrange'] = BlueDarkOrange
-cmapd['BluesAgab'] = BluesAgab
-cmapd['BlueGreen14'] = BlueGreen14
-cmapd['StepSeq25'] = StepSeq25
-cmapd['CyanOrange14'] = CyanOrange14
-cmapd['BlueDarkYellow18'] = BlueDarkYellow18
-cmapd['BlueYellow14'] = BlueYellow14
-cmapd['LightBlueToDarkBlue10'] = LightBlueToDarkBlue10
-cmapd['LightBlueToDarkBlue'] = LightBlueToDarkBlue
-cmapd['Cat12'] = Cat12
+cmapd = {'PlanckianLocus': PlanckianLocus, 'WhiteBlueYellowRed': WhiteBlueYellowRed,
+         'UnsBlueSatBlueYellowRed': UnsBlueSatBlueYellowRed, 'UnsBlueYellowRed': UnsBlueYellowRed,
+         'BerryPosNeg': BerryPosNeg, 'BerryPos': BerryPos, 'BlueDarkOrange18': BlueDarkOrange18,
+         'BlueDarkOrange': BlueDarkOrange, 'BluesAgab': BluesAgab, 'BlueGreen14': BlueGreen14, 'StepSeq25': StepSeq25,
+         'CyanOrange14': CyanOrange14, 'BlueDarkYellow18': BlueDarkYellow18, 'BlueYellow14': BlueYellow14,
+         'LightBlueToDarkBlue10': LightBlueToDarkBlue10, 'LightBlueToDarkBlue': LightBlueToDarkBlue, 'Cat12': Cat12}
 
 
 # reverse all the colormaps.
@@ -343,35 +319,40 @@ for _cmapname in _cmapnames:
     datad[_cmapname_r] = _cmapdat_r
     cmapd[_cmapname_r] = locals()[_cmapname_r]
 
-for m in cmapd.keys():
-    plt.register_cmap(name=m, cmap=cmapd[m])
 
-"""
-Show all the color maps defined in the agabColorMaps module.
-"""
+def register_maps():
+    """
+    Register the color maps defined above.
+    """
+    for m in cmapd.keys():
+        plt.colormaps.register(cmapd[m], name=m)
 
 
 def show_color_maps():
-    a = linspace(0, 1, _LUTSIZE).reshape(1, -1)
-    a = vstack((a, a))
+    """
+    Show all the color maps defined in the agabColorMaps module.
+    """
+    register_maps()
+    image = linspace(0, 1, _LUTSIZE).reshape(1, -1)
+    image = vstack((image, image))
 
     # Get a list of the colormaps in this module.  Ignore the ones that end with
     # '_r' because these are simply reversed versions of ones that don't end
     # with '_r'
-    maps = sorted(m for m in datad.keys() if not m.endswith("_r"))
+    maps = sorted(ma for ma in datad.keys() if not ma.endswith("_r"))
     nmaps = len(maps) + 1
 
     fig = plt.figure(figsize=(5, 10))
     fig.subplots_adjust(top=0.99, bottom=0.01, left=0.01, right=0.99)
-    for i, m in enumerate(maps):
-        ax = plt.subplot(nmaps, 1, i + 1)
+    for j, ma in enumerate(maps):
+        ax = plt.subplot(nmaps, 1, j + 1)
         plt.axis("off")
-        plt.imshow(a, aspect='auto', cmap=plt.get_cmap(m), origin='lower')
+        plt.imshow(image, aspect='auto', cmap=plt.get_cmap(ma), origin='lower')
         pos = list(ax.get_position().bounds)
-        fig.text(pos[0] + 0.5 * (pos[2] - pos[0]), pos[1], m, fontsize=10, horizontalalignment='center')
+        fig.text(pos[0] + 0.5 * (pos[2] - pos[0]), pos[1], ma, fontsize=10, horizontalalignment='center')
 
     plt.show()
 
 
-if __name__ in ('__main__'):
-    showColorMaps()
+if __name__ in '__main__':
+    show_color_maps()
