@@ -320,19 +320,23 @@ for _cmapname in _cmapnames:
     cmapd[_cmapname_r] = locals()[_cmapname_r]
 
 
-def register_maps():
+def register_agab_maps():
     """
     Register the color maps defined above.
     """
-    for m in cmapd.keys():
-        plt.colormaps.register(cmapd[m], name=m)
+    try:
+        for m in cmapd.keys():
+            plt.colormaps.register(cmapd[m], name=m)
+    except ValueError as err:
+        print(f"{err}\n\nExiting this loop as colour maps already registered.")
+
 
 
 def show_color_maps():
     """
     Show all the color maps defined in the agabColorMaps module.
     """
-    register_maps()
+    register_agab_maps()
     image = linspace(0, 1, _LUTSIZE).reshape(1, -1)
     image = vstack((image, image))
 

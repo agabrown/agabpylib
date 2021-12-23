@@ -1,20 +1,19 @@
 """
 Provides plotting styles.
 
-Anthony Brown Aug 2015 - Jun 2020
+Anthony Brown Aug 2015 - Dec 2021
 """
 
 import matplotlib.pyplot as plt
 from matplotlib import rc
 from cycler import cycler
 from agabpylib.plotting.distinct_colours import get_distinct
-from agabpylib.plotting.agabcolormaps import register_maps
 
 
 def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=4, axislinewidths=1,
-            linewidths=2, lenticks=6):
+            linewidths=2, lenticks=6, return_colours=False):
     """
-    Configure the plotting style to my liking. Also generate and register the custom color maps.
+    Configure the plotting style to my liking.
 
     Parameters
     ----------
@@ -66,9 +65,8 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     rc('figure', dpi=80)
     rc('figure.subplot', bottom=0.125)
 
-    register_maps()
-
-    return line_colours
+    if return_colours:
+        return line_colours
 
 
 def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='left'):
@@ -96,10 +94,10 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='le
     """
 
     if yspine == 'right':
-        # Move left and bottom spines outward by 5 points
+        # Move right and bottom spines outward by 5 points
         ax.spines['right'].set_position(('outward', 5))
         ax.spines['bottom'].set_position(('outward', 5))
-        # Hide the right and top spines
+        # Hide the left and top spines
         ax.spines['left'].set_visible(False)
         ax.spines['top'].set_visible(False)
         # Only show ticks on the left and bottom spines
