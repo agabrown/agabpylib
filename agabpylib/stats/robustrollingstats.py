@@ -4,12 +4,15 @@ according to some attribute.
 
 Code originally writting in 2014 during Gaia commissioning.
 
-Anthony Brown Jan 2014 - June 2019
+Anthony Brown Jan 2014 - Apr 2022
 """
 
 import numpy as np
+from scipy.special import erfinv
 
 from agabpylib.stats.robuststats import rse
+
+_rse_constant = 1.0/(np.sqrt(2)*2*erfinv(0.8))
 
 
 def robust_rolling_stats(series, window=5):
@@ -30,7 +33,7 @@ def robust_rolling_stats(series, window=5):
     rmedian = series.rolling(window).median()
     lowerq = series.rolling(window).quantile(0.1)
     upperq = series.rolling(window).quantile(0.9)
-    rolling_rse = 0.390152 * (upperq - lowerq)
+    rolling_rse = _rse_constant * (upperq - lowerq)
     #
     # treat first window data points
     #
