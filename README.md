@@ -13,16 +13,27 @@ Included with most of the python code, so read the comments or use python's help
 
 ## Installation notes
 
+Clone the github repository:
+```bash
+git clone https://github.com/agabrown/agabpylib.git
+cd agabpylib
+python setup.py install --user
+```
+
 The following python packages are required:
 
 * [numpy](http://www.numpy.org/)
 * [scipy](https://www.scipy.org/)
 * [matplotlib](https://matplotlib.org/)
+* [cycler](https://github.com/matplotlib/cycler)
 * [scikit-learn](http://scikit-learn.org/stable/index.html)
 * [pandas](https://pandas.pydata.org/)
 * [astropy](https://www.astropy.org/)
-* [pystan](https://mc-stan.org/users/interfaces/pystan.html)
 * [setuptools](https://pypi.python.org/pypi/setuptools)
+
+The following packages are optional:
+
+* [pystan](https://mc-stan.org/users/interfaces/pystan.html)
 
 ## Attribution
 
