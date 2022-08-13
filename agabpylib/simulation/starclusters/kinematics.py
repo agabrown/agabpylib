@@ -40,8 +40,7 @@ class Kinematics(ABC):
         str:
             String with information about the cluster kinematics.
         """
-        return "Kinematics\n" + \
-               "------------------\n" + self.addinfo()
+        return "Kinematics\n" + "------------------\n" + self.addinfo()
 
     @abstractmethod
     def addinfo(self):
@@ -121,15 +120,22 @@ class LinearVelocityField(Kinematics):
     def generate_kinematics(self, x, y, z):
         positions = np.array([x, y, z]) * x.unit
         covmat = np.zeros((3, 3))
-        covmat[np.diag_indices(3)] = self.s*self.s
-        v_x, v_y, v_z = multivariate_normal.rvs(cov=covmat, size=x.size).T * u.km / u.s + np.matmul(self.tmat,
-                                                                                                    positions)
+        covmat[np.diag_indices(3)] = self.s * self.s
+        v_x, v_y, v_z = multivariate_normal.rvs(
+            cov=covmat, size=x.size
+        ).T * u.km / u.s + np.matmul(self.tmat, positions)
         return v_x + self.v[0], v_y + self.v[1], v_z + self.v[2]
 
     def addinfo(self):
-        return "Linear velocity field:\n v = {0}\n s = {1}\n omega = {2}\n kappa = {3}\n".format(self.v, self.s,
-                                                                                                 self.omega, self.kappa)
+        return "Linear velocity field:\n v = {0}\n s = {1}\n omega = {2}\n kappa = {3}\n".format(
+            self.v, self.s, self.omega, self.kappa
+        )
 
     def getmeta(self):
-        return {"kinematics": "Linear velocity field", "mean_velocity": self.v, "velocity_dispersion": self.s,
-                "rotation_rate": self.omega, "expansion_rate": self.kappa}
+        return {
+            "kinematics": "Linear velocity field",
+            "mean_velocity": self.v,
+            "velocity_dispersion": self.s,
+            "rotation_rate": self.omega,
+            "expansion_rate": self.kappa,
+        }

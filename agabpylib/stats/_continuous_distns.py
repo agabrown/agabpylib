@@ -47,9 +47,14 @@ class hoyt_gen(rv_continuous):
     """
 
     def _pdf(self, x, a, b):
-        four_qsqrw = 4 * a ** 2 * b
-        return (1.0 + a ** 2) * x / (a * b) * np.exp(-(1.0 + a ** 2) ** 2 * x ** 2 / four_qsqrw) * \
-               iv(0, (1.0 - a ** 4) * x ** 2 / four_qsqrw)
+        four_qsqrw = 4 * a**2 * b
+        return (
+            (1.0 + a**2)
+            * x
+            / (a * b)
+            * np.exp(-((1.0 + a**2) ** 2) * x**2 / four_qsqrw)
+            * iv(0, (1.0 - a**4) * x**2 / four_qsqrw)
+        )
 
     def _stats(self, a, b):
         asqr = a * a
@@ -57,19 +62,30 @@ class hoyt_gen(rv_continuous):
         oneminusasqr = 1 - asqr
         mean = np.sqrt(2 / np.pi) * np.sqrt(b / oneplusasqr) * ellipe(oneminusasqr)
         var = b * (1 - (2 * ellipe(oneminusasqr) ** 2) / (np.pi * oneplusasqr))
-        skew = -(np.sqrt(2) * (np.pi * asqr * ellipk(oneminusasqr) + ellipe(oneminusasqr) *
-                               (np.pi * oneplusasqr - 4 * ellipe(oneminusasqr) ** 2))) / \
-               (np.pi * oneplusasqr - 2 * ellipe(oneminusasqr) ** 2) ** 1.5
-        kurt = (4 * np.pi * asqr * (2 * ellipk(oneminusasqr) * ellipe(oneminusasqr) - np.pi) +
-                3 * np.pi ** 2 * oneplusasqr ** 2 - 4 * ellipe(oneminusasqr) ** 2 *
-                (np.pi * oneplusasqr + 3 * ellipe(oneminusasqr) ** 2)) / \
-               (np.pi * oneplusasqr - 2 * ellipe(oneminusasqr) ** 2) ** 2
+        skew = (
+            -(
+                np.sqrt(2)
+                * (
+                    np.pi * asqr * ellipk(oneminusasqr)
+                    + ellipe(oneminusasqr)
+                    * (np.pi * oneplusasqr - 4 * ellipe(oneminusasqr) ** 2)
+                )
+            )
+            / (np.pi * oneplusasqr - 2 * ellipe(oneminusasqr) ** 2) ** 1.5
+        )
+        kurt = (
+            4 * np.pi * asqr * (2 * ellipk(oneminusasqr) * ellipe(oneminusasqr) - np.pi)
+            + 3 * np.pi**2 * oneplusasqr**2
+            - 4
+            * ellipe(oneminusasqr) ** 2
+            * (np.pi * oneplusasqr + 3 * ellipe(oneminusasqr) ** 2)
+        ) / (np.pi * oneplusasqr - 2 * ellipe(oneminusasqr) ** 2) ** 2
         # Subtract 3 to be consistent with the "Fisher" definition of Kurtosis (which is zero for a normal
         # distribution)
         kurt = kurt - 3.0
         return mean, var, skew, kurt
 
 
-hoyt = hoyt_gen(name='hoyt')
+hoyt = hoyt_gen(name="hoyt")
 
-_distn_names = ['hoyt']
+_distn_names = ["hoyt"]

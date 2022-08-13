@@ -23,7 +23,7 @@ def load_stan_code(filename):
 
     A string with the model code.
     """
-    f = open(filename, 'r')
+    f = open(filename, "r")
     contents = f.read()
     f.close()
     return contents
@@ -50,17 +50,17 @@ def stan_cache(model_code, model_name=None):
 
     Instance of pystan.StanModel.
     """
-    code_hash = md5(model_code.encode('ascii')).hexdigest()
+    code_hash = md5(model_code.encode("ascii")).hexdigest()
     if model_name is None:
-        cache_fn = 'cached-model-{}.pkl'.format(code_hash)
+        cache_fn = "cached-model-{}.pkl".format(code_hash)
     else:
-        cache_fn = 'cached-{}-{}.pkl'.format(model_name, code_hash)
+        cache_fn = "cached-{}-{}.pkl".format(model_name, code_hash)
 
     try:
-        sm = pickle.load(open(cache_fn, 'rb'))
+        sm = pickle.load(open(cache_fn, "rb"))
     except:
         sm = pystan.StanModel(model_code=model_code)
-        with open(cache_fn, 'wb') as f:
+        with open(cache_fn, "wb") as f:
             pickle.dump(sm, f)
     else:
         print("Using cached StanModel")

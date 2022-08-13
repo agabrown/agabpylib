@@ -9,4 +9,4 @@ dynamically self-consistent clusters (i.e. where the mass distribution, potentia
 Anthony Brown Jul 2019 - Sep 2019
 """
 
-__all__ = [s for s in dir() if not s.startswith('_')]
+__all__ = [s for s in dir() if not s.startswith("_")]

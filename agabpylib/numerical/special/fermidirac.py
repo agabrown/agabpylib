@@ -13,7 +13,7 @@ from scipy.integrate import fixed_quad
 
 from agabpylib.numerical.integrate import fixed_quad_laguerre
 
-__all__ = ['fd_evaluate']
+__all__ = ["fd_evaluate"]
 
 # Constants for defining the integration intervals (Table 2 in Aparicio's paper)
 _D = 3.3609
@@ -24,7 +24,7 @@ _c1 = 2.9826
 _a2 = 3.7601
 _b2 = 9.3719e-2
 _c2 = 2.1063e-2
-_d2 = 3.1084e+1
+_d2 = 3.1084e1
 _e2 = 1.0056
 _a3 = 7.5669
 _b3 = 1.1695
@@ -92,10 +92,17 @@ def _fd_integrand_nearzero(z, nu, eta, theta):
     largeexp = np.logical_not(smallexp)
     result = np.zeros_like(zz)
 
-    result[smallexp] = (2 * np.power(zz[smallexp], 2 * nu + 1) * np.sqrt(1.0 + (zsqr[smallexp] * theta / 2.0))) / \
-                       (np.exp(zsqr[smallexp] - eta) + 1)
-    result[largeexp] = 2 * np.power(zz[largeexp], 2 * nu + 1) * np.sqrt(1.0 + (zsqr[largeexp] * theta / 2.0)) * \
-                       np.exp(eta - zsqr[largeexp])
+    result[smallexp] = (
+        2
+        * np.power(zz[smallexp], 2 * nu + 1)
+        * np.sqrt(1.0 + (zsqr[smallexp] * theta / 2.0))
+    ) / (np.exp(zsqr[smallexp] - eta) + 1)
+    result[largeexp] = (
+        2
+        * np.power(zz[largeexp], 2 * nu + 1)
+        * np.sqrt(1.0 + (zsqr[largeexp] * theta / 2.0))
+        * np.exp(eta - zsqr[largeexp])
+    )
 
     return result
 
@@ -122,10 +129,14 @@ def _fd_integrand(x, nu, eta, theta):
     largeexp = np.logical_not(smallexp)
     result = np.zeros_like(xx)
 
-    result[smallexp] = (np.power(xx[smallexp], nu) * np.sqrt(1.0 + (xx[smallexp] * theta / 2.0))) / \
-                       (np.exp(xx[smallexp] - eta) + 1)
-    result[largeexp] = np.power(xx[largeexp], nu) * np.sqrt(1.0 + (xx[largeexp] * theta / 2.0)) * \
-                       np.exp(eta - xx[largeexp])
+    result[smallexp] = (
+        np.power(xx[smallexp], nu) * np.sqrt(1.0 + (xx[smallexp] * theta / 2.0))
+    ) / (np.exp(xx[smallexp] - eta) + 1)
+    result[largeexp] = (
+        np.power(xx[largeexp], nu)
+        * np.sqrt(1.0 + (xx[largeexp] * theta / 2.0))
+        * np.exp(eta - xx[largeexp])
+    )
 
     return result
 
@@ -146,26 +157,42 @@ def fd_evaluate(nu, eta, theta):
 
     Value of the Fermi-Dirac integral.
     """
-    if (not np.isscalar(nu) or not np.isscalar(theta)):
+    if not np.isscalar(nu) or not np.isscalar(theta):
         raise TypeError("fd_evaluate() is only vectorized for eta")
 
     order = 20
     s1, s2, s3 = _calculate_breakpoints(eta)
 
     if np.isscalar(eta):
-        i1, dummy = fixed_quad(_fd_integrand_nearzero, 0, np.sqrt(s1), args=(nu, eta, theta), n=order)
+        i1, dummy = fixed_quad(
+            _fd_integrand_nearzero, 0, np.sqrt(s1), args=(nu, eta, theta), n=order
+        )
         i2, dummy = fixed_quad(_fd_integrand, s1, s2, args=(nu, eta, theta), n=order)
         i3, dummy = fixed_quad(_fd_integrand, s2, s3, args=(nu, eta, theta), n=order)
-        i4, dummy = fixed_quad_laguerre(_fd_integrand, s3, args=(nu, eta, theta), n=order)
+        i4, dummy = fixed_quad_laguerre(
+            _fd_integrand, s3, args=(nu, eta, theta), n=order
+        )
     else:
         i1 = np.zeros_like(eta)
         i2 = np.zeros_like(eta)
         i3 = np.zeros_like(eta)
         i4 = np.zeros_like(eta)
         for i in range(eta.size):
-            i1[i], dummy = fixed_quad(_fd_integrand_nearzero, 0, np.sqrt(s1[i]), args=(nu, eta[i], theta), n=order)
-            i2[i], dummy = fixed_quad(_fd_integrand, s1[i], s2[i], args=(nu, eta[i], theta), n=order)
-            i3[i], dummy = fixed_quad(_fd_integrand, s2[i], s3[i], args=(nu, eta[i], theta), n=order)
-            i4[i], dummy = fixed_quad_laguerre(_fd_integrand, s3[i], args=(nu, eta[i], theta), n=order)
+            i1[i], dummy = fixed_quad(
+                _fd_integrand_nearzero,
+                0,
+                np.sqrt(s1[i]),
+                args=(nu, eta[i], theta),
+                n=order,
+            )
+            i2[i], dummy = fixed_quad(
+                _fd_integrand, s1[i], s2[i], args=(nu, eta[i], theta), n=order
+            )
+            i3[i], dummy = fixed_quad(
+                _fd_integrand, s2[i], s3[i], args=(nu, eta[i], theta), n=order
+            )
+            i4[i], dummy = fixed_quad_laguerre(
+                _fd_integrand, s3[i], args=(nu, eta[i], theta), n=order
+            )
 
     return i1 + i2 + i3 + i4

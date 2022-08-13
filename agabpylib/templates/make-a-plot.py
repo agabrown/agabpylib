@@ -28,11 +28,11 @@ def make_plot(args):
     Nothing
     """
 
-    basename = 'a-descriptive-name'
-    if args['pdfOutput']:
-        plt.savefig(basename+'.pdf')
-    elif args['pngOutput']:
-        plt.savefig(basename+'.png')
+    basename = "a-descriptive-name"
+    if args["pdfOutput"]:
+        plt.savefig(basename + ".pdf")
+    elif args["pngOutput"]:
+        plt.savefig(basename + ".png")
     else:
         plt.show()
 
@@ -42,12 +42,16 @@ def parseCommandLineArguments():
     Set up command line parsing.
     """
     parser = argparse.ArgumentParser(description="""Describe the plot.""")
-    parser.add_argument("-p", action="store_true", dest="pdfOutput", help="Make PDF plot")
-    parser.add_argument("-b", action="store_true", dest="pngOutput", help="Make PNG plot")
+    parser.add_argument(
+        "-p", action="store_true", dest="pdfOutput", help="Make PDF plot"
+    )
+    parser.add_argument(
+        "-b", action="store_true", dest="pngOutput", help="Make PNG plot"
+    )
     args = vars(parser.parse_args())
     return args
 
 
-if __name__ in ('__main__'):
-    args=parseCommandLineArguments()
+if __name__ in ("__main__"):
+    args = parseCommandLineArguments()
     make_plot(args)

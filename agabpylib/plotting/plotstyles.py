@@ -10,8 +10,17 @@ import cycler
 from agabpylib.plotting.distinct_colours import get_distinct
 
 
-def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, ncolors=10, axislinewidths=1,
-            linewidths=2, lenticks=6, return_colours=False):
+def useagab(
+    usetex=False,
+    fontfam="sans-serif",
+    fontsize=18,
+    sroncolours=False,
+    ncolors=10,
+    axislinewidths=1,
+    linewidths=2,
+    lenticks=6,
+    return_colours=False,
+):
     """
     Configure the plotting style to my liking.
 
@@ -41,37 +50,37 @@ def useagab(usetex=False, fontfam='sans-serif', fontsize=18, sroncolours=False, 
     The list of colours used by the colour cycler.
     """
     if usetex:
-        rc('text', usetex=True)
-        rc('text.latex', preamble=r'\usepackage{amsmath}')
+        rc("text", usetex=True)
+        rc("text.latex", preamble=r"\usepackage{amsmath}")
     else:
-        rc('text', usetex=False)
-    rc('font', family=fontfam, size=fontsize)
-    rc('xtick.major', size=lenticks)
-    rc('xtick.minor', size=lenticks * 2 / 3)
-    rc('ytick.major', size=lenticks)
-    rc('ytick.minor', size=lenticks * 2 / 3)
-    rc('lines', linewidth=linewidths)
-    rc('axes', linewidth=axislinewidths)
-    rc('axes', facecolor='white')
+        rc("text", usetex=False)
+    rc("font", family=fontfam, size=fontsize)
+    rc("xtick.major", size=lenticks)
+    rc("xtick.minor", size=lenticks * 2 / 3)
+    rc("ytick.major", size=lenticks)
+    rc("ytick.minor", size=lenticks * 2 / 3)
+    rc("lines", linewidth=linewidths)
+    rc("axes", linewidth=axislinewidths)
+    rc("axes", facecolor="white")
     if sroncolours:
         line_colours = get_distinct(ncolors)
     else:
-        line_colours = plt.cm.get_cmap('tab10').colors[0:ncolors]
-    rc('axes', prop_cycle=(cycler.cycler('color', line_colours)))
-    rc('xtick', direction='out')
-    rc('ytick', direction='out')
-    rc('grid', color='cbcbcb')
-    rc('grid', linestyle='-')
-    rc('grid', linewidth=0.5)
-    rc('grid', alpha=1.0)
-    rc('figure', dpi=80)
-    rc('figure.subplot', bottom=0.125)
+        line_colours = plt.cm.get_cmap("tab10").colors[0:ncolors]
+    rc("axes", prop_cycle=(cycler.cycler("color", line_colours)))
+    rc("xtick", direction="out")
+    rc("ytick", direction="out")
+    rc("grid", color="cbcbcb")
+    rc("grid", linestyle="-")
+    rc("grid", linewidth=0.5)
+    rc("grid", alpha=1.0)
+    rc("figure", dpi=80)
+    rc("figure.subplot", bottom=0.125)
 
     if return_colours:
         return line_colours
 
 
-def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='left'):
+def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="left"):
     """
     Apply the "Tufte" style to the plot axes contained in the input axis object.
 
@@ -95,33 +104,33 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine='le
     Nothing.
     """
 
-    if yspine == 'right':
+    if yspine == "right":
         # Move right and bottom spines outward by 5 points
-        ax.spines['right'].set_position(('outward', 5))
-        ax.spines['bottom'].set_position(('outward', 5))
+        ax.spines["right"].set_position(("outward", 5))
+        ax.spines["bottom"].set_position(("outward", 5))
         # Hide the left and top spines
-        ax.spines['left'].set_visible(False)
-        ax.spines['top'].set_visible(False)
+        ax.spines["left"].set_visible(False)
+        ax.spines["top"].set_visible(False)
         # Only show ticks on the left and bottom spines
-        ax.yaxis.set_ticks_position('right')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.yaxis.set_ticks_position("right")
+        ax.xaxis.set_ticks_position("bottom")
     else:
         # Move left and bottom spines outward by 5 points
-        ax.spines['left'].set_position(('outward', 5))
-        ax.spines['bottom'].set_position(('outward', 5))
+        ax.spines["left"].set_position(("outward", 5))
+        ax.spines["bottom"].set_position(("outward", 5))
         # Hide the right and top spines
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["top"].set_visible(False)
         # Only show ticks on the left and bottom spines
-        ax.yaxis.set_ticks_position('left')
-        ax.xaxis.set_ticks_position('bottom')
+        ax.yaxis.set_ticks_position("left")
+        ax.xaxis.set_ticks_position("bottom")
 
-    for axis in ['top', 'bottom', 'left', 'right']:
+    for axis in ["top", "bottom", "left", "right"]:
         ax.spines[axis].set_linewidth(ax.spines[axis].get_linewidth())
-    ax.tick_params('both', width=ax.spines['bottom'].get_linewidth(), which='both')
+    ax.tick_params("both", width=ax.spines["bottom"].get_linewidth(), which="both")
     if withgrid:
         if gridboth:
-            ax.grid(which='both')
+            ax.grid(which="both")
         else:
             ax.grid()
     if minorticks:

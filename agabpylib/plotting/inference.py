@@ -27,7 +27,7 @@ def error_ellipses(mu, covmat, sigma_levels, **kwargs):
 
     Keywords
     --------
-    **kwargs : 
+    **kwargs :
         Extra arguments for matplotlib.patches.Ellipse
 
     Returns
@@ -36,14 +36,32 @@ def error_ellipses(mu, covmat, sigma_levels, **kwargs):
     List of matplotlib.patches.Ellipse objects
     """
 
-    sigmaLevels2D = -2.0*np.log(1.0-erf(np.array([sigma_levels]).flatten()/np.sqrt(2.0)))
+    sigmaLevels2D = -2.0 * np.log(
+        1.0 - erf(np.array([sigma_levels]).flatten() / np.sqrt(2.0))
+    )
 
-    eigvalmax = 0.5*(covmat[0]+covmat[1]+np.sqrt((covmat[0]-covmat[1])**2+4*covmat[2]**2))
-    eigvalmin = 0.5*(covmat[0]+covmat[1]-np.sqrt((covmat[0]-covmat[1])**2+4*covmat[2]**2))
-    angle = atan2((covmat[0]-eigvalmax), -covmat[2])/np.pi*180
+    eigvalmax = 0.5 * (
+        covmat[0]
+        + covmat[1]
+        + np.sqrt((covmat[0] - covmat[1]) ** 2 + 4 * covmat[2] ** 2)
+    )
+    eigvalmin = 0.5 * (
+        covmat[0]
+        + covmat[1]
+        - np.sqrt((covmat[0] - covmat[1]) ** 2 + 4 * covmat[2] ** 2)
+    )
+    angle = atan2((covmat[0] - eigvalmax), -covmat[2]) / np.pi * 180
     errEllipses = []
     for csqr in sigmaLevels2D:
-        errEllipses.append( Ellipse(mu,2*np.sqrt(csqr*eigvalmax), 2*np.sqrt(csqr*eigvalmin), angle, **kwargs) )
+        errEllipses.append(
+            Ellipse(
+                mu,
+                2 * np.sqrt(csqr * eigvalmax),
+                2 * np.sqrt(csqr * eigvalmin),
+                angle,
+                **kwargs
+            )
+        )
 
     return errEllipses
 

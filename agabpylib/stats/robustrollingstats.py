@@ -12,7 +12,7 @@ from scipy.special import erfinv
 
 from agabpylib.stats.robuststats import rse
 
-_rse_constant = 1.0/(np.sqrt(2)*2*erfinv(0.8))
+_rse_constant = 1.0 / (np.sqrt(2) * 2 * erfinv(0.8))
 
 
 def robust_rolling_stats(series, window=5):
@@ -22,12 +22,12 @@ def robust_rolling_stats(series, window=5):
     Parameters
     ----------
     series - Pandas series with the data. ASSUMED TO HAVE BEEN SORTED IN THE PROPER ORDER.
-  
+
     Window - Number of data points to include in rolling stats. Default 5
-  
+
     Returns
     -------
-  
+
     median, rse: both as pandas series
     """
     rmedian = series.rolling(window).median()
@@ -49,14 +49,14 @@ def cleanup_data(dframe, colname, window=50):
     """
     Remove outliers from the data frame by appling a filtering based on the rolling median and RSE. Any
     points further than 3*RSE from the local median in the series are removed.
-  
+
     Parameters
     ----------
     dframe - Pandas data frame with the data. ASSUMED TO HAVE BEEN SORTED IN THE PROPER ORDER.
     colname - Name of column for which the data is to be cleaned.
 
-    Window - Number of data points from which to calculate the local median. 
-  
+    Window - Number of data points from which to calculate the local median.
+
     Return
     ------
     clean_dframe, rmedian, rolling_rse, cleanset; the cleaned up data frame, the rolling median series, and

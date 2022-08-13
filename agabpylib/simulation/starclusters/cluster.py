@@ -97,22 +97,50 @@ class StarAPs:
         if self.modelset == "mist":
             subfolder = "MIST_v1.2_vvcrit{0:3.1f}_UBVRIplus".format(self.vvcrit)
             fstring = "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit{4:3.1f}_UBVRIplus.iso.cmd"
-            self.isofilename = fstring.format(mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh),
-                                              self.vvcrit)
+            self.isofilename = fstring.format(
+                mehsign,
+                np.abs(self.metallicity),
+                afehsign,
+                np.abs(self.afeh),
+                self.vvcrit,
+            )
             isoreader = MIST
-            self.tabledict = {'initial_mass': 'initial_mass', 'mass': 'star_mass', 'log_L': 'log_L',
-                              'log_Teff': 'log_Teff', 'log_g': 'log_g', 'Gabs': 'Gaia_G_MAW',
-                              'Gabs_BPb': 'Gaia_BP_MAWb', 'Gabs_BPf': 'Gaia_BP_MAWf', 'Gabs_RP': 'Gaia_RP_MAW',
-                              'Vabs': 'Bessell_V', 'Iabs': 'Bessell_I'}
+            self.tabledict = {
+                "initial_mass": "initial_mass",
+                "mass": "star_mass",
+                "log_L": "log_L",
+                "log_Teff": "log_Teff",
+                "log_g": "log_g",
+                "Gabs": "Gaia_G_MAW",
+                "Gabs_BPb": "Gaia_BP_MAWb",
+                "Gabs_BPf": "Gaia_BP_MAWf",
+                "Gabs_RP": "Gaia_RP_MAW",
+                "Vabs": "Bessell_V",
+                "Iabs": "Bessell_I",
+            }
             self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
         else:
             subfolder = "PARSEC_v1.2S_GaiaMAW_UBVRIJHK"
-            fstring = "PARSEC_v1.2S_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_GaiaMAW_UBVRIJHK.iso.cmd"
-            self.isofilename = fstring.format(mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh))
+            fstring = (
+                "PARSEC_v1.2S_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_GaiaMAW_UBVRIJHK.iso.cmd"
+            )
+            self.isofilename = fstring.format(
+                mehsign, np.abs(self.metallicity), afehsign, np.abs(self.afeh)
+            )
             isoreader = PARSEC
-            self.tabledict = {'initial_mass': 'Mini', 'mass': 'Mass', 'log_L': 'logL',
-                              'log_Teff': 'logTe', 'log_g': 'logg', 'Gabs': 'Gmag', 'Gabs_BPb': 'G_BPbrmag',
-                              'Gabs_BPf': 'G_BPftmag', 'Gabs_RP': 'G_RPmag', 'Vabs': 'Vmag', 'Iabs': 'Imag'}
+            self.tabledict = {
+                "initial_mass": "Mini",
+                "mass": "Mass",
+                "log_L": "logL",
+                "log_Teff": "logTe",
+                "log_g": "logg",
+                "Gabs": "Gmag",
+                "Gabs_BPb": "G_BPbrmag",
+                "Gabs_BPf": "G_BPftmag",
+                "Gabs_RP": "G_RPmag",
+                "Vabs": "Vmag",
+                "Iabs": "Imag",
+            }
             self.isofullpath = path.join(self.isofiles, subfolder, self.isofilename)
 
         self.isocmd = isoreader(path.join(self.isofullpath))
@@ -132,17 +160,17 @@ class StarAPs:
         """
         age_index = self.isocmd.age_index(self.logage)
         self.logageloaded = self.isocmd.ages[age_index]
-        iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict['initial_mass']]
+        iso_ini_masses = self.isocmd.isocmds[age_index][self.tabledict["initial_mass"]]
 
         aptable = QTable()
-        aptable.add_column(Column(np.arange(n)), name='source_id')
+        aptable.add_column(Column(np.arange(n)), name="source_id")
         ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
-        aptable.add_column(Column(ini_masses) * u.M_sun, name='initial_mass')
+        aptable.add_column(Column(ini_masses) * u.M_sun, name="initial_mass")
 
         for item in list(self.tabledict.keys())[1:]:
             y = self.isocmd.isocmds[age_index][self.tabledict[item]]
             f = interp1d(iso_ini_masses, y)
-            if item == 'mass':
+            if item == "mass":
                 aptable.add_column(Column(f(ini_masses) * u.M_sun), name=item)
             else:
                 aptable.add_column(Column(f(ini_masses)), name=item)
@@ -156,9 +184,17 @@ class StarAPs:
         dict :
             Dictionary containing metadata describing the astrophysical parameter model.
         """
-        meta = {'ID': 'Simulated_cluster', 'age': self.age, 'logage': self.logage, 'logageloaded': self.logageloaded,
-                'metallicity': self.metallicity, 'alpha_over_fe': self.afeh, 'vvcrit': self.vvcrit,
-                'stellarmodels': self.modelset, 'isochronefile': self.isofullpath}
+        meta = {
+            "ID": "Simulated_cluster",
+            "age": self.age,
+            "logage": self.logage,
+            "logageloaded": self.logageloaded,
+            "metallicity": self.metallicity,
+            "alpha_over_fe": self.afeh,
+            "vvcrit": self.vvcrit,
+            "stellarmodels": self.modelset,
+            "isochronefile": self.isofullpath,
+        }
         meta.update(self.imf.getmeta())
         return meta
 
@@ -170,14 +206,17 @@ class StarAPs:
             String with information on the simulation of the astrophysical parameters.
         """
         info = ""
-        info = info + "Astrophysical parameters\n" + \
-               "------------------------\n" + \
-               "Isochrone models: {0}\n".format(self.modelset) + \
-               "Age, log(Age) specified: {0}, {1}\n".format(self.age, self.logage) + \
-               "log(Age) loaded: {0}\n".format(self.logageloaded) + \
-               "[M/H]: {0}\n".format(self.metallicity) + \
-               "[alpha/Fe]: {0}\n".format(self.afeh)
-        if self.modelset == 'mist':
+        info = (
+            info
+            + "Astrophysical parameters\n"
+            + "------------------------\n"
+            + "Isochrone models: {0}\n".format(self.modelset)
+            + "Age, log(Age) specified: {0}, {1}\n".format(self.age, self.logage)
+            + "log(Age) loaded: {0}\n".format(self.logageloaded)
+            + "[M/H]: {0}\n".format(self.metallicity)
+            + "[alpha/Fe]: {0}\n".format(self.afeh)
+        )
+        if self.modelset == "mist":
             info = info + "[v/vcrit]: {0}\n".format(self.afeh)
         info = info + "Isochrone file: {0}\n\n".format(self.isofullpath)
         info = info + self.imf.getinfo()
@@ -217,14 +256,18 @@ class StarCluster:
         self.simobs = simobs
         self.star_table = self.staraps.generate_aps(self.n_stars)
         x, y, z = starpos.generate_positions(self.n_stars)
-        self.star_table.add_columns([x, y, z], names=['x', 'y', 'z'])
+        self.star_table.add_columns([x, y, z], names=["x", "y", "z"])
         vx, vy, vz = starkin.generate_kinematics(x, y, z)
-        self.star_table.add_columns([vx, vy, vz], names=['v_x', 'v_y', 'v_z'])
+        self.star_table.add_columns([vx, vy, vz], names=["v_x", "v_y", "v_z"])
         simobs.generate_observations(self.star_table)
 
         self.star_table.meta = {}
         self.star_table.meta.update(
-            {'timestamp': datetime.now().strftime('%Y-%m-%d-%H:%M:%S'), 'n_stars': self.n_stars})
+            {
+                "timestamp": datetime.now().strftime("%Y-%m-%d-%H:%M:%S"),
+                "n_stars": self.n_stars,
+            }
+        )
         self.star_table.meta.update(staraps.getmeta())
         self.star_table.meta.update(starpos.getmeta())
         self.star_table.meta.update(starkin.getmeta())
@@ -237,13 +280,18 @@ class StarCluster:
         str:
             Information on the simulated cluster.
         """
-        return "Simulated cluster parameters\n" + \
-               "============================\n" + \
-               "Number of stars: {0}\n\n".format(self.n_stars) + \
-               self.staraps.getinfo() + "\n\n" + \
-               self.starpos.getinfo() + "\n\n" + \
-               self.starkin.getinfo() + "\n\n" + \
-               self.simobs.getinfo()
+        return (
+            "Simulated cluster parameters\n"
+            + "============================\n"
+            + "Number of stars: {0}\n\n".format(self.n_stars)
+            + self.staraps.getinfo()
+            + "\n\n"
+            + self.starpos.getinfo()
+            + "\n\n"
+            + self.starkin.getinfo()
+            + "\n\n"
+            + self.simobs.getinfo()
+        )
 
     def getmeta(self):
         """

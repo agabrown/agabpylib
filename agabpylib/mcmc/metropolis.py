@@ -87,7 +87,7 @@ class MetropolisSampler:
             lnpdf_theta_prop = self.lnprob(theta_prop)
             #   HANDLE THIS CASE!
             # if (np.isinf(lnpdf_theta_prop) and np.isinf(lnpdf_theta_k)):
-            if (lnpdf_theta_prop - lnpdf_theta_k > lnr):
+            if lnpdf_theta_prop - lnpdf_theta_k > lnr:
                 self.samples[i] = theta_prop
                 self.accepted_samples += 1
             else:
@@ -134,7 +134,7 @@ class MetropolisSampler:
         Returns
         -------
 
-        The acceptance fraction. 
+        The acceptance fraction.
         """
         if np.any(self.samples == None):
             raise Exception("No samples generated: Please invoke run_mcmc() first!")

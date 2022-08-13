@@ -33,7 +33,11 @@ def lnP2DGaussian(zObs, z, S):
     detS = covmat[:, 0] * covmat[:, 1] - covmat[:, 2] * covmat[:, 2]
     delta_x = zObs[0] - z[0]
     delta_y = zObs[1] - z[1]
-    innerzObsz = covmat[:, 1] * delta_x ** 2 - 2 * covmat[:, 2] * delta_x * delta_y + covmat[:, 0] * delta_y ** 2
+    innerzObsz = (
+        covmat[:, 1] * delta_x**2
+        - 2 * covmat[:, 2] * delta_x * delta_y
+        + covmat[:, 0] * delta_y**2
+    )
     return -0.5 * innerzObsz / detS - 0.5 * log(detS) - log(2.0 * pi)
 
 
@@ -57,7 +61,11 @@ def lnL_polynomial(zObs, p, S):
     detS = S[0] * S[1] - S[2] * S[2]
     poly_delta_x = Polynomial([zObs[0], -1])
     poly_delta_y = Polynomial([zObs[1]]) - Polynomial(p)
-    poly_lnL = S[1] * poly_delta_x ** 2 - 2 * S[2] * poly_delta_x * poly_delta_y + S[0] * poly_delta_y ** 2
+    poly_lnL = (
+        S[1] * poly_delta_x**2
+        - 2 * S[2] * poly_delta_x * poly_delta_y
+        + S[0] * poly_delta_y**2
+    )
     poly_lnL = -0.5 * poly_lnL / detS
     return poly_lnL.coef
 

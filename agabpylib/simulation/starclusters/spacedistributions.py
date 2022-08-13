@@ -41,8 +41,7 @@ class SpaceDistribution(ABC):
         str:
             String with information about the space distribution.
         """
-        return "Space distribution\n" + \
-               "------------------\n" + self.addinfo()
+        return "Space distribution\n" + "------------------\n" + self.addinfo()
 
     @abstractmethod
     def addinfo(self):
@@ -91,17 +90,22 @@ class ConstantDensitySphere(SpaceDistribution):
     def generate_positions(self, n):
         phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
         theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
-        r = self.radius * uniform.rvs(loc=0, scale=1, size=n) ** (1. / 3.)
+        r = self.radius * uniform.rvs(loc=0, scale=1, size=n) ** (1.0 / 3.0)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)
         return x, y, z
 
     def addinfo(self):
-        return "Uniform space density distribution over sphere of radius {0}\n".format(self.radius)
+        return "Uniform space density distribution over sphere of radius {0}\n".format(
+            self.radius
+        )
 
     def getmeta(self):
-        return {'space_distribution': 'uniform density sphere', 'space_distribution_radius': self.radius}
+        return {
+            "space_distribution": "uniform density sphere",
+            "space_distribution_radius": self.radius,
+        }
 
 
 class SphericalShell(SpaceDistribution):
@@ -139,7 +143,10 @@ class SphericalShell(SpaceDistribution):
         return "Spherical shell of radius {0}\n".format(self.radius)
 
     def getmeta(self):
-        return {'space_distribution': 'spherical shell', 'space_distribution_radius': self.radius}
+        return {
+            "space_distribution": "spherical shell",
+            "space_distribution_radius": self.radius,
+        }
 
 
 class PlummerSphere(SpaceDistribution):
@@ -184,10 +191,15 @@ class PlummerSphere(SpaceDistribution):
         return x, y, z
 
     def addinfo(self):
-        return "Plummer density distribution with core radius {0}".format(self.core_radius)
+        return "Plummer density distribution with core radius {0}".format(
+            self.core_radius
+        )
 
     def getmeta(self):
-        return {'space_distribution': 'Plummer sphere', 'plummer_core_radius': self.core_radius}
+        return {
+            "space_distribution": "Plummer sphere",
+            "plummer_core_radius": self.core_radius,
+        }
 
 
 class TruncatedPlummerSphere(SpaceDistribution):
@@ -221,7 +233,7 @@ class TruncatedPlummerSphere(SpaceDistribution):
         phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
         theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
         h = uniform.rvs(loc=0, scale=1, size=n)
-        r = self.core_radius / np.sqrt((c/h) ** (2 / 3) - 1)
+        r = self.core_radius / np.sqrt((c / h) ** (2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)
@@ -229,8 +241,12 @@ class TruncatedPlummerSphere(SpaceDistribution):
 
     def addinfo(self):
         return "Truncated Plummer density distribution: core radius {0}, truncation radius {1}".format(
-            self.core_radius, self.truncation_radius)
+            self.core_radius, self.truncation_radius
+        )
 
     def getmeta(self):
-        return {'space_distribution': 'Truncated Plummer sphere', 'plummer_core_radius': self.core_radius,
-                'plummer_truncation_radius':self.truncation_radius}
+        return {
+            "space_distribution": "Truncated Plummer sphere",
+            "plummer_core_radius": self.core_radius,
+            "plummer_truncation_radius": self.truncation_radius,
+        }

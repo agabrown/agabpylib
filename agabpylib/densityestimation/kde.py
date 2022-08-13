@@ -10,7 +10,9 @@ from sklearn.neighbors import KernelDensity
 from sklearn.preprocessing import StandardScaler
 
 
-def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0, **kwargs):
+def kde_scikitlearn(
+    data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0, **kwargs
+):
     """
     Provide a kernel density estimate for a set of data points (d_i). Make use of the scikit-learn
     scikitlearn.neighbours.KernelDensity class.
@@ -33,9 +35,9 @@ def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0,
     -------
 
     Dsamples, log_dens: The log(density) evaluated on the regular grid Dsamples (both shape (N,))
-    
-    OR 
-    
+
+    OR
+
     log_dens: The log(density) evaluated for the data points (shape (data.size,)).
     """
     if lims == None:
@@ -56,8 +58,19 @@ def kde_scikitlearn(data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0,
         return log_dens
 
 
-def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlims=None, ylims=None, evalOnData=False,
-                      kde_bandwidth=1.0, **kwargs):
+def kde2d_scikitlearn(
+    xdata,
+    ydata,
+    Nx=100,
+    Ny=100,
+    xeval=None,
+    yeval=None,
+    xlims=None,
+    ylims=None,
+    evalOnData=False,
+    kde_bandwidth=1.0,
+    **kwargs
+):
     """
     Provide a 2D kernel density estimate for a set of data points (x_i, y_i). Make use of the
     scikit-learn scikitlearn.neighbours.KernelDensity class.
@@ -76,7 +89,7 @@ def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlim
     Nx - Number of KDE samples in X (regular grid between xmin and xmax)
     Ny - Number of KDE samples in Y (regular grid between ymin and ymax)
     xeval - evaluate on this set of x coordinates (takes precedence over regular grid)
-    yeval - evaluate on this set of y coordinates (takes precedence over regular grid) 
+    yeval - evaluate on this set of y coordinates (takes precedence over regular grid)
     evalOndata - If true returns the log(density) evaluated on the data (instead of the regular grid)
     kde_bandwidth - Bandwith for density estimator
     **kwargs - Extra arguments for KernelDensity class initializer
@@ -117,7 +130,9 @@ def kde2d_scikitlearn(xdata, ydata, Nx=100, Ny=100, xeval=None, yeval=None, xlim
             Ysamples = np.linspace(ymin, ymax, Ny)
             X, Y = np.meshgrid(Xsamples, Ysamples)
             positions = np.vstack([X.T.ravel(), Y.T.ravel()]).T
-            log_dens = kde.score_samples(scaler.transform(positions)).reshape((Nx, Ny)).T
+            log_dens = (
+                kde.score_samples(scaler.transform(positions)).reshape((Nx, Ny)).T
+            )
     else:
         log_dens = kde.score_samples(scaled_values)
 

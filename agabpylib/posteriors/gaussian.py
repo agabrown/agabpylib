@@ -29,8 +29,14 @@ def unknownMeanAndVarianceFlatPrior(n, xbar, V, mu, tau):
     The value of ln(posterior) at each grid point.
     """
 
-    lnP = log(2.0) + 0.5*(n-3)*log(n*V) - gammaln((n-3)/2.0) \
-            + 0.5*(log(n)-log(pi)) - n/2.0*log(2*tau) - 0.5*(n*(V+(mu-xbar)**2))/tau 
+    lnP = (
+        log(2.0)
+        + 0.5 * (n - 3) * log(n * V)
+        - gammaln((n - 3) / 2.0)
+        + 0.5 * (log(n) - log(pi))
+        - n / 2.0 * log(2 * tau)
+        - 0.5 * (n * (V + (mu - xbar) ** 2)) / tau
+    )
     return lnP
 
 
@@ -49,11 +55,15 @@ def marginalMeanUMVFlatPrior(n, xbar, V, mu):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = gammaln((n-2)/2.0) - gammaln((n-3)/2.0) - 0.5*(log(pi)+log(V)) \
-            - (n-2)/2.0*log(1+(mu-xbar)**2/V)
+    lnP = (
+        gammaln((n - 2) / 2.0)
+        - gammaln((n - 3) / 2.0)
+        - 0.5 * (log(pi) + log(V))
+        - (n - 2) / 2.0 * log(1 + (mu - xbar) ** 2 / V)
+    )
     return lnP
 
 
@@ -72,10 +82,15 @@ def marginalTauUMVFlatPrior(n, xbar, V, tau):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = 0.5*(n-3)*(log(n*V)-log(2*tau)) - gammaln((n-3)/2.0) - log(tau) - n*V/(2*tau)
+    lnP = (
+        0.5 * (n - 3) * (log(n * V) - log(2 * tau))
+        - gammaln((n - 3) / 2.0)
+        - log(tau)
+        - n * V / (2 * tau)
+    )
     return lnP
 
 
@@ -100,8 +115,14 @@ def unknownMeanAndVarianceUnInfPrior(n, xbar, V, mu, tau):
     The value of ln(posterior) at each grid point.
     """
 
-    lnP = (n-1)/2.0*(log(n)+log(V)) - n/2.0*log(2.0) - gammaln((n-1)/2.0) \
-            + 0.5*(log(n)-log(pi)) - (n+2)/2.0*log(tau) - 0.5*(n*(V+(mu-xbar)**2))/tau
+    lnP = (
+        (n - 1) / 2.0 * (log(n) + log(V))
+        - n / 2.0 * log(2.0)
+        - gammaln((n - 1) / 2.0)
+        + 0.5 * (log(n) - log(pi))
+        - (n + 2) / 2.0 * log(tau)
+        - 0.5 * (n * (V + (mu - xbar) ** 2)) / tau
+    )
     return lnP
 
 
@@ -120,11 +141,15 @@ def marginalMeanUMVUnInfPrior(n, xbar, V, mu):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = gammaln(n/2.0) - gammaln((n-1)/2.0) - 0.5*(log(pi)+log(V)) \
-            - n/2.0*log(1+(mu-xbar)**2/V)
+    lnP = (
+        gammaln(n / 2.0)
+        - gammaln((n - 1) / 2.0)
+        - 0.5 * (log(pi) + log(V))
+        - n / 2.0 * log(1 + (mu - xbar) ** 2 / V)
+    )
     return lnP
 
 
@@ -143,10 +168,15 @@ def marginalTauUMVUnInfPrior(n, xbar, V, tau):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = 0.5*(n-1)*(log(n*V)-log(2*tau)) - gammaln((n-1)/2.0) - log(tau) - n*V/(2*tau)
+    lnP = (
+        0.5 * (n - 1) * (log(n * V) - log(2 * tau))
+        - gammaln((n - 1) / 2.0)
+        - log(tau)
+        - n * V / (2 * tau)
+    )
     return lnP
 
 
@@ -170,8 +200,15 @@ def unknownMeanAndStddevFlatPrior(n, xbar, V, mu, sigma):
     The value of ln(posterior) at each grid point.
     """
 
-    lnP = 1.5*log(2.0) + (n-2)/2.0*(log(n)+log(V)) - n/2.0*log(2.0) - gammaln((n-2)/2.0) \
-            + 0.5*(log(n)-log(pi)) - n*log(sigma) - 0.5*(n*(V+(mu-xbar)**2))/(sigma*sigma)
+    lnP = (
+        1.5 * log(2.0)
+        + (n - 2) / 2.0 * (log(n) + log(V))
+        - n / 2.0 * log(2.0)
+        - gammaln((n - 2) / 2.0)
+        + 0.5 * (log(n) - log(pi))
+        - n * log(sigma)
+        - 0.5 * (n * (V + (mu - xbar) ** 2)) / (sigma * sigma)
+    )
     return lnP
 
 
@@ -190,11 +227,15 @@ def marginalMeanUMSFlatPrior(n, xbar, V, mu):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = gammaln((n-1)/2.0) - gammaln((n-2)/2.0) - 0.5*(log(pi)+log(V)) \
-            - (n-1)/2.0*log(1+(mu-xbar)**2/V)
+    lnP = (
+        gammaln((n - 1) / 2.0)
+        - gammaln((n - 2) / 2.0)
+        - 0.5 * (log(pi) + log(V))
+        - (n - 1) / 2.0 * log(1 + (mu - xbar) ** 2 / V)
+    )
     return lnP
 
 
@@ -213,11 +254,16 @@ def marginalSigmaUMSFlatPrior(n, xbar, V, sigma):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = 0.5*(n-1)*(log(n*V)-log(2)-2*log(sigma)) - gammaln((n-2)/2.0) \
-            -0.5*log(n*V) + 1.5*log(2) - n*V/(2*sigma*sigma)
+    lnP = (
+        0.5 * (n - 1) * (log(n * V) - log(2) - 2 * log(sigma))
+        - gammaln((n - 2) / 2.0)
+        - 0.5 * log(n * V)
+        + 1.5 * log(2)
+        - n * V / (2 * sigma * sigma)
+    )
     return lnP
 
 
@@ -242,9 +288,16 @@ def unknownMeanAndStddevUnInfPrior(n, xbar, V, mu, sigma):
     The value of ln(posterior) at each grid point.
     """
 
-    lnP = 1.5*log(2.0) - log(n*V) + (n+1)/2.0*(log(n)+log(V)) - (n+1)/2.0*log(2.0) \
-            - gammaln((n-1)/2.0) \
-            + 0.5*(log(n)-log(pi)) - (n+1)*log(sigma) - 0.5*(n*(V+(mu-xbar)**2))/(sigma*sigma)
+    lnP = (
+        1.5 * log(2.0)
+        - log(n * V)
+        + (n + 1) / 2.0 * (log(n) + log(V))
+        - (n + 1) / 2.0 * log(2.0)
+        - gammaln((n - 1) / 2.0)
+        + 0.5 * (log(n) - log(pi))
+        - (n + 1) * log(sigma)
+        - 0.5 * (n * (V + (mu - xbar) ** 2)) / (sigma * sigma)
+    )
     return lnP
 
 
@@ -263,11 +316,16 @@ def marginalMeanUMSUnInfPrior(n, xbar, V, mu):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = gammaln(n/2.0) - gammaln((n-1)/2.0) + 0.5*(log(n)-log(pi)) - 0.5*log(n*V) \
-            - n/2.0*log(1+(mu-xbar)**2/V)
+    lnP = (
+        gammaln(n / 2.0)
+        - gammaln((n - 1) / 2.0)
+        + 0.5 * (log(n) - log(pi))
+        - 0.5 * log(n * V)
+        - n / 2.0 * log(1 + (mu - xbar) ** 2 / V)
+    )
     return lnP
 
 
@@ -286,9 +344,14 @@ def marginalSigmaUMSUnInfPrior(n, xbar, V, sigma):
 
     Returns
     -------
-    
+
     The value of ln(posterior) at each grid point.
     """
-    lnP = 0.5*(n+1)*(log(n*V)-log(2)-2*log(sigma)) - gammaln((n-1)/2.0) \
-            + log(4*sigma) - log(n*V) - n*V/(2*sigma*sigma)
+    lnP = (
+        0.5 * (n + 1) * (log(n * V) - log(2) - 2 * log(sigma))
+        - gammaln((n - 1) / 2.0)
+        + log(4 * sigma)
+        - log(n * V)
+        - n * V / (2 * sigma * sigma)
+    )
     return lnP

@@ -9,7 +9,7 @@ from numpy import median
 from scipy.stats import scoreatpercentile
 from scipy.special import erfinv
 
-_rse_constant = 1.0/(np.sqrt(2)*2*erfinv(0.8))
+_rse_constant = 1.0 / (np.sqrt(2) * 2 * erfinv(0.8))
 
 
 def rse(x):
@@ -53,5 +53,14 @@ def robust_stats(x):
     lowerten = scoreatpercentile(x, 10)
     upperten = scoreatpercentile(x, 90)
 
-    return {'median': med, 'rse': therse, 'lowerq': lowerq, 'upperq': upperq, 'lower10': lowerten, 'upper10': upperten,
-            'min': x.min(), 'max': x.max(), 'ndata': x.size}
+    return {
+        "median": med,
+        "rse": therse,
+        "lowerq": lowerq,
+        "upperq": upperq,
+        "lower10": lowerten,
+        "upper10": upperten,
+        "min": x.min(),
+        "max": x.max(),
+        "ndata": x.size,
+    }

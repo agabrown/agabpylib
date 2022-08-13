@@ -1,4 +1,3 @@
-
 """
 Statistical functions.
 
@@ -9,4 +8,4 @@ from .distributions import *
 from .robuststats import *
 from .robustrollingstats import *
 
-__all__ = [s for s in dir() if not s.startswith('_')]
+__all__ = [s for s in dir() if not s.startswith("_")]

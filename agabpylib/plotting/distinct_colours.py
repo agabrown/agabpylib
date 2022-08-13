@@ -7,24 +7,38 @@ SRON - Netherlands Institute for Space Research
 """
 
 # colour table in HTML hex format
-hexcols = ['#332288', '#88CCEE', '#44AA99', '#117733', '#999933', '#DDCC77',
-           '#CC6677', '#882255', '#AA4499', '#661100', '#6699CC', '#AA4466',
-           '#4477AA']
+hexcols = [
+    "#332288",
+    "#88CCEE",
+    "#44AA99",
+    "#117733",
+    "#999933",
+    "#DDCC77",
+    "#CC6677",
+    "#882255",
+    "#AA4499",
+    "#661100",
+    "#6699CC",
+    "#AA4466",
+    "#4477AA",
+]
 
-greysafecols = ['#809BC8', '#FF6666', '#FFCC66', '#64C204']
+greysafecols = ["#809BC8", "#FF6666", "#FFCC66", "#64C204"]
 
-xarr = [[12],
-        [12, 6],
-        [12, 5, 6],
-        [12, 3, 5, 6],
-        [0, 1, 3, 5, 6],
-        [0, 1, 3, 5, 6, 8],
-        [0, 1, 2, 3, 5, 6, 8],
-        [0, 1, 2, 3, 4, 5, 6, 8],
-        [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        [0, 1, 2, 3, 4, 5, 9, 6, 7, 8],
-        [0, 10, 1, 2, 3, 4, 5, 9, 6, 7, 8],
-        [0, 10, 1, 2, 3, 4, 5, 9, 6, 11, 7, 8]]
+xarr = [
+    [12],
+    [12, 6],
+    [12, 5, 6],
+    [12, 3, 5, 6],
+    [0, 1, 3, 5, 6],
+    [0, 1, 3, 5, 6, 8],
+    [0, 1, 2, 3, 5, 6, 8],
+    [0, 1, 2, 3, 4, 5, 6, 8],
+    [0, 1, 2, 3, 4, 5, 6, 7, 8],
+    [0, 1, 2, 3, 4, 5, 9, 6, 7, 8],
+    [0, 10, 1, 2, 3, 4, 5, 9, 6, 7, 8],
+    [0, 10, 1, 2, 3, 4, 5, 9, 6, 11, 7, 8],
+]
 
 
 # get specified nr of distinct colours in HTML hex format.
@@ -59,7 +73,7 @@ def get_distinct(nr):
 
 
 # displays usage information and produces example plot.
-if __name__ == '__main__':
+if __name__ == "__main__":
     import numpy as np
     import matplotlib.mlab as mlab
     import matplotlib.pyplot as plt
@@ -80,9 +94,9 @@ if __name__ == '__main__':
     plt.plot(t, s, linewidth=1.0, c=cols[0])
     plt.plot(t, c, linewidth=1.0, c=cols[1])
 
-    plt.xlabel('time (s)')
-    plt.ylabel('voltage (mV)')
-    plt.title('Distinct colours example')
+    plt.xlabel("time (s)")
+    plt.ylabel("voltage (mV)")
+    plt.title("Distinct colours example")
     plt.grid(True)
     plt.show()
     plt.savefig("distinct_colours_example.png")

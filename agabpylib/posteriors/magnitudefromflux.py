@@ -27,15 +27,15 @@ def magnitude_improper_uniform_prior(observed_flux, relative_error, m, c):
     Values of unnormalized ln(posterior) at each value of d. Note that the mode of this unnormalized
     posterior is always 1.
     """
-    flux = power(10.0,-0.4*(m-c))
-    lnP = - 0.5*((flux/observed_flux-1.0)/relative_error)**2
+    flux = power(10.0, -0.4 * (m - c))
+    lnP = -0.5 * ((flux / observed_flux - 1.0) / relative_error) ** 2
     return lnP
 
 
 def magnitude_uniform_density_prior(observed_flux, relative_error, m, c):
     """
     Calculate the posterior on the magnitude m=-2.5*log10(flux)+C, given the observed flux and the
-    relative error on the flux, and assuming a uniform density improper prior 
+    relative error on the flux, and assuming a uniform density improper prior
 
     Parameters
     ----------
@@ -50,5 +50,7 @@ def magnitude_uniform_density_prior(observed_flux, relative_error, m, c):
 
     Values of unnormalized ln(posterior) at each value of d.
     """
-    lnP = 0.6*log(10.0)*m- 0.5*((flux/observed_flux-1.0)/relative_error)**2
+    lnP = (
+        0.6 * log(10.0) * m - 0.5 * ((flux / observed_flux - 1.0) / relative_error) ** 2
+    )
     return lnP

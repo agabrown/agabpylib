@@ -14,10 +14,10 @@ _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def get_data(path):
-    return os.path.join(_ROOT, 'data', path)
+    return os.path.join(_ROOT, "data", path)
 
 
-class U0Interpolator():
+class U0Interpolator:
     """
     Class which holds functions that can used to calculate u0 values given the G-band magnitude only, or
     the G-band magnitude and the BP-RP colour of a source. The class initialization takes care of reading
@@ -36,19 +36,30 @@ class U0Interpolator():
         self.minbprp = -1.0
         self.maxbprp = 10.0
 
-        u0data = np.genfromtxt(get_data('table_u0_g_col.txt'), names=['g_mag', 'bp_rp', 'u0'], skip_header=1,
-                               delimiter=',')
-        gmagmesh = np.reshape(u0data['g_mag'], (ngmagbins, ncolorbins))
-        bprpmesh = np.reshape(u0data['bp_rp'], (ngmagbins, ncolorbins))
-        u0mesh = np.reshape(u0data['u0'], (ngmagbins, ncolorbins))
+        u0data = np.genfromtxt(
+            get_data("table_u0_g_col.txt"),
+            names=["g_mag", "bp_rp", "u0"],
+            skip_header=1,
+            delimiter=",",
+        )
+        gmagmesh = np.reshape(u0data["g_mag"], (ngmagbins, ncolorbins))
+        bprpmesh = np.reshape(u0data["bp_rp"], (ngmagbins, ncolorbins))
+        u0mesh = np.reshape(u0data["u0"], (ngmagbins, ncolorbins))
 
         gmag = gmagmesh[:, 0]
         bprp = bprpmesh[0, :]
 
-        self.gbprpinterpolator = RectBivariateSpline(gmag, bprp, u0mesh, kx=1, ky=1, s=0)
+        self.gbprpinterpolator = RectBivariateSpline(
+            gmag, bprp, u0mesh, kx=1, ky=1, s=0
+        )
 
-        u0data = np.genfromtxt(get_data('table_u0_g.txt'), names=['g_mag', 'u0'], skip_header=1, delimiter=',')
-        self.ginterpolator = interp1d(u0data['g_mag'], u0data['u0'], bounds_error=True)
+        u0data = np.genfromtxt(
+            get_data("table_u0_g.txt"),
+            names=["g_mag", "u0"],
+            skip_header=1,
+            delimiter=",",
+        )
+        self.ginterpolator = interp1d(u0data["g_mag"], u0data["u0"], bounds_error=True)
 
     def get_u0_g_col(self, gmag, bprp, asgrid=False):
         """

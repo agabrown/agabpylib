@@ -6,7 +6,7 @@ Anthony Brown Aug 2017 - Jun 2019
 
 import numpy as np
 
-__all__ = ['bracket_root']
+__all__ = ["bracket_root"]
 
 
 def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
@@ -20,7 +20,7 @@ def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
     func : Callable f(x,*args)
         Objective function to minimize.
     xa, xb : float, optional
-        Bracketing interval. Defaults xa to 0.0, and xb to 1.0. 
+        Bracketing interval. Defaults xa to 0.0, and xb to 1.0.
     args : tuple, optional
         Additional arguments (if present), passed to func.
     grow_factor : float, optional
@@ -41,7 +41,7 @@ def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
     f1 = func(x1, *args)
     f2 = func(x2, *args)
     for i in range(maxiter):
-        if (f1 * f2 < 0.0):
+        if f1 * f2 < 0.0:
             return x1, x2, True
         else:
             if np.abs(f1) < np.abs(f2):
