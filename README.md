@@ -41,16 +41,10 @@ Please acknowledge the author if you use this code.
 
 ## License
 
-Copyright (c) 2015-2021 Anthony Brown, Leiden Observatory, Leiden University
+Copyright (c) 2015-2022 Anthony Brown, Leiden Observatory, Leiden University
 
 agabpylib is open source and free software: you can redistribute it and/or
 modify it under the terms of MIT license.
 
 You should have received a copy of the MIT licence with this source code. If not, see
 [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT).
-
-## Visualization of this repository
-
-Made with [repo-visualizer](https://github.com/githubocto/repo-visualizer)
-
-![Visualization of this repo](./diagram.svg)
