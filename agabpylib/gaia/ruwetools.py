@@ -1,20 +1,37 @@
 """
-Functions for handling the tables listing the normalization factor u0 needed to calculate the
+Classes and Functions for handling the tables listing the normalization factor u0 needed to calculate the
 renormalized unit weight error (RUWE). The tables are provided on the Gaia DR2 Known Issues pages
 (https://www.cosmos.esa.int/web/gaia/dr2-known-issues).
 
-Anthony Brown Oct 2018 - Jun 2019
+.. note::
+    This module is obsolete as the RUWE values are available as a separate table in the Gaia DR2
+    archive and as a field in ``gaia_source`` since Gaia EDR3.
+
+Anthony Brown Oct 2018 - Aug 2022
 """
 
 import numpy as np
 import os
-from scipy.interpolate import interp1d, RectBivariateSpline
+import scipy.interpolate as spint
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
-def get_data(path):
-    return os.path.join(_ROOT, "data", path)
+def _get_data(path_to_file):
+    """
+    Obtain the path to a file located in 'data' or a subfolder thereof. Intended for package internal use only.
+
+    Parameters
+    ----------
+    path_to_file : str
+         Name of file or of path to the file.
+
+    Returns
+    -------
+    full_path_to_file : str
+        The full path to the input file.
+    """
+    return os.path.join(_ROOT, "data", path_to_file)
 
 
 class U0Interpolator:
@@ -37,7 +54,7 @@ class U0Interpolator:
         self.maxbprp = 10.0
 
         u0data = np.genfromtxt(
-            get_data("table_u0_g_col.txt"),
+            _get_data("table_u0_g_col.txt"),
             names=["g_mag", "bp_rp", "u0"],
             skip_header=1,
             delimiter=",",
@@ -49,85 +66,89 @@ class U0Interpolator:
         gmag = gmagmesh[:, 0]
         bprp = bprpmesh[0, :]
 
-        self.gbprpinterpolator = RectBivariateSpline(
+        self.gbprpinterpolator = spint.RectBivariateSpline(
             gmag, bprp, u0mesh, kx=1, ky=1, s=0
         )
 
         u0data = np.genfromtxt(
-            get_data("table_u0_g.txt"),
+            _get_data("table_u0_g.txt"),
             names=["g_mag", "u0"],
             skip_header=1,
             delimiter=",",
         )
-        self.ginterpolator = interp1d(u0data["g_mag"], u0data["u0"], bounds_error=True)
+        self.ginterpolator = spint.interp1d(
+            u0data["g_mag"], u0data["u0"], bounds_error=True
+        )
 
     def get_u0_g_col(self, gmag, bprp, asgrid=False):
         """
-        Calculate the u0 value for the input G-band magnitude(s) and BP-RP colour(s). Input values
-        outside the interpolation range will lead to a ValueError being raised.
+        Calculate the u0 value for the input G-band magnitude(s) and BP-RP colour(s).
 
         Parameters
         ----------
-
         gmag : float array
             Values of G (size n)
         bprp : float array
             Values of BP-RP (size m)
-
-        Keywords
-        --------
-
         asgrid : boolean
             If True treat the input gmag and bprp arrays as the coordinates for a 2D grid. If set to True
             the sizes of the input arrays n and m may be different. If set to False n=m is required.
 
         Returns
         -------
+        u0 : array-like
+            The values of u0 evaluated at the input (G, BP-RP) combinations. The returned list consists
+            of n values for ``asgrid=False`` and n*m otherwise.
 
-        The values of u0 evaluated at the input (G, BP-RP) combinations. The returned list consists
-        of n values for grid=True and n*m otherwise.
+        Raises
+        ------
+        ValueError
+            For input values outside the interpolation range.
+
         """
-
         return self.gbprpinterpolator(gmag, bprp, grid=asgrid)
 
     def get_u0_g(self, gmag):
         """
-        Calculate the normalization factor u0 for the RUWE for the input G-band magnitude(s). Input
-        values outside the interpolation range will lead to a ValueError being raised.
+        Calculate the normalization factor u0 for the RUWE for the input G-band magnitude(s).
 
         Parameters
         ----------
-
         gmag : float array
             Values of G
 
         Returns
         -------
+        u0 : float array
+            Array of u0 values evaluated at the input G-band magnitudes.
 
-        Array of u0 values evaluated at the input G-band magnitudes.
+         Raises
+        ------
+        ValueError
+            For input values outside the interpolation range.
         """
         return self.ginterpolator(gmag)
 
     def get_u0(self, gmag, bprp):
         """
         Calculate the RUWE normalization factor u0 for the input G-band magnitude(s) and BP-RP colour(s).
-        Input values outside the interpolation range will be clamped to the corresponding edge of that
-        range.
 
-        USE THIS FUNCTION IF YOU HAVE A LARGE LIST OF MAGNITUDES AND COLOURS OR IF YOU HAVE A LIST WHICH
-        MAY INCLUDE ENTRIES WITH NO BP_RP COLOUR.
+        .. attention::
+            This is a version of `get_u0_g_col` that is robust against missing (BP-RP) values and against magnitudes
+            and colours outside the interpolation range. Input values outside the interpolation range will be clamped
+            to the corresponding edge of that range.
 
         Parameters
         ----------
-
         gmag : float array
             Values of G (size n)
         bprp : float array
             Values of BP-RP (size m)
+
         Returns
         -------
-
-        The values of u0 evaluated at the input (G, BP-RP) combinations.
+        u0 : float array
+            The values of u0 evaluated at the input (G, BP-RP) combinations.
         """
 
         if np.isscalar(gmag):

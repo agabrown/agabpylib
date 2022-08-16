@@ -1,11 +1,17 @@
 """
-Custom colormaps:
+Custom colormaps collected from a variety of sources.
 
-run agabcolormaps.show_color_maps() to see what these colormaps look like.
+Notes
+-----
+Execute
+
+>>> agabcolormaps.show_color_maps() 
+
+to see what these colormaps look like.
 """
 
 from matplotlib import rcParams, colors
-from numpy import genfromtxt, linspace, empty, flipud, vstack, clip, where, floor
+import numpy as np
 import matplotlib.pyplot as plt
 import os
 
@@ -14,12 +20,25 @@ _LUTSIZE = rcParams["image.lut"]
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
-def get_data(path):
-    return os.path.join(_ROOT, "data", path)
+def _get_data(path_to_file):
+    """
+    Obtain the path to a file located in 'data' or a subfolder thereof. Intended for package internal use only.
+
+    Parameters
+    ----------
+    path_to_file : str
+         Name of file or of path to the file.
+
+    Returns
+    -------
+    full_path_to_file : str
+        The full path to the input file.
+    """
+    return os.path.join(_ROOT, "data", path_to_file)
 
 
-_Blackbody_data = genfromtxt(
-    get_data("bbr_color.txt"),
+_Blackbody_data = np.genfromtxt(
+    _get_data("bbr_color.txt"),
     dtype=None,
     skip_header=19,
     comments="#",
@@ -27,12 +46,12 @@ _Blackbody_data = genfromtxt(
     encoding=None,
 )
 npoints = int(len(_Blackbody_data["temp"]) / 2)
-indices = where(_Blackbody_data["cmf"] == "10deg")
+indices = np.where(_Blackbody_data["cmf"] == "10deg")
 r_bb = _Blackbody_data["r"][indices]
 g_bb = _Blackbody_data["g"][indices]
 b_bb = _Blackbody_data["b"][indices]
 _Planckian_temperatures = _Blackbody_data["temp"][indices] * 1.0
-_Planckian_data = empty((npoints, 3))
+_Planckian_data = np.empty((npoints, 3))
 _Planckian_data[:, 0] = r_bb
 _Planckian_data[:, 1] = g_bb
 _Planckian_data[:, 2] = b_bb
@@ -49,22 +68,24 @@ def planckian_locus(tbb):
 
     Parameters
     ----------
-
-    tbb - Blackbody temperature in Kelvin
+    tbb : float
+        Blackbody temperature in Kelvin
 
     Returns
     -------
-
-    sRGB R, G, B values normalized to [0,1]
+    rint, gint, bint : float array
+        sRGB R, G, B values normalized to [0,1]
     """
 
-    temp = clip(tbb, 1000.0, 40000.0)
+    temp = np.clip(tbb, 1000.0, 40000.0)
     if temp == 1000.0:
         return tuple(_Planckian_data[0])
     elif temp == 40000.0:
         return tuple(_Planckian_data[-1])
     else:
-        index = where(_Planckian_temperatures == floor(temp / 100.0) * 100.0)[0][0]
+        index = np.where(_Planckian_temperatures == np.floor(temp / 100.0) * 100.0)[0][
+            0
+        ]
         amt = (temp - _Planckian_temperatures[index]) / (
             _Planckian_temperatures[index + 1] - _Planckian_temperatures[index]
         )
@@ -171,20 +192,20 @@ _BerryPos_data = {
 
 # Using data from BlueDarkOrange18.rgb
 #
-bdoData = genfromtxt(
-    get_data("BlueDarkOrange18.rgb"),
+bdoData = np.genfromtxt(
+    _get_data("BlueDarkOrange18.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_BlueDarkOrange18_data = empty((18, 3))
+_BlueDarkOrange18_data = np.empty((18, 3))
 for i in range(18):
     _BlueDarkOrange18_data[i][0] = bdoData["r"][i] / 255.0
     _BlueDarkOrange18_data[i][1] = bdoData["g"][i] / 255.0
     _BlueDarkOrange18_data[i][2] = bdoData["b"][i] / 255.0
 
-segments = linspace(0, 1, 9)
+segments = np.linspace(0, 1, 9)
 _BluesAgab_data = {
     "red": [
         (segments[i], _BlueDarkOrange18_data[i][0], _BlueDarkOrange18_data[i][0])
@@ -202,20 +223,20 @@ _BluesAgab_data = {
 
 # Using data from BlueDarkOrange19.rgb
 #
-bdoData = genfromtxt(
-    get_data("BlueDarkOrange19.rgb"),
+bdoData = np.genfromtxt(
+    _get_data("BlueDarkOrange19.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_BlueDarkOrange19_data = empty((19, 3))
+_BlueDarkOrange19_data = np.empty((19, 3))
 for i in range(19):
     _BlueDarkOrange19_data[i][0] = bdoData["r"][i] / 255.0
     _BlueDarkOrange19_data[i][1] = bdoData["g"][i] / 255.0
     _BlueDarkOrange19_data[i][2] = bdoData["b"][i] / 255.0
 
-segments = linspace(0, 1, 19)
+segments = np.linspace(0, 1, 19)
 _BlueDarkOrange_data = {
     "red": [
         (segments[i], _BlueDarkOrange19_data[i][0], _BlueDarkOrange19_data[i][0])
@@ -233,14 +254,14 @@ _BlueDarkOrange_data = {
 
 # Using data from BlueGreen14.rgb
 #
-bg14Data = genfromtxt(
-    get_data("BlueGreen14.rgb"),
+bg14Data = np.genfromtxt(
+    _get_data("BlueGreen14.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_BlueGreen14_data = empty((14, 3))
+_BlueGreen14_data = np.empty((14, 3))
 for i in range(14):
     _BlueGreen14_data[i][0] = bg14Data["r"][i] / 255.0
     _BlueGreen14_data[i][1] = bg14Data["g"][i] / 255.0
@@ -248,14 +269,14 @@ for i in range(14):
 
 # Using data from StepSeq25.rgb
 #
-ss25Data = genfromtxt(
-    get_data("StepSeq25.rgb"),
+ss25Data = np.genfromtxt(
+    _get_data("StepSeq25.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_StepSeq25_data = empty((25, 3))
+_StepSeq25_data = np.empty((25, 3))
 for i in range(25):
     _StepSeq25_data[i][0] = ss25Data["r"][i] / 255.0
     _StepSeq25_data[i][1] = ss25Data["g"][i] / 255.0
@@ -263,14 +284,14 @@ for i in range(25):
 
 # Using data from CyanOrange14.rgb
 #
-co14Data = genfromtxt(
-    get_data("CyanOrange14.rgb"),
+co14Data = np.genfromtxt(
+    _get_data("CyanOrange14.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_CyanOrange14_data = empty((14, 3))
+_CyanOrange14_data = np.empty((14, 3))
 for i in range(14):
     _CyanOrange14_data[i][0] = co14Data["r"][i] / 255.0
     _CyanOrange14_data[i][1] = co14Data["g"][i] / 255.0
@@ -278,14 +299,14 @@ for i in range(14):
 
 # Using data from BlueDarkYellow18.rgb
 #
-bdyData = genfromtxt(
-    get_data("BlueDarkYellow18.rgb"),
+bdyData = np.genfromtxt(
+    _get_data("BlueDarkYellow18.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_BlueDarkYellow18_data = empty((18, 3))
+_BlueDarkYellow18_data = np.empty((18, 3))
 for i in range(18):
     _BlueDarkYellow18_data[i][0] = bdyData["r"][i] / 255.0
     _BlueDarkYellow18_data[i][1] = bdyData["g"][i] / 255.0
@@ -293,14 +314,14 @@ for i in range(18):
 
 # Using data from BlueYellow14.rgb
 #
-by14Data = genfromtxt(
-    get_data("BlueYellow14.rgb"),
+by14Data = np.genfromtxt(
+    _get_data("BlueYellow14.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_BlueYellow14_data = empty((14, 3))
+_BlueYellow14_data = np.empty((14, 3))
 for i in range(14):
     _BlueYellow14_data[i][0] = by14Data["r"][i] / 255.0
     _BlueYellow14_data[i][1] = by14Data["g"][i] / 255.0
@@ -308,20 +329,20 @@ for i in range(14):
 
 # Using data from LightBlueToDarkBlue10.rgb
 #
-bu10Data = genfromtxt(
-    get_data("LightBlueToDarkBlue10.rgb"),
+bu10Data = np.genfromtxt(
+    _get_data("LightBlueToDarkBlue10.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_LightBlueToDarkBlue10_data = empty((10, 3))
+_LightBlueToDarkBlue10_data = np.empty((10, 3))
 for i in range(10):
     _LightBlueToDarkBlue10_data[i][0] = bu10Data["r"][i] / 255.0
     _LightBlueToDarkBlue10_data[i][1] = bu10Data["g"][i] / 255.0
     _LightBlueToDarkBlue10_data[i][2] = bu10Data["b"][i] / 255.0
 
-segments = linspace(0, 1, 10)
+segments = np.linspace(0, 1, 10)
 _LightBlueToDarkBlue_data = {
     "red": [
         (
@@ -351,14 +372,14 @@ _LightBlueToDarkBlue_data = {
 
 # Using data from Cat_12.rgb
 #
-cat12data = genfromtxt(
-    get_data("Cat_12.rgb"),
+cat12data = np.genfromtxt(
+    _get_data("Cat_12.rgb"),
     dtype=None,
     skip_header=7,
     names=("r", "g", "b"),
     encoding=None,
 )
-_Cat12_data = empty((12, 3))
+_Cat12_data = np.empty((12, 3))
 for i in range(12):
     _Cat12_data[i][0] = cat12data["r"][i] / 255.0
     _Cat12_data[i][1] = cat12data["g"][i] / 255.0
@@ -465,7 +486,7 @@ for _cmapname in _cmapnames:
             _cmapname_r, _cmapdat_r, _LUTSIZE
         )
     else:
-        _cmapdat_r = flipud(datad[_cmapname])
+        _cmapdat_r = np.flipud(datad[_cmapname])
         locals()[_cmapname_r] = colors.ListedColormap(_cmapdat_r, name=_cmapname_r)
     datad[_cmapname_r] = _cmapdat_r
     cmapd[_cmapname_r] = locals()[_cmapname_r]
@@ -473,7 +494,7 @@ for _cmapname in _cmapnames:
 
 def register_agab_maps():
     """
-    Register the color maps defined above.
+    Register the color maps defined in this module.
     """
     try:
         for m in cmapd.keys():
@@ -487,8 +508,8 @@ def show_color_maps():
     Show all the color maps defined in the agabColorMaps module.
     """
     register_agab_maps()
-    image = linspace(0, 1, _LUTSIZE).reshape(1, -1)
-    image = vstack((image, image))
+    image = np.linspace(0, 1, _LUTSIZE).reshape(1, -1)
+    image = np.vstack((image, image))
 
     # Get a list of the colormaps in this module.  Ignore the ones that end with
     # '_r' because these are simply reversed versions of ones that don't end

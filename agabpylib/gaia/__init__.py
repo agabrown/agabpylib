@@ -1,6 +1,4 @@
 """
-Gaia related tools.
-
 This package contains tools for handling Gaia data.
 """
 

@@ -1,38 +1,41 @@
 """
 Functions for the use and analysis of Gaia EDR3 data.
 
-Anthony Brown Dec 2020 - Dec 2020
+Anthony Brown Dec 2020 - Aug 2022
 """
 import numpy as np
 
 
 def correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean_flux):
     """
-    Correct the G-band fluxes and magnitudes for the input list of Gaia EDR3 data.
+    Correct the G-band fluxes and magnitudes for the input list of Gaia EDR3 photometry.
 
     Parameters
     ----------
-
-    bp_rp: float, numpy.ndarray
+    bp_rp : float or array of float
         The (BP-RP) colour listed in the Gaia EDR3 archive.
-    astrometric_params_solved: int, numpy.ndarray
+    astrometric_params_solved : int or array of int
         The astrometric solution type listed in the Gaia EDR3 archive.
-    phot_g_mean_mag: float, numpy.ndarray
+    phot_g_mean_mag : float or array of float
         The G-band magnitude as listed in the Gaia EDR3 archive.
-    phot_g_mean_flux: float, numpy.ndarray
+    phot_g_mean_flux : float or array of float
         The G-band flux as listed in the Gaia EDR3 archive.
 
     Returns
     -------
+    phot_g_mean_mag_corrected, phot_g_mean_flux_corrected : float or array of float
+        The corrected G-band magnitudes and fluxes. The corrections are only applied to
+        sources with a 2-parameter or 6-parameter astrometric solution fainter than G=13,
+        for which a (BP-RP) colour is available.
 
-    The corrected G-band magnitudes and fluxes. The corrections are only applied to
-    sources with a 2-parameter or 6-parameter astrometric solution fainter than G=13, for which a
-    (BP-RP) colour is available.
+    Notes
+    -----
+    This function should only be used with photometry from Gaia EDR3. Gaia DR3 already
+    includes these corrections.
 
-    Example
-    -------
-
-    gmag_corr, gflux_corr = correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean_flux)
+    Examples
+    --------
+    >>> gmag_corr, gflux_corr = correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean_flux)
     """
 
     if (
@@ -91,21 +94,23 @@ def correct_flux_excess_factor(bp_rp, phot_bp_rp_excess_factor):
 
     Parameters
     ----------
-
-    bp_rp: float, numpy.ndarray
+    bp_rp: float or float array
         The (BP-RP) colour listed in the Gaia EDR3 archive.
-    phot_bp_rp_excess_factor: float, numpy.ndarray
+    phot_bp_rp_excess_factor: float or float array
         The flux excess factor listed in the Gaia EDR3 archive.
 
     Returns
     -------
+    phot_bp_rp_excess_factor_cor : float or float array
+        The corrected value for the flux excess factor, which is zero for "normal" stars.
 
-    The corrected value for the flux excess factor, which is zero for "normal" stars.
+    Notes
+    -----
+    This function is applicable to photometry from both Gaia EDR3 and Gaia DR3.
 
-    Example
-    -------
-
-    phot_bp_rp_excess_factor_corr = correct_flux_excess_factor(bp_rp, phot_bp_rp_flux_excess_factor)
+    Examples
+    --------
+    >>> phot_bp_rp_excess_factor_corr = correct_flux_excess_factor(bp_rp, phot_bp_rp_flux_excess_factor)
     """
 
     if np.isscalar(bp_rp) or np.isscalar(phot_bp_rp_excess_factor):
