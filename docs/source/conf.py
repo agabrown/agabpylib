@@ -16,13 +16,14 @@
 
 
 # -- Project information -----------------------------------------------------
+import agabpylib
 
 project = "agabpylib"
-copyright = "2022, Anthony G.A. Brown"
+copyright = "2015-2022, Anthony G.A. Brown"
 author = "Anthony G.A. Brown"
 
-# The full version, including alpha/beta/rc tags
-release = "0.1.15"
+version = agabpylib.__version__
+release = agabpylib.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -34,9 +35,8 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx_automodapi.automodapi",
     "matplotlib.sphinxext.plot_directive",
-    "numpydoc",
+    "sphinx.ext.napoleon",
 ]
-numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -49,12 +49,22 @@ exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-#
-html_theme = "pydata_sphinx_theme"
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
+html_theme = "sphinx_book_theme"
+html_title = "agabpylib"
 html_static_path = ["_static"]
+html_show_sourcelink = False
+html_theme_options = {
+    "path_to_docs": "docs",
+    "repository_url": "https://github.com/agabrown/agabpylib",
+    "repository_branch": "master",
+    "launch_buttons": {
+        "binderhub_url": "https://mybinder.org",
+        "colab_url": "https://colab.research.google.com/",
+        "notebook_interface": "jupyterlab",
+    },
+    "use_edit_page_button": False,
+    "use_issues_button": False,
+    "use_repository_button": True,
+    "use_download_button": True,
+}
+html_baseurl = "https://agabpylib.readthedocs.io/en/latest/"

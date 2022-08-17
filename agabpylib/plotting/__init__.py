@@ -1,7 +1,7 @@
 """
 Plotting tools.
 
-This package provides functions for plotting.
+This package provides classes and functions for plotting.
 """
 
 from .plotstyles import *

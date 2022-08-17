@@ -1,44 +1,44 @@
 """
-Provides wrappers around existing kernel density estimation methods. In addition some utility methods are
-provided.
+Provides wrappers around scikit-learn kernel density estimation methods.
 
-Anthony Brown May 2015 - Jun 2019
+Anthony Brown May 2015 - Aug 2022
 """
 
 import numpy as np
-from sklearn.neighbors import KernelDensity
-from sklearn.preprocessing import StandardScaler
+import sklearn
 
 
 def kde_scikitlearn(
     data, N=100, lims=None, evalOnData=False, kde_bandwidth=1.0, **kwargs
 ):
     """
-    Provide a kernel density estimate for a set of data points (d_i). Make use of the scikit-learn
-    scikitlearn.neighbours.KernelDensity class.
+    Provide a kernel density estimate for a set of data points (d_i).
+
+    Make use of the sklearn.neighbours.KernelDensity class.
 
     Parameters
     ----------
-
-    data - 1D array of values of d_i
-
-    Keyword Arguments
-    -----------------
-
-    lims - Tuple with limits on data to use (dmin, dmax)
-    N - Number of KDE samples in d (regular grid between dmin and dmax)
-    evalOndata - If true returns the log(density) evaluated on the data (instead of the regular grid)
-    kde_bandwidth - Bandwith for density estimator
-    **kwargs - Extra arguments for KernelDensity class initializer
+    data : floar array
+        1D array of values of d_i
+    lims : tuple
+        Limits on data to use (dmin, dmax)
+    N : int
+        Number of KDE samples in d (regular grid between dmin and dmax)
+    evalOndata : boolean
+        If true return the log(density) evaluated on the data (instead of the regular grid)
+    kde_bandwidth : float
+        Bandwith for density estimator
 
     Returns
     -------
+    Dsamples, log_dens : float array
+        Dsamples, log_dens: The log(density) evaluated on the regular grid Dsamples (both shape (N,))
+    If evalOnData is True return only log_dens evaluated for the data points (shape (data.size,)).
 
-    Dsamples, log_dens: The log(density) evaluated on the regular grid Dsamples (both shape (N,))
-
-    OR
-
-    log_dens: The log(density) evaluated for the data points (shape (data.size,)).
+    Other parameters
+    ----------------
+    **kwargs : dict
+        Extra arguments for KernelDensity class initializer
     """
     if lims == None:
         dmin = data.min()
@@ -47,7 +47,7 @@ def kde_scikitlearn(
         dmin = lims[0]
         dmax = lims[1]
 
-    kde = KernelDensity(bandwidth=kde_bandwidth, **kwargs)
+    kde = sklearn.neighbours.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(data[:, None])
     if not (evalOnData):
         Dsamples = np.linspace(dmin, dmax, N)[:, None]
@@ -117,9 +117,9 @@ def kde2d_scikitlearn(
     data_values = np.vstack([xdata, ydata]).T
     # First scale the input data to unit variance and zero mean (to handle the possibly very different
     # input units), then estimate the KDE bandwidth and carry out the KDE.
-    scaler = StandardScaler().fit(data_values)
+    scaler = sklearn.preprocessing.StandardScaler().fit(data_values)
     scaled_values = scaler.transform(data_values)
-    kde = KernelDensity(bandwidth=kde_bandwidth, **kwargs)
+    kde = sklearn.neighbours.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(scaled_values)
     if not (evalOnData):
         if not (xeval == None):

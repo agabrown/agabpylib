@@ -15,7 +15,7 @@ def useagab(
     fontfam="sans-serif",
     fontsize=18,
     sroncolours=False,
-    ncolors=10,
+    ncolors=4,
     axislinewidths=1,
     linewidths=2,
     lenticks=6,
@@ -66,7 +66,7 @@ def useagab(
     if sroncolours:
         line_colours = dc.get_distinct(ncolors)
     else:
-        line_colours = plt.cm.get_cmap("tab10").colors[0:ncolors]
+        line_colours = plt.cm.get_cmap("tab10").colors
     mpl.rc("axes", prop_cycle=(cycler.cycler("color", line_colours)))
     mpl.rc("xtick", direction="out")
     mpl.rc("ytick", direction="out")

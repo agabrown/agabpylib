@@ -3,8 +3,8 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-agabpylib documentation
-=======================
+agabpylib
+=========
 
 Python library with Anthony's private python utilities for data analysis, simulation, plotting, etc.
 
@@ -13,21 +13,15 @@ Python library with Anthony's private python utilities for data analysis, simula
    at anytime. There is likely to be outdated or badly performing code, and there is no committment to fixing
    issues. Use at your own risk.
 
-Getting started
----------------
+Documentation
+-------------
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    
    getting-started/index
-
-User documentation
-------------------
-
-.. toctree:: 
-   :maxdepth: 2
-
    user-documentation/index
+   api
 
 Indices and tables
 ------------------

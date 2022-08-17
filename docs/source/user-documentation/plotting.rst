@@ -1,5 +1,7 @@
-Plotting utilities (`agabpylib.plotting`)
-=========================================
+Plotting utilities
+==================
+
+Package: ``agabpylib.plotting``
 
 Introduction
 ------------
@@ -9,6 +11,8 @@ based on `matplotlib <https://matplotlib.org>`_.
 
 Plot styles
 -----------
+
+Detailed API: :py:mod:`agabpylib.plotting.plotstyles`
 
 The plotting style can be set by invoking ``useagab`` which results in larger fonts, thicker lines, 
 specific tick lengths, and a choice for the number colours to use for the colour cycler. A colour-blind
@@ -27,7 +31,7 @@ Example plots are include here to show the difference with the default matplotli
     from agabpylib.plotting.plotstyles import useagab, apply_tufte
 
     x=np.linspace(-np.pi,np.pi,1000)
-    fig, axA  = plt.subplots(1, 1, figsize=(6,4.5))
+    figA, axA  = plt.subplots(1, 1, figsize=(6,4.5))
     axA.plot(x, np.sin(x)*np.cos(x), label=r"$\sin(x)\cos(x)$")
     axA.set_title("default matplotlib")
     axA.legend()
@@ -44,33 +48,55 @@ Example plots are include here to show the difference with the default matplotli
     axC.set_title("useagab() + apply_tufte()")
     axC.legend()
 
+    useagab(sroncolours=True)
+    figD, axD  = plt.subplots(1, 1, figsize=(6,4.5))
+    apply_tufte(axD)
+    for k in range(4):
+        axD.plot(x, np.sin(x)*np.cos((k+1)*x), label=rf"$\sin(x)\cos({k+1}x)$")
+    axD.set_title("sroncolours=True")
+    axD.legend(fontsize=12)
+
     plt.show()
 
 Colour maps
 -----------
 
+Detailed API: :py:mod:`agabpylib.plotting.agabcolormaps`
+
 The ``agabpylib.plotting.agabcolormaps`` module adds colour maps which were collected from a variety
 of sources. Most of these should not be used. The code is mostly retained for illustration of how to
 create custom colour maps for use with matplotlib.
 
-The colour maps are show below.
+Here is a visualization of the colour maps.
 
 .. plot::
 
     from agabpylib.plotting.agabcolormaps import show_color_maps
     show_color_maps()
 
-Reference/API
--------------
+Distinct colour-blind friendly colours
+--------------------------------------
 
-.. automodapi:: agabpylib.plotting.plotstyles
-    :no-inheritance-diagram:
+Detailed API: :py:mod:`agabpylib.plotting.distinct_colours`
 
-.. automodapi:: agabpylib.plotting.agabcolormaps
-    :no-inheritance-diagram:
+The ``useagab()`` style offers the option to use the colour set developed by Paul Tol (SRON). The colour
+set is from the 2011 code by Tol, and corresponds to the 2021 "muted" colour set (see `<https://personal.sron.nl/~pault/>`_).
 
-.. .. autosummary::
-    :toctree: generated
+Plots of distributions
+----------------------
 
-    agabpylib.plotting.plotstyles
-    agabpylib.plotting.agabcolormaps
+Detailed API: :py:mod:`agabpylib.plotting.distributions`
+
+The module ``agabpylib.plotting.distributions`` provides functions for making plots of 1D or 2D distributions 
+of data, such as samples from an MCMC run. This module is obsolete as the functionality is covered much better 
+by other packages such as, for example, `corner <https://github.com/dfm/corner.py>`_  or
+`arViz <https://www.arviz.org/en/latest/>`_.
+
+Plotting tools for inference
+----------------------------
+
+Detailed API: :py:mod:`agabpylib.plotting.inference`
+
+The module ``agabpylib.plotting.inference`` provides functions that are useful when making plots in the
+context of inference problems.
+

@@ -1,6 +1,8 @@
 """
 Custom colormaps collected from a variety of sources.
 
+Anthony Brown Aug 2015 - Aug 2022
+
 Notes
 -----
 Execute
@@ -515,22 +517,24 @@ def show_color_maps():
     # '_r' because these are simply reversed versions of ones that don't end
     # with '_r'
     maps = sorted(ma for ma in datad.keys() if not ma.endswith("_r"))
-    nmaps = len(maps) + 1
+    nmaps = len(maps)
 
-    fig = plt.figure(figsize=(5, 10))
-    fig.subplots_adjust(top=0.99, bottom=0.01, left=0.01, right=0.99)
-    for j, ma in enumerate(maps):
-        ax = plt.subplot(nmaps, 1, j + 1)
-        plt.axis("off")
-        plt.imshow(image, aspect="auto", cmap=plt.get_cmap(ma), origin="lower")
-        pos = list(ax.get_position().bounds)
-        fig.text(
-            pos[0] + 0.5 * (pos[2] - pos[0]),
-            pos[1],
-            ma,
+    figh = (nmaps + (nmaps - 1) * 0.1) * 0.25
+    fig, axs = plt.subplots(nrows=nmaps, figsize=(6.4, figh))
+    fig.subplots_adjust(top=1, bottom=0, left=0.3, right=0.99)
+    for ax, cmap_name in zip(axs, maps):
+        ax.imshow(image, aspect="auto", cmap=cmap_name)
+        ax.text(
+            -0.01,
+            0.5,
+            cmap_name,
+            va="center",
+            ha="right",
             fontsize=10,
-            horizontalalignment="center",
+            transform=ax.transAxes,
         )
+    for ax in axs:
+        ax.set_axis_off()
 
     plt.show()
 

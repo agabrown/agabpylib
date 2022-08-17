@@ -1,42 +1,45 @@
 """
-Provides methods to plot the distribution of data. This can be univariate distributions, such as
-histograms, or multivariate distributions, such as 2D histograms.
+Provides methods to visualize 1D or 2D distributions of data.
 
-Anthony Brown May 2015 - Jul 2019
+Anthony Brown May 2015 - Aug 2022
+
+.. note::
+    The functionalities offered here are covered much better by other tools for visualization
+    of distributions such as `corner <https://github.com/dfm/corner.py>`_ or `arViz <https://www.arviz.org/en/latest/>`_.
 """
 
 import numpy as np
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-from cycler import cycler
-from matplotlib import rc, cm
+import cycler
 
 from matplotlib.ticker import NullFormatter
-from agabpylib.plotting.inference import convert_to_stdev_nan
+import agabpylib.plotting.inference as infr
 
-from agabpylib.densityestimation.kde import kde2d_scikitlearn, kde_scikitlearn
-from agabpylib.plotting.distinct_colours import get_distinct
+import agabpylib.densityestimation.kde as abkde
+import agabpylib.plotting.distinct_colours as dc
 
-line_colours = get_distinct(4)
+line_colours = dc.get_distinct(4)
 
 # Configure matplotlib
-rc("text", usetex=True)
-rc("font", family="serif", size=10)
-rc("xtick.major", size="6")
-rc("xtick.minor", size="4")
-rc("ytick.major", size="6")
-rc("ytick.minor", size="4")
-rc("lines", linewidth=1.5)
-rc("axes", linewidth=1)
-rc("axes", facecolor="f0f0f0")
-rc("axes", axisbelow=True)
-rc("axes", prop_cycle=cycler("color", line_colours))
-rc("xtick", direction="out")
-rc("ytick", direction="out")
-rc("grid", color="cbcbcb")
-rc("grid", linestyle="-")
-rc("grid", linewidth=0.5)
-rc("grid", alpha=1.0)
-rc("figure", facecolor="ffffff")
+mpl.rc("text", usetex=True)
+mpl.rc("font", family="serif", size=10)
+mpl.rc("xtick.major", size="6")
+mpl.rc("xtick.minor", size="4")
+mpl.rc("ytick.major", size="6")
+mpl.rc("ytick.minor", size="4")
+mpl.rc("lines", linewidth=1.5)
+mpl.rc("axes", linewidth=1)
+mpl.rc("axes", facecolor="f0f0f0")
+mpl.rc("axes", axisbelow=True)
+mpl.rc("axes", prop_cycle=cycler.cycler("color", line_colours))
+mpl.rc("xtick", direction="out")
+mpl.rc("ytick", direction="out")
+mpl.rc("grid", color="cbcbcb")
+mpl.rc("grid", linestyle="-")
+mpl.rc("grid", linewidth=0.5)
+mpl.rc("grid", alpha=1.0)
+mpl.rc("figure", facecolor="ffffff")
 
 
 def plot_joint_kde_and_marginals(
@@ -56,7 +59,9 @@ def plot_joint_kde_and_marginals(
 ):
     """
     Plot the joint distribution of two variables, X and Y, for which the data set {(x_i, y_i)} is
-    available. The joint and marginal distributions and show in one plot, where the distributions are
+    available.
+
+    The joint and marginal distributions are show in one plot, where the distributions are
     estimated using Kernel Density Estimation (KDE).
 
     Parameters
@@ -65,32 +70,33 @@ def plot_joint_kde_and_marginals(
         1D array of values of x_i
     ydata : array_like
         1D array of values of y_i
-    xname : str, optional
+    xname : str
         Name of the X variable
-    yname : str, optional
+    yname : str
         Name of Y variable
-    xunit : str, optional
+    xunit : str
         Units for the X variable.
-    yunit : str, optional
+    yunit : str
         Units for the Y variable.
-    xlims : tuple, optional
+    xlims : tuple
         Limits in x to use (min, max).
-    ylims : tuple, optional
+    ylims : tuple
         Limits in y to use (min, max).
-    nx : int, optional
+    nx : int
         Number of KDE samples in X.
-    ny : int, optional
+    ny : int
         Number of KDE samples in Y.
-    lnpmin : float, optional
+    lnpmin : float
         minimum value of the log of the KDE density (relative to maximum) to include in colour image.
-    contour_only : bool, optional
+    contour_only : bool
         If true plot only the contours enclosing constant levels of cumulative probability.
-    show_data : bool, optional
+    show_data : bool
         If true plot the data points.
 
     Returns
     -------
-    Figure object with the plot.
+    fig : matplotlib.figure.Figure
+        Figure object with the plot.
     """
 
     if xname is None:
@@ -149,7 +155,7 @@ def plot_joint_kde_and_marginals(
     # Marginal over X
     ax_marginal_x = fig.add_axes(ax_marginal_x_rect)
     ax_marginal_x.xaxis.set_major_formatter(nullfmt)
-    xsamples, log_dens = kde_scikitlearn(xdata, lims=(xmin, xmax), N=200)
+    xsamples, log_dens = abkde.kde_scikitlearn(xdata, lims=(xmin, xmax), N=200)
     dens_kde = np.exp(log_dens)
     ax_marginal_x.fill_between(
         xsamples[:, 0],
@@ -174,7 +180,7 @@ def plot_joint_kde_and_marginals(
     # Marginal over Y
     ax_marginal_y = fig.add_axes(ax_marginal_y_rect)
     ax_marginal_y.yaxis.set_major_formatter(nullfmt)
-    ysamples, log_dens = kde_scikitlearn(ydata, lims=(ymin, ymax), N=200)
+    ysamples, log_dens = abkde.kde_scikitlearn(ydata, lims=(ymin, ymax), N=200)
     dens_kde = np.exp(log_dens)
     ax_marginal_y.fill_betweenx(
         ysamples[:, 0],
@@ -218,7 +224,9 @@ def plot_joint_kde(
 ):
     """
     Plot the joint distribution of two variables, X and Y, for which the data set {(x_i, y_i)} is
-    available. The joint distribution are estimated using Kernel Density Estimation (KDE). The plot is
+    available.
+
+    The joint distribution are estimated using Kernel Density Estimation (KDE). The plot is
     produced using the currently active Axes object.
 
     Parameters
@@ -227,32 +235,33 @@ def plot_joint_kde(
         1D array of values of x_i
     ydata : array_like
         1D array of values of y_i
-    xname : str, optional
+    xname : str
         Name of the X variable
-    yname : str, optional
+    yname : str
         Name of Y variable
-    xunit :str, optional
+    xunit :str
         Units for the X variable
-    yunit : str, optional
+    yunit : str
         Units for the Y variable
-    xlims : tuple, optional
+    xlims : tuple
         Tuple with limits in x to use (min, max)
-    ylims : tuple, optional
+    ylims : tuple
         Tuple with limits in y to use (min, max)
-    nx : int, optional
+    nx : int
         Number of KDE samples in X
-    ny : int, optional
+    ny : int
         Number of KDE samples in Y
-    lnpmin : float, optional
+    lnpmin : float
         minimum value of the log of the KDE density (relative to maximum) to include in colour image
-    contour_only : bool, optional
+    contour_only : bool
         If true plot only the contours enclosing constant levels of cumulative probability
-    show_data : bool, optional
+    show_data : bool
         If true plot the data points
 
     Returns
     -------
-    Axis object with the plot.
+    ax : matplotlib.axes.Axes
+        Axes object with the plot.
     """
 
     if xname is None:
@@ -274,7 +283,9 @@ def plot_joint_kde(
 
     xsamples = np.linspace(xmin, xmax, nx)
     ysamples = np.linspace(ymin, ymax, ny)
-    log_dens = kde2d_scikitlearn(xdata, ydata, xlims=(xmin, xmax), ylims=(ymin, ymax))
+    log_dens = abkde.kde2d_scikitlearn(
+        xdata, ydata, xlims=(xmin, xmax), ylims=(ymin, ymax)
+    )
     log_dens = log_dens - log_dens.max()
 
     ax_joint = plt.gca()
@@ -283,7 +294,7 @@ def plot_joint_kde(
         kde_image = ax_joint.imshow(
             log_dens,
             aspect="auto",
-            cmap=cm.Blues,
+            cmap=mpl.cm.Blues,
             extent=[xmin, xmax, ymin, ymax],
             origin="lower",
         )
@@ -291,7 +302,7 @@ def plot_joint_kde(
     ax_joint.contour(
         xsamples,
         ysamples,
-        convert_to_stdev_nan(log_dens),
+        infr.convert_to_stdev_nan(log_dens),
         levels=(0.01, 0.683, 0.955, 0.997),
         colors="k",
     )  # line_colours[0])

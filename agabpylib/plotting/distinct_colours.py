@@ -4,6 +4,10 @@
 Colour-blind proof distinct colours module, based on work by Paul Tol
 Pieter van der Meer, 2011
 SRON - Netherlands Institute for Space Research
+
+.. note::
+    This code is for an older version of Tol's color scheme. It corresponds to the 2021
+    "muted" color set (see `<https://personal.sron.nl/~pault/>`_).
 """
 
 # colour table in HTML hex format
@@ -41,21 +45,23 @@ xarr = [
 ]
 
 
-# get specified nr of distinct colours in HTML hex format.
-# in: nr - number of colours [1..12]
-# returns: list of distinct colours in HTML hex
 def get_distinct(nr):
-    #
-    # check if nr is in correct range
-    #
+    """
+    Get specified number of distinct colours in HTML hex format.
 
+    Parameters
+    ----------
+    nr : int
+        number of colours [1..12]
+
+    Returns
+    -------
+    hex_colours : list of str
+        List of distinct colours in HTML hex format.
+    """
     if nr < 1 or nr > 12:
         print("wrong nr of distinct colours!")
         return
-
-    #
-    # get list of indices
-    #
 
     lst = xarr[nr - 1]
 
