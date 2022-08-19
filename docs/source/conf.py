@@ -36,6 +36,10 @@ extensions = [
     "sphinx_automodapi.automodapi",
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.napoleon",
+    "myst_parser",
+]
+myst_enable_extensions = [
+    "colon_fence",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
