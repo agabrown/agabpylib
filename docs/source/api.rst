@@ -10,6 +10,9 @@ Detailed API documentation
 .. automodapi:: agabpylib.gaia.ruwetools
     :no-inheritance-diagram:
 
+.. automodapi:: agabpylib.mcmc.metropolis
+    :no-inheritance-diagram:
+
 .. automodapi:: agabpylib.plotting.plotstyles
     :no-inheritance-diagram:
 

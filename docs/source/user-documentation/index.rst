@@ -6,5 +6,6 @@ User documentation
 
     densityestimation
     gaia
+    mcmc
     plotting
     

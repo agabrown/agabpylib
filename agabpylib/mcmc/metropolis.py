@@ -22,20 +22,15 @@ class MetropolisSampler:
 
         Parameters
         ----------
-
         lnprob : callable
             Function returning the natural logarithm of the probability density distribution to be
-            sampled. Should take a vector of floats as its single input parameter.
+            sampled. Should take a 1D array of floats as its single input parameter.
         proposal_rvs : callable
-            Function returning a random variate from the proposal distribution. Should take a vector
+            Function returning a random variate from the proposal distribution. Should take a 1D array
             of floats as its single input parameter.
-
-        Keywords
-        --------
 
         Returns
         -------
-
         Nothing.
         """
 
@@ -54,23 +49,17 @@ class MetropolisSampler:
 
         Parameters
         ----------
-
-        theta_init : float (scalar or vector)
+        theta_init : float, or float array
             Initial values of the samples theta_k.
         n_iter : int
             Number of MCMC iterations to perform.
-
-        Keywords
-        --------
-
         burnin : int
             Number of "burn-in" steps to take.
         thin : int
-            Only output every thin sample.
+            Only output every thin samples.
 
         Returns
         -------
-
         Nothing
         """
 
@@ -99,18 +88,12 @@ class MetropolisSampler:
 
         Parameters
         ----------
-
-        None
-
-        Keywords
-        --------
-
         None
 
         Returns
         -------
-
-        The array with MCMC samples (shape (n_samples, n_parameters)).
+        samples : float array
+            The array with MCMC samples (shape (n_samples, n_parameters)).
         """
 
         if np.any(self.samples == None):
@@ -123,18 +106,12 @@ class MetropolisSampler:
 
         Parameters
         ----------
-
-        None
-
-        Keywords
-        --------
-
         None
 
         Returns
         -------
-
-        The acceptance fraction.
+        acceptance_frac : float
+            The acceptance fraction.
         """
         if np.any(self.samples == None):
             raise Exception("No samples generated: Please invoke run_mcmc() first!")

@@ -1,7 +1,11 @@
 """
 Utility functions for using PyStan.
 
-Anthony Brown June 2017 - Jun 2019
+.. warning::
+    This code is obsolete with respect to recent pystan versions. I have switched
+    to cmdstanpy + cmdstan for which the code below is not needed.
+
+Anthony Brown June 2017 - Aug 2022
 """
 
 import pystan
