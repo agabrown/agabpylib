@@ -1,11 +1,11 @@
 """
 Custom quadrature methods which are not available from scipy.
 
-Anthony Brown Aug 2017 -Jun 2019
+Anthony Brown Aug 2017 -Aug 2022
 """
 
 import numpy as np
-from scipy.special import roots_laguerre
+import scipy as sp
 
 __all__ = ["fixed_quad_laguerre"]
 
@@ -22,7 +22,7 @@ def _cached_roots_laguerre(n):
     if n in _cached_roots_laguerre.cache:
         return _cached_roots_laguerre.cache[n]
 
-    x, w, _ = roots_laguerre(n)
+    x, w, _ = sp.special.roots_laguerre(n)
     # Multiply the weights by exp(x)
     _cached_roots_laguerre.cache[n] = (x, w * np.exp(x))
     return _cached_roots_laguerre.cache[n]

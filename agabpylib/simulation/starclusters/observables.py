@@ -1,7 +1,7 @@
 """
 Generate the Gaia observables for a given simulated cluster.
 
-Anthony Brown Sep 2019 - Jan 2020
+Anthony Brown Sep 2019 - Aug 2022
 """
 
 from abc import ABC, abstractmethod
@@ -24,6 +24,8 @@ from pygaia.errors.photometric import (
 )
 from pygaia.errors.spectroscopic import vrad_error_sky_avg
 
+__all__ = ["Observables", "GaiaSurvey"]
+
 
 class Observables(ABC):
     """
@@ -42,7 +44,6 @@ class Observables(ABC):
 
         Returns
         -------
-
         Nothing: the simulated observations of the cluster are appended to the input table.
         """
         pass
@@ -51,7 +52,7 @@ class Observables(ABC):
         """
         Returns
         -------
-        str:
+        infoi : str
             String with information about the simulated observations.
         """
         return "Simulated observations\n" + "----------------------\n" + self.addinfo()
@@ -61,7 +62,7 @@ class Observables(ABC):
         """
         Returns
         -------
-        str:
+        info : str
             String with specific information about the simulated observations.
         """
         pass
@@ -71,7 +72,7 @@ class Observables(ABC):
         """
         Returns
         -------
-        dict :
+        meta : dict
             Metadata on the simulated observations.
         """
         pass
@@ -110,7 +111,6 @@ class GaiaSurvey(Observables):
             Right ascension of cluster centre (of mass) in degrees.
         dec_c : astropy.units.Quantity
             Declination of cluster centre (of mass) in degrees.
-
         rvslim : float
             RVS survey limit (default 16.0)
         """

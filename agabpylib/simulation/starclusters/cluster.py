@@ -2,19 +2,25 @@
 Provide classes and methods for basic simulations of star clusters, where the main aim is to support
 kinematic modelling studies.
 
-The cluster simulations are focused on generating realistic observables and are NOT intended for the simulation of
-dynamically self-consistent clusters (i.e. where the mass distribution, potential, and kinematics are consistent).
+.. note::
+    The cluster simulations are focused on generating realistic observables and
+    are not intended for the simulation of dynamically self-consistent clusters
+    (i.e. where the mass distribution, potential, and kinematics are
+    consistent).
 
-Anthony Brown Jul 2019 - Sep 2019
+Anthony Brown Jul 2019 - Aug 2022
 """
 
 import numpy as np
 from scipy.interpolate import interp1d
-import astropy.units as u
-from astropy.table import QTable, Column
 from os import path
 from datetime import datetime
+import astropy.units as u
+from astropy.table import QTable, Column
+
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
+
+__all__ = ["StarAPs", "StarCluster"]
 
 
 class StarAPs:
@@ -156,7 +162,8 @@ class StarAPs:
 
         Returns
         -------
-        Table with a list of stars and their properties.
+        aptable : astropy.table.Table
+            Table with a list of stars and their properties.
         """
         age_index = self.isocmd.age_index(self.logage)
         self.logageloaded = self.isocmd.ages[age_index]
@@ -181,7 +188,7 @@ class StarAPs:
         """
         Returns
         -------
-        dict :
+        meta : dict
             Dictionary containing metadata describing the astrophysical parameter model.
         """
         meta = {
@@ -202,7 +209,7 @@ class StarAPs:
         """
         Returns
         -------
-        str :
+        info : str
             String with information on the simulation of the astrophysical parameters.
         """
         info = ""
@@ -242,11 +249,11 @@ class StarCluster:
             Number of stars in the cluster.
         staraps : agabpylib.simulation.starclusters.StarAPs
             Class that generates the astrophysical parameters for the cluster stars.
-        starpos: agabpylib.simulation.starclusters.SpaceDistribution
+        starpos : agabpylib.simulation.starclusters.SpaceDistribution
             The class that will generate the space positions of the stars with respect to the cluster (bary)centre.
         starkin : agabpylib.simulation.starclusters.Kinematics
             The instance of the class that will generate the cluster kinematics.
-        simobs :: agabpylib.simulation.starclusters.observables
+        simobs : agabpylib.simulation.starclusters.Observables
             The instance of the class that will simulate the observations of the cluster.
         """
         self.n_stars = n_stars
@@ -277,7 +284,7 @@ class StarCluster:
         """
         Returns
         -------
-        str:
+        info : str
             Information on the simulated cluster.
         """
         return (
@@ -297,7 +304,7 @@ class StarCluster:
         """
         Returns
         -------
-        dict :
+        meta : dict
             Metadata on the simulated star cluster.
         """
         return self.star_table.meta
@@ -312,6 +319,9 @@ class StarCluster:
             Name of the file to write to.
         ffmt : str
             File format. See astropy.Table.write.
+
+        Other parameters
+        ----------------
         **kwargs : optional
             Further keyword arguments for astropy.table.Table.write()
         """

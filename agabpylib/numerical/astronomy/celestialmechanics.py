@@ -1,14 +1,14 @@
 """
-Provides useful functions for very basic celestial mechanics applications.
+Provides useful functions for basic celestial mechanics applications.
 
-Anthony Brown May 2020 - Feb 2021
+Anthony Brown May 2020 - Aug 2022
 """
 
+import numpy as np
+import scipy as sp
+from scipy.spatial.transform import Rotation as R
 import astropy.constants as c
 import astropy.units as u
-import numpy as np
-from scipy.optimize import toms748
-from scipy.spatial.transform import Rotation as R
 
 __all__ = ["kepler_equation_solver", "orbital_elements_to_xyz"]
 
@@ -21,13 +21,21 @@ def _kepler_equation(EE, ee, MM):
 
 def kepler_equation_solver(e, M):
     """
-    Solve the Kepler equation for the input values of eccentricity and mean anomaly. Use a root-finding method.
+    Solve the Kepler equation for the input values of eccentricity and mean anomaly.
 
-    :param e: scalar or 1D array
-        Values of the eccentricity
-    :param M: scalar or 1D array
-        Values of the mean anomaly
-    :return:
+    Use a root-finding method. The input can consist of two scalar values, a combination
+    of a scalar and a 1D array, or two equally sized 1D arrays.
+
+    Parameters
+    ----------
+    e : float scalar or 1D array
+        Value(s) of the eccentricity
+    M : float scalar or 1D array
+        Value(s) of the mean anomaly
+
+    Returns
+    -------
+    E : float scalar or 1D array
         Array of eccentric anomaly values.
     """
     if np.ndim(e) > 1 or np.ndim(M) > 1:
@@ -37,7 +45,7 @@ def kepler_equation_solver(e, M):
         if e == 0 or np.mod(M, np.pi) == 0:
             return np.mod(M, 2 * np.pi)
         else:
-            return toms748(
+            return sp.optimize.toms748(
                 _kepler_equation, 0, 2 * np.pi, args=(e, np.mod(M, 2 * np.pi))
             )
 
@@ -59,7 +67,7 @@ def kepler_equation_solver(e, M):
             E.append(np.mod(Ml, 2 * np.pi))
         else:
             E.append(
-                toms748(
+                sp.optimize.toms748(
                     _kepler_equation, 0, 2 * np.pi, args=(el, np.mod(Ml, 2 * np.pi))
                 )
             )
@@ -70,25 +78,33 @@ def kepler_equation_solver(e, M):
 def orbital_elements_to_xyz(a, e, incl, lon_nodes, argperi, tau, t):
     """
     For the given Keplerian orbital elements and the epoch t, calculate the position in (x,y,z) in the BCRS.
-    FOR NOW ORBITS WITH e<1 ARE ASSUMED. The orbit is treated as that of a test-particle and thus the period is
-    given in multiples of 2*PI/(GM_sun)*(au)^1.5.
 
-    :param a: scalar or 1D-array
+    The inputs can consist of all scalars or a mix of scalars an 1D arrays.
+
+    .. note::
+        For now orbits with e<1 are assumed. The orbit is treated as that of a test-particle and thus
+        the period is given in multiples of 2*PI/(GM_sun)*(au)^1.5.
+
+    Parameters
+    ----------
+    a : float scalar or 1D-array
         Semi-major axis in au
-    :param e: scalar or 1D-array
+    e : float scalar or 1D-array
         Eccentricity
-    :param incl: scalar or 1D-array
+    incl : float scalar or 1D-array
         inclination in degrees (0-180)
-    :param lon_nodes: scalar or 1D-array
+    lon_nodes : float scalar or 1D-array
         Longitude of the line of nodes in degrees (0-360)
-    :param argperi: scalar or 1D-array
+    argperi : float scalar or 1D-array
         Argument of perihelion in degrees (0-360)
-    :param tau: scalar or 1D-array
+    tau : float scalar or 1D-array
         Epoch of perihelium passage in yr
-    :param t: scalar or 1D-array
-        Epoch at which to calculate (x,y,z)
+    t : float scalar or 1D-array
+        Epoch at which to calculate (x,y,z) in yr
 
-    :return:
+    Returns
+    -------
+    x, y, z : float array of shape (N,3)
         Array of values (x,y,z) of shape (N,3)
     """
     if (

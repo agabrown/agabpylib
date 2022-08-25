@@ -18,7 +18,7 @@ def kde_scikitlearn(
 
     Parameters
     ----------
-    data : floar array
+    data : float array
         1D array of values of d_i
     lims : tuple
         Limits on data to use (dmin, dmax)
@@ -33,7 +33,7 @@ def kde_scikitlearn(
     -------
     Dsamples, log_dens : float array
         Dsamples, log_dens: The log(density) evaluated on the regular grid Dsamples (both shape (N,))
-    If evalOnData is True return only log_dens evaluated for the data points (shape (data.size,)).
+        If evalOnData is True return only log_dens evaluated for the data points (shape (data.size,)).
 
     Other parameters
     ----------------
@@ -77,28 +77,37 @@ def kde2d_scikitlearn(
 
     Parameters
     ----------
-
-    xdata - 1D array of values of x_i
-    ydata - 1D array of values of y_i
-
-    Keyword Arguments
-    -----------------
-
-    xlims - Tuple with limits in x to use (xmin, xmax)
-    ylims - Tuple with limits in y to use (ymin, ymax)
-    Nx - Number of KDE samples in X (regular grid between xmin and xmax)
-    Ny - Number of KDE samples in Y (regular grid between ymin and ymax)
-    xeval - evaluate on this set of x coordinates (takes precedence over regular grid)
-    yeval - evaluate on this set of y coordinates (takes precedence over regular grid)
-    evalOndata - If true returns the log(density) evaluated on the data (instead of the regular grid)
-    kde_bandwidth - Bandwith for density estimator
-    **kwargs - Extra arguments for KernelDensity class initializer
+    xdata : float array
+        1D array of values of x_i
+    ydata : float array
+        1D array of values of y_i
+    xlims : tuple
+        limits in x to use (xmin, xmax)
+    ylims : tuple
+        Limits in y to use (ymin, ymax)
+    Nx : int
+        Number of KDE samples in X (regular grid between xmin and xmax)
+    Ny : int
+        Number of KDE samples in Y (regular grid between ymin and ymax)
+    xeval : float array
+        Evaluate on this set of x coordinates (takes precedence over regular grid)
+    yeval : float array
+        Evaluate on this set of y coordinates (takes precedence over regular grid)
+    evalOndata : boolean
+        If true return the log(density) evaluated on the data (instead of the regular grid)
+    kde_bandwidth : float
+        Bandwith for density estimator
 
     Returns
     -------
+    log_dens : float array
+        The log(density) evaluated on the regular grid (shape (Nx,Ny)), or the log(density) evaluated for the
+        data points (shape (xdata.size,)).
 
-    The log(density) evaluated on the regular grid (shape (Nx,Ny)), or the log(density) evaluated for the
-    data points (shape (xdata.size,)).
+    Other parameters
+    ----------------
+    **kwargs : dict
+        Extra arguments for KernelDensity class initializer
     """
 
     if xlims == None:

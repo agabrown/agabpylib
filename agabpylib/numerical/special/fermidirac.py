@@ -5,11 +5,11 @@ part on the fortran 90 implementation by F.X. Timmes
 (http://cococubed.asu.edu/code_pages/fermi_dirac.shtml, as included in the MESA equation of state
 libraries).
 
-Anthony Brown Aug 2017 - Jun 2019
+Anthony Brown Aug 2017 - Aug 2022
 """
 
 import numpy as np
-from scipy.integrate import fixed_quad
+import scipy as sp
 
 from agabpylib.numerical.integrate import fixed_quad_laguerre
 
@@ -40,14 +40,14 @@ def _calculate_breakpoints(eta):
 
     Parameters
     ----------
-
-    eta - Value of the parameter eta of the FD integral.
+    eta : float
+        Value of the parameter eta of the FD integral.
 
     Returns
     -------
-
-    s1, s2, s3 - The integration interval boundaries. Where the intervals are [-inf, s1], [s1,s2],
-    [s2,s3], [s3,+inf]
+    s1, s2, s3 : float
+        The integration interval boundaries. Where the intervals are [-inf, s1], [s1,s2],
+        [s2,s3], [s3,+inf]
     """
     zz = np.array(eta)
     smallexp = _sigma * (zz - _D) < 100.0
@@ -75,16 +75,19 @@ def _fd_integrand_nearzero(z, nu, eta, theta):
 
     Parameters
     ----------
-
-    z - Abscissa(e) where the value of the integrand is desired.
-    nu - Parameter nu (index) of Fermi-Dirac integral.
-    eta - Parameter eta of Fermi-Dirac integral.
-    theta - Parameter theta of Fermi-Dirac integral.
+    z : float or float array
+        Abscissa(e) where the value of the integrand is desired.
+    nu : float
+        Parameter nu (index) of Fermi-Dirac integral.
+    eta : float
+        Parameter eta of Fermi-Dirac integral.
+    theta : float
+        Parameter theta of Fermi-Dirac integral.
 
     Returns
     -------
-
-    Value of the integrand.
+    val : float
+        Value(s) of the integrand.
     """
     zz = np.array(z)
     zsqr = zz * zz
@@ -113,16 +116,19 @@ def _fd_integrand(x, nu, eta, theta):
 
     Parameters
     ----------
-
-    x - Abscissa(e) where the value of the integrand is desired.
-    nu - Parameter nu (index) of Fermi-Dirac integral.
-    eta - Parameter eta of Fermi-Dirac integral.
-    theta - Parameter theta of Fermi-Dirac integral.
+    x : float or float array
+        Abscissa(e) where the value of the integrand is desired.
+    nu : float
+        Parameter nu (index) of Fermi-Dirac integral.
+    eta : float
+        Parameter eta of Fermi-Dirac integral.
+    theta : float
+        Parameter theta of Fermi-Dirac integral.
 
     Returns
     -------
-
-    Value of the integrand.
+    val : float or float array
+        Value(s) of the integrand.
     """
     xx = np.array(x)
     smallexp = (xx - eta) < 100.0
@@ -142,20 +148,26 @@ def _fd_integrand(x, nu, eta, theta):
 
 
 def fd_evaluate(nu, eta, theta):
-    """
-    Evaluate the Fermi-Dirac integral for the given parameters.
+    r"""
+    Evaluate the generalized Fermi-Dirac integral.
+
+    .. math::
+
+        F_\nu(\eta,\theta)=\int_0^\infty \frac{x^\nu(1+\frac{1}{2}\theta x)^{1/2}}{e^{x-\eta}+1}\,dx
 
     Parameters
     ----------
-
-    nu : Index of Fermi-Dirac integral, must be a scalar.
-    eta : Value(s) of the parameter eta, can be an array.
-    theta : Value of the parameter theta, must be a scalar.
+    nu : float
+        Index :math:`\nu` of Fermi-Dirac integral, must be a scalar.
+    eta : float
+        Value(s) of the parameter :math:`\eta`, can be an array.
+    theta : float
+        Value of the parameter :math:`\theta`, must be a scalar.
 
     Returns
     -------
-
-    Value of the Fermi-Dirac integral.
+    val : float
+        Value of the Fermi-Dirac integral.
     """
     if not np.isscalar(nu) or not np.isscalar(theta):
         raise TypeError("fd_evaluate() is only vectorized for eta")
@@ -164,11 +176,15 @@ def fd_evaluate(nu, eta, theta):
     s1, s2, s3 = _calculate_breakpoints(eta)
 
     if np.isscalar(eta):
-        i1, dummy = fixed_quad(
+        i1, dummy = sp.integrate.fixed_quad(
             _fd_integrand_nearzero, 0, np.sqrt(s1), args=(nu, eta, theta), n=order
         )
-        i2, dummy = fixed_quad(_fd_integrand, s1, s2, args=(nu, eta, theta), n=order)
-        i3, dummy = fixed_quad(_fd_integrand, s2, s3, args=(nu, eta, theta), n=order)
+        i2, dummy = sp.integrate.fixed_quad(
+            _fd_integrand, s1, s2, args=(nu, eta, theta), n=order
+        )
+        i3, dummy = sp.integrate.fixed_quad(
+            _fd_integrand, s2, s3, args=(nu, eta, theta), n=order
+        )
         i4, dummy = fixed_quad_laguerre(
             _fd_integrand, s3, args=(nu, eta, theta), n=order
         )
@@ -178,17 +194,17 @@ def fd_evaluate(nu, eta, theta):
         i3 = np.zeros_like(eta)
         i4 = np.zeros_like(eta)
         for i in range(eta.size):
-            i1[i], dummy = fixed_quad(
+            i1[i], dummy = sp.integrate.fixed_quad(
                 _fd_integrand_nearzero,
                 0,
                 np.sqrt(s1[i]),
                 args=(nu, eta[i], theta),
                 n=order,
             )
-            i2[i], dummy = fixed_quad(
+            i2[i], dummy = sp.integrate.fixed_quad(
                 _fd_integrand, s1[i], s2[i], args=(nu, eta[i], theta), n=order
             )
-            i3[i], dummy = fixed_quad(
+            i3[i], dummy = sp.integrate.fixed_quad(
                 _fd_integrand, s2[i], s3[i], args=(nu, eta[i], theta), n=order
             )
             i4[i], dummy = fixed_quad_laguerre(

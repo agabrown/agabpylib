@@ -1,7 +1,7 @@
 """
 Optimization utility methods not available from scipy.optimize.
 
-Anthony Brown Aug 2017 - Jun 2019
+Anthony Brown Aug 2017 - Aug 2022
 """
 
 import numpy as np
@@ -11,12 +11,13 @@ __all__ = ["bracket_root"]
 
 def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
     """
-    Bracket the root of a function by considering increasingly large intervals within which the root
+    Bracket the root of a function. 
+
+    This is done by considering increasingly large intervals within which the root
     might lie. Implicitly assumes a monotonic function.
 
     Parameters
     ----------
-
     func : Callable f(x,*args)
         Objective function to minimize.
     xa, xb : float, optional
@@ -30,7 +31,6 @@ def bracket_root(func, xa=0.0, xb=1.0, args=(), grow_factor=1.6, maxiter=50):
 
     Returns
     -------
-
     x1, x1 : float
         The interval brackteing the root.
     converged : Boolean

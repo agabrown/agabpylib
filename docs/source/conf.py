@@ -33,6 +33,7 @@ release = agabpylib.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx_automodapi.automodapi",
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.napoleon",
@@ -41,6 +42,7 @@ extensions = [
 myst_enable_extensions = [
     "colon_fence",
 ]
+numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

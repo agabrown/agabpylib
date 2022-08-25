@@ -7,5 +7,8 @@ User documentation
     densityestimation
     gaia
     mcmc
+    numerical
     plotting
+    posteriors
+    simulation
     

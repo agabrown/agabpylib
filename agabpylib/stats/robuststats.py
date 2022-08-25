@@ -2,14 +2,13 @@
 Provides various methods for robust estimates of simple statistics such as the mean and variance, which
 in this case are estimated through the median and RSE.
 
-Anthony Brown May 2015 - Apr 2022
+Anthony Brown May 2015 - Aug 2022
 """
 
-from numpy import median
-from scipy.stats import scoreatpercentile
-from scipy.special import erfinv
+import numpy as np
+import scipy as sp
 
-_rse_constant = 1.0 / (np.sqrt(2) * 2 * erfinv(0.8))
+_rse_constant = 1.0 / (np.sqrt(2) * 2 * sp.special.erfinv(0.8))
 
 
 def rse(x):
@@ -27,7 +26,9 @@ def rse(x):
     The Robust Scatter Estimate (RSE), defined as 0.390152 * (P90-P10), where P10 and P90 are the 10th and
     90th percentile of the distribution of x.
     """
-    return _rse_constant * (scoreatpercentile(x, 90) - scoreatpercentile(x, 10))
+    return _rse_constant * (
+        sp.stats.scoreatpercentile(x, 90) - sp.stats.scoreatpercentile(x, 10)
+    )
 
 
 def robust_stats(x):
@@ -46,12 +47,12 @@ def robust_stats(x):
     value, 'max':maximum value}
     """
 
-    med = median(x)
+    med = np.median(x)
     therse = rse(x)
-    lowerq = scoreatpercentile(x, 25)
-    upperq = scoreatpercentile(x, 75)
-    lowerten = scoreatpercentile(x, 10)
-    upperten = scoreatpercentile(x, 90)
+    lowerq = sp.stats.scoreatpercentile(x, 25)
+    upperq = sp.stats.scoreatpercentile(x, 75)
+    lowerten = sp.stats.scoreatpercentile(x, 10)
+    upperten = sp.stats.scoreatpercentile(x, 90)
 
     return {
         "median": med,

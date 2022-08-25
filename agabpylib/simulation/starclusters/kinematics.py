@@ -1,13 +1,15 @@
 """
 Provides classes and methods to simulate the kinematics of stars in clusters.
 
-Anthony Brown Aug 2019 - Sep 2019
+Anthony Brown Aug 2019 - Aug 2022
 """
 
 import numpy as np
 from scipy.stats import multivariate_normal
 from abc import ABC, abstractmethod
 import astropy.units as u
+
+__all__ = ["Kinematics", "LinearVelocityField"]
 
 
 class Kinematics(ABC):
@@ -37,7 +39,7 @@ class Kinematics(ABC):
         """
         Returns
         -------
-        str:
+        info : str
             String with information about the cluster kinematics.
         """
         return "Kinematics\n" + "------------------\n" + self.addinfo()
@@ -47,7 +49,7 @@ class Kinematics(ABC):
         """
         Returns
         -------
-        str:
+        info : str
             String with specific information about the cluster kinematics.
         """
         pass
@@ -57,14 +59,14 @@ class Kinematics(ABC):
         """
         Returns
         -------
-        dict :
+        meta : dict
             Metadata on the kinematics of the cluster stars.
         """
         pass
 
 
 class LinearVelocityField(Kinematics):
-    """
+    r"""
     General linear velocity field for the cluster stars which besides the mean cluster velocity can include a
     rotation and isotropic expansion/contraction term, both defined with respect to the cluster centre. The velocities
     are generated according to equations (3) and (4) in Lindegren et al (2000,

@@ -22,6 +22,18 @@ from sklearn.neighbors import KernelDensity
 
 _ROOT = path.abspath(path.dirname(__file__))
 
+__all__ = [
+    "simDistancesConstantSpaceDensity",
+    "simGaussianAbsoluteMagnitude",
+    "ParallaxSurvey",
+    "UniformSpaceDistributionSingleLuminosity",
+    "UniformDistributionSingleLuminosityHip",
+    "UniformDistributionSingleLuminosityTGAS",
+    "showSurveyStatistics",
+    "marginal_pdf_distance",
+    "marginal_pdf_absMag",
+]
+
 
 def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance):
     """
@@ -816,5 +828,5 @@ def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
             rlim[(rlim > rmax)] = rmax
         return (rlim**3 - rmin**3) / A * norm.pdf(x, loc=mu, scale=sigma)
 
-    C, dummy = quad(_pdf, mu - 7 * sigma, mu + 8 * sigma)
+    C, _ = quad(_pdf, mu - 7 * sigma, mu + 8 * sigma)
     return _pdf(M) / C

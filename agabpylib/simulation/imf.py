@@ -8,6 +8,8 @@ import numpy as np
 from scipy.stats import uniform
 from abc import ABC, abstractmethod
 
+__all__ = ["IMF", "Uniform", "MultiPartPowerLaw"]
+
 
 class IMF(ABC):
     """
@@ -30,7 +32,7 @@ class IMF(ABC):
 
         Returns
         -------
-        float array
+        lnpdf_val : float array
             Value of the natural logarithm of the IMF for each of the input masses.
         """
         pass
@@ -52,7 +54,7 @@ class IMF(ABC):
 
         Returns
         -------
-        float array
+        cdfval : float array
             Value of the cumulative mass distribution function for each of the input masses
         """
         pass
@@ -64,7 +66,8 @@ class IMF(ABC):
 
         Parameters
         ----------
-        n : Number of random mass values to generate.
+        n : int
+            Number of random mass values to generate.
         min_mass : float
             Minimum mass of interval over which to evaluate the IMF.
         max_mass : float
@@ -72,7 +75,7 @@ class IMF(ABC):
 
         Returns
         -------
-        float array
+        masses : float array
             Array of random mass values.
         """
         pass
@@ -82,7 +85,7 @@ class IMF(ABC):
         """
         Returns
         -------
-        str :
+        info : str
             String with information about the IMF.
         """
         pass
@@ -92,7 +95,7 @@ class IMF(ABC):
         """
         Returns
         -------
-        dict :
+        meta : dict
             Metadata about the IMF.
         """
 
@@ -140,6 +143,16 @@ class MultiPartPowerLaw(IMF):
 
     This class represents a multi-part power-law IMF, such as the one defined by Kroupa
     (https://ui.adsabs.harvard.edu/#abs/2001MNRAS.322..231K/abstract).
+
+    Attributes
+    ----------
+    slopes : float array
+        The slopes alpha for each part of the power law, where the IMF is
+        proportional to mass^(-alpha).
+    break_points : float array
+        The masses where the slopes change. Must contain one element less than
+        the slopes array, the array should thus be empty for a single slope. The
+        values should form an increasing sequence.
     """
 
     def __init__(self, slopes, break_points):

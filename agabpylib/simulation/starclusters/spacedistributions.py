@@ -1,15 +1,24 @@
 """
 Provides classes and methods to simulate the space distributions of stars in clusters.
 
-NOTE: The classes below only generate star positions according to a number density distribution. Only for equal mass
-stars will this result in a mass-distribution consistent with the number density distribution.
+.. note::
+    The classes below only generate star positions according to a number density
+    distribution. Only for equal mass stars will this result in a
+    mass-distribution consistent with the number density distribution.
 
 Anthony Brown Jul 2019 - Sep 2019
 """
 
 import numpy as np
-from scipy.stats import uniform
 from abc import ABC, abstractmethod
+
+__all__ = [
+    "SpaceDistribution",
+    "ConstantDensitySphere",
+    "SphericalShell",
+    "PlummerSphere",
+    "TruncatedPlummerSphere",
+]
 
 
 class SpaceDistribution(ABC):
@@ -38,7 +47,7 @@ class SpaceDistribution(ABC):
         """
         Returns
         -------
-        str:
+        info : str
             String with information about the space distribution.
         """
         return "Space distribution\n" + "------------------\n" + self.addinfo()
@@ -48,7 +57,7 @@ class SpaceDistribution(ABC):
         """
         Returns
         -------
-        str:
+        info : str
             String with specific information about the space distribution.
         """
         pass
@@ -58,7 +67,7 @@ class SpaceDistribution(ABC):
         """
         Returns
         -------
-        dict :
+        meta : dict
             Metadata on the space distribution of the cluster stars.
         """
         pass
@@ -86,11 +95,12 @@ class ConstantDensitySphere(SpaceDistribution):
             Radius of the cluster in pc
         """
         self.radius = r
+        self.rng = np.random.default_rng()
 
     def generate_positions(self, n):
-        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
-        r = self.radius * uniform.rvs(loc=0, scale=1, size=n) ** (1.0 / 3.0)
+        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
+        r = self.radius * self.rng.uniform.rvs(loc=0, scale=1, size=n) ** (1.0 / 3.0)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)
@@ -110,8 +120,11 @@ class ConstantDensitySphere(SpaceDistribution):
 
 class SphericalShell(SpaceDistribution):
     """
-    Stars are distributed in a spherical shell around the cluster centre (of mass) the shell has zero thickness. This
-    space distribution is useful for investigating the correct simulation of kinematics (for example).
+    Stars are distributed in a spherical shell around the cluster centre (of
+    mass) the shell has zero thickness.
+
+    This space distribution is useful for investigating the correct simulation
+    of kinematics (for example).
 
     Attributes
     ----------
@@ -129,10 +142,11 @@ class SphericalShell(SpaceDistribution):
             Radius of the shell in pc
         """
         self.radius = r
+        self.rng = np.random.default_rng()
 
     def generate_positions(self, n):
-        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
+        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
         r = self.radius
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
@@ -150,18 +164,29 @@ class SphericalShell(SpaceDistribution):
 
 
 class PlummerSphere(SpaceDistribution):
-    """
+    r"""
     Plummer density distribution.
 
-    Implements a spherical Plummer distribution:
-        density = C * (1+(r/a)^2)^(-5/2)
+    Implements a spherical Plummer distribution with core radius :math:`a`:
+
+    .. math::
+
+        \rho(r) = \frac{C}{(1+(r/a)^2)^{5/2}}
+
     Note that the mass of the cluster is ignored in this implementation.
 
     The density of stars in this model as a function of distance from the cluster centre (at (0,0,0)),
-    expressed as a probability density, is given by
-        rho(r) = 3/(4*pi*a^3) * (1+(r/a)^2)^(-5/2)
-    while the number of stars per distance interval, expressed as a probability density, is:
-        n(r) = 4*pi*r^2*rho(r)
+    expressed as a probability density, is given by:
+
+    .. math::
+
+        \rho(r) = \frac{3}{4\pi a^3} \frac{1}{(1+(r/a)^2)^{5/2}}
+
+    The number of stars per distance interval, expressed as a probability density, is:
+
+    .. math::
+
+        n(r) = 4\pi r^2\rho(r)
 
     Attributes
     ----------
@@ -179,11 +204,12 @@ class PlummerSphere(SpaceDistribution):
             Core radius of the cluster in pc
         """
         self.core_radius = a
+        self.rng = np.random.default_rng()
 
     def generate_positions(self, n):
-        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
-        h = uniform.rvs(loc=0, scale=1, size=n)
+        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
+        h = self.rng.uniform.rvs(loc=0, scale=1, size=n)
         r = self.core_radius / np.sqrt(h ** (-2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
@@ -227,12 +253,13 @@ class TruncatedPlummerSphere(SpaceDistribution):
         """
         self.core_radius = a
         self.truncation_radius = t
+        self.rng = np.random.default_rng()
 
     def generate_positions(self, n):
         c = (1 + (self.core_radius / self.truncation_radius) ** 2) ** (1.5)
-        phi = uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(uniform.rvs(loc=-1, scale=2, size=n))
-        h = uniform.rvs(loc=0, scale=1, size=n)
+        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
+        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
+        h = self.rng.uniform.rvs(loc=0, scale=1, size=n)
         r = self.core_radius / np.sqrt((c / h) ** (2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
