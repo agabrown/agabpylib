@@ -151,7 +151,7 @@ class StarAPs:
 
         self.isocmd = isoreader(path.join(self.isofullpath))
 
-    def generate_aps(self, n):
+    def generate_aps(self, n, rng):
         """
         Generate the simulated APs from the IMF and the isochrone data.
 
@@ -159,6 +159,9 @@ class StarAPs:
         ----------
         n : int
             Number of stars for which to generate the APs
+        rng : numpy.random.Generator
+            Random number generator. This is provided separately to enable user
+            control over the random number sequence.
 
         Returns
         -------
@@ -171,7 +174,9 @@ class StarAPs:
 
         aptable = QTable()
         aptable.add_column(Column(np.arange(n)), name="source_id")
-        ini_masses = self.imf.rvs(n, iso_ini_masses.min(), iso_ini_masses.max())
+        ini_masses = self.imf.gen_masses(
+            n, iso_ini_masses.min(), iso_ini_masses.max(), rng
+        )
         aptable.add_column(Column(ini_masses) * u.M_sun, name="initial_mass")
 
         for item in list(self.tabledict.keys())[1:]:
@@ -239,7 +244,7 @@ class StarCluster:
     used to generate the simulated stars.The focus is on simulating Gaia observations of the clusters.
     """
 
-    def __init__(self, n_stars, staraps, starpos, starkin, simobs):
+    def __init__(self, n_stars, staraps, starpos, starkin, simobs, rangen):
         """
         Class constructor/initializer
 
@@ -255,18 +260,22 @@ class StarCluster:
             The instance of the class that will generate the cluster kinematics.
         simobs : agabpylib.simulation.starclusters.Observables
             The instance of the class that will simulate the observations of the cluster.
+        rangen : numpy.random.Generator
+            Random number generator. This is provided separately to enable user
+            control over the random number sequence.
         """
         self.n_stars = n_stars
         self.staraps = staraps
         self.starpos = starpos
         self.starkin = starkin
         self.simobs = simobs
-        self.star_table = self.staraps.generate_aps(self.n_stars)
-        x, y, z = starpos.generate_positions(self.n_stars)
+        self.rng = rangen
+        self.star_table = self.staraps.generate_aps(self.n_stars, self.rng)
+        x, y, z = starpos.generate_positions(self.n_stars, self.rng)
         self.star_table.add_columns([x, y, z], names=["x", "y", "z"])
-        vx, vy, vz = starkin.generate_kinematics(x, y, z)
+        vx, vy, vz = starkin.generate_kinematics(x, y, z, self.rng)
         self.star_table.add_columns([vx, vy, vz], names=["v_x", "v_y", "v_z"])
-        simobs.generate_observations(self.star_table)
+        simobs.generate_observations(self.star_table, self.rng)
 
         self.star_table.meta = {}
         self.star_table.meta.update(

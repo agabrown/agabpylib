@@ -84,8 +84,8 @@ class GaiaSurvey(Observables):
 
     Attributes
     ----------
-    observation_interval : int
-        Number of months of data collected by Gaia.
+    gaia_release : str
+        The Gaia data release for which the performance is to be simulated
     cluster_distance : astropy.units.Quantity
         Distance to cluster centre (of mass) in pc
     cluster_ra : astropy.units.Quantity
@@ -94,26 +94,39 @@ class GaiaSurvey(Observables):
         Declination of cluster centre (of mass) in degrees.
     rvslim : float
         RVS survey limit (default 16.0)
+    survey_limit : float
+        Apparent magnitude limit of the simulated cluster survey (Gaia survey limit of G=20.7)
+    bright_faint_sep : float
+        Separation between bright and faint stars for Gaia DR2 photometry corrections (obsolete)
+    n_astrophoto : int
+        Number of simulated stars with astrometry and photometry that are brighter than the survey limit.
+    n_plxpos : int
+        Number of simulated stars with positive observed parallaxes.
+    n_rvs : int
+        Number of simulated stars with a radial velocity.
     """
 
-    def __init__(self, release, distance_c, ra_c, dec_c, rvslim=16.0):
+    def __init__(self, distance_c, ra_c, dec_c, release="dr3", rvslim=16.0):
         """
         Class constructor/initializer.
 
         Parameters
         ----------
-        release : str
-            Specify the Gaia data release for which the performance is to be simulated. 'dr3' -> Gaia (E)DR3,
-            'dr4' -> Gaia DR4, 'dr5' -> Gaia DR5.
         distance_c : astropy.units.Quantity
             Distance to cluster centre (of mass) in pc
         ra_c : astropy.units.Quantity
             Right ascension of cluster centre (of mass) in degrees.
         dec_c : astropy.units.Quantity
             Declination of cluster centre (of mass) in degrees.
+        release : str
+            Specify the Gaia data release for which the performance is to be simulated. 'dr3' -> Gaia (E)DR3,
+            'dr4' -> Gaia DR4, 'dr5' -> Gaia DR5.
         rvslim : float
-            RVS survey limit (default 16.0)
+            RVS survey limit (default G_rvs=16.0)
         """
+        if not (release in ["dr3", "dr4", "dr5"]):
+            raise ValueError("Release must be one of dr3/dr4/dr5")
+            exit(0)
         self.gaia_release = release
         self.cluster_distance = distance_c
         self.cluster_ra = ra_c
@@ -130,9 +143,8 @@ class GaiaSurvey(Observables):
             self.mission_extension = 5.0
         else:
             self.mission_extension = 0.0
-        self.rng = np.random.default_rng()
 
-    def generate_observations(self, cluster):
+    def generate_observations(self, cluster, rng):
         x_c, y_c, z_c = spherical_to_cartesian(
             self.cluster_distance, self.cluster_ra.to(u.rad), self.cluster_dec.to(u.rad)
         )
@@ -167,8 +179,10 @@ class GaiaSurvey(Observables):
         )
 
         ra_error, dec_error = position_uncertainty(gmag, release=self.gaia_release)
-        plx_error = parallax_uncertainty(gmag)
-        pmra_error, pmdec_error = proper_motion_uncertainty(gmag)
+        plx_error = parallax_uncertainty(gmag, release=self.gaia_release)
+        pmra_error, pmdec_error = proper_motion_uncertainty(
+            gmag, release=self.gaia_release
+        )
 
         teff = 10 ** cluster["log_Teff"]
         logg = cluster["log_g"]
@@ -217,17 +231,17 @@ class GaiaSurvey(Observables):
         pmra_error = pmra_error / 1000.0
         pmdec_error = pmdec_error / 1000.0
 
-        gmag_obs = self.rng.normal(loc=gmag, scale=gmag_error)
-        bpmag_obs = self.rng.normal(loc=bpmag, scale=bpmag_error)
-        rpmag_obs = self.rng.normal(loc=rpmag, scale=rpmag_error)
-        vrad_obs = self.rng.normal(loc=vrad, scale=vrad_error)
+        gmag_obs = rng.normal(loc=gmag, scale=gmag_error)
+        bpmag_obs = rng.normal(loc=bpmag, scale=bpmag_error)
+        rpmag_obs = rng.normal(loc=rpmag, scale=rpmag_error)
+        vrad_obs = rng.normal(loc=vrad, scale=vrad_error)
 
         mastorad = (1 * u.mas).to(u.rad).value
-        ra_obs = self.rng.normal(loc=ra, scale=ra_error * mastorad)
-        dec_obs = self.rng.normal(loc=dec, scale=dec_error * mastorad)
-        plx_obs = self.rng.normal(loc=plx, scale=plx_error)
-        pmra_obs = self.rng.normal(loc=pmra, scale=pmra_error)
-        pmdec_obs = self.rng.normal(loc=pmdec, scale=pmdec_error)
+        ra_obs = rng.normal(loc=ra, scale=ra_error * mastorad)
+        dec_obs = rng.normal(loc=dec, scale=dec_error * mastorad)
+        plx_obs = rng.normal(loc=plx, scale=plx_error)
+        pmra_obs = rng.normal(loc=pmra, scale=pmra_error)
+        pmdec_obs = rng.normal(loc=pmdec, scale=pmdec_error)
 
         cluster.add_columns(
             [

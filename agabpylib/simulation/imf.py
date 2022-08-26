@@ -1,7 +1,7 @@
 """
 Provide classes and methods for the simulation of initial mass functions.
 
-Anthony Brown Sep 2017 - Jul 2019
+Anthony Brown Sep 2017 - Aug 2022
 """
 
 import numpy as np
@@ -60,7 +60,7 @@ class IMF(ABC):
         pass
 
     @abstractmethod
-    def rvs(self, n, min_mass, max_mass):
+    def gen_masses(self, n, min_mass, max_mass, rng):
         """
         Generate random masses from this IMF.
 
@@ -72,6 +72,9 @@ class IMF(ABC):
             Minimum mass of interval over which to evaluate the IMF.
         max_mass : float
             Maximum mass of interval over which to evaluate the IMF.
+        rng : numpy.random.Generator
+            Random number generator. This is provided separately to enable user
+            control over the random number sequence.
 
         Returns
         -------
@@ -127,8 +130,8 @@ class Uniform(IMF):
             )
         return (masses - min_mass) / (max_mass - min_mass)
 
-    def rvs(self, n, min_mass, max_mass):
-        return uniform.rvs(size=n) * (max_mass - min_mass) + min_mass
+    def gen_masses(self, n, min_mass, max_mass, rng):
+        return rng.uniform(low=min_mass, high=max_mass, size=n)
 
     def getinfo(self):
         return "Initial Mass Function\n" + "---------------------\n" + "Uniform in mass"
@@ -299,7 +302,7 @@ class MultiPartPowerLaw(IMF):
 
         return cimf
 
-    def rvs(self, n, min_mass, max_mass):
+    def gen_masses(self, n, min_mass, max_mass, rng):
         (
             mass_limits,
             active_slopes,
@@ -309,7 +312,7 @@ class MultiPartPowerLaw(IMF):
             xlimits,
             normalization,
         ) = self._initialize_constants(min_mass, max_mass)
-        x = uniform.rvs(size=n)
+        x = rng.uniform(size=n)
         masses = np.zeros(x.size)
         for i in range(active_slopes.size):
             indices = (xlimits[i] <= x) & (x < xlimits[i + 1])

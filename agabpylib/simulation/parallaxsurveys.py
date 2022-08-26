@@ -2,7 +2,7 @@
 Provide classes and methods for simulating simple (magnitude limited) parallax surveys. These consist of
 measurements of the parallax and the apparent magnitude of the stars.
 
-Anthony Brown 2011 - Jul 2019
+Anthony Brown 2011 - Aug 2022
 """
 
 import numpy as np
@@ -35,45 +35,53 @@ __all__ = [
 ]
 
 
-def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance):
+def simDistancesConstantSpaceDensity(numStars, minDistance, maxDistance, rangen):
     """
     Simulate distances for stars distributed uniformly in space around the Sun.
 
     Parameters
     ----------
-
-    numStars - number of stars to simulate
-    minDistance - lower limit on the distance (pc, closest possible star)
-    maxDistance - upper limit on the distance (pc, volume limit of survey)
+    numStars int
+        Number of stars to simulate
+    minDistance : float
+        Lower limit on the distance (pc, closest possible star)
+    maxDistance : float
+        Upper limit on the distance (pc, volume limit of survey)
+    rangen : numpy.random.Generator
+        Random number generator.
 
     Returns
     -------
-
-    Vector of distance values
+    distances : float array
+        Vector of distance values
     """
-    x = uniform.rvs(loc=0.0, scale=1.0, size=numStars)
+    x = rangen.uniform(loc=0.0, scale=1.0, size=numStars)
     minDCubed = np.power(minDistance, 3.0)
     maxDCubed = np.power(maxDistance, 3.0)
     return np.power(minDCubed + x * (maxDCubed - minDCubed), 1.0 / 3.0)
 
 
-def simGaussianAbsoluteMagnitude(numStars, mean, stddev):
+def simGaussianAbsoluteMagnitude(numStars, mean, stddev, rangen):
     """
     Simulate absolute magnitudes following a Gaussian distribution.
 
     Parameters
     ----------
-
-    numStars - number of stars to simulate
-    mean - mean of the distribution
-    stddev - standard deviation of the distribution
+    numStars : int
+        Number of stars to simulate
+    mean : float
+        Mean of the distribution
+    stddev : float
+        Standard deviation of the distribution
+    rangen : numpy.random.Generator
+        Random number generator.
 
     Returns
     -------
-
-    Vector of magnitudes.
+    mags : float array
+        Vector of magnitudes.
     """
-    return norm.rvs(loc=mean, scale=stddev, size=numStars)
+    return rangen.normal(loc=mean, scale=stddev, size=numStars)
 
 
 class ParallaxSurvey:
@@ -82,6 +90,27 @@ class ParallaxSurvey:
     of stars distributed in space between some minimum aand maximum distance value, according to some
     spatial distribution to be defined by the sub-classes. Likewise the distribution in apparent
     magnitudes is assumed to be specified by the sub-classes.
+
+    Attributes
+    ----------
+    numberOfStars : int
+        Number of stars to simulate
+    numberOfStarsInSurvey : int
+        Number of stars that ends up in the survey after taking the magnitude limit into account.
+    minDistance : float
+        Minumum distance of the simulated stars (pc)
+    maxDistance : float
+        Maximum distance of the simulated stars (pc)
+    minParallax : float
+        Minimum parallax of the simulated star (mas, 1000/maxDistance)
+    maxParallax : float
+        Maximum parallax of the simulated star (mas, 1000/minDistance)
+    apparentMagnitudeLimit : float
+        Apparent magnitude limit of the survey
+    seed : int
+        Random number seed
+    rng : numpy.random.Generator
+        Random number generator.
     """
 
     def __init__(self, numberOfStars, minDistance, maxDistance, surveyLimit=np.Inf):
@@ -90,15 +119,14 @@ class ParallaxSurvey:
 
         Parameters
         ----------
-
-        numberOfStars - Number of stars to simulate
-        minDistance   - Lower limit on the distance (closest possible star, pc)
-        maxDistance   - Upper limit on the distance (volume limit of survey, pc)
-
-        Keywords
-        --------
-
-        surveyLimit - Apparent magnitude limit of the survey (default: no limit)
+        numberOfStars : int
+            Number of stars to simulate
+        minDistance : float
+            Lower limit on the distance (closest possible star, pc)
+        maxDistance : float
+            Upper limit on the distance (volume limit of survey, pc)
+        surveyLimit : float
+            Apparent magnitude limit of the survey (default: no limit)
         """
         self.numberOfStars = numberOfStars
         self.numberOfStarsInSurvey = numberOfStars
@@ -108,10 +136,11 @@ class ParallaxSurvey:
         self.maxParallax = 1000.0 / self.minDistance
         self.apparentMagnitudeLimit = surveyLimit
         self.seed = None
+        self.rng = np.random.default_rng()
 
     def setRandomNumberSeed(self, seed):
         """
-        (Re-)Set the random number seed for the simulations. NOTE, also applies to the scipy.stats functions.
+        (Re-)Set the random number seed for the simulations.
 
         Parameters
         ----------
@@ -119,7 +148,7 @@ class ParallaxSurvey:
         seed - Value of random number seed
         """
         self.seed = seed
-        np.random.seed(seed)
+        rng = np.random.default_rng(seed)
 
     def getRandomNumberSeed(self):
         """
@@ -158,6 +187,13 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
     Base class for simulated parallax surveys in which the stars are distributed uniformly in space
     between a minimum and maximum distance and with all stars having an absolute magnitude draw from the
     same Normal distribution.
+
+    Attributes
+    ----------
+    meanAbsoluteMagnitude : float
+        Mean of Gaussian absolute magnitude distribution
+    stddevAbsoluteMagnitude : float
+        Standard deviation of Gaussian absolute magnitude distribution
     """
 
     def __init__(
@@ -174,17 +210,18 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
 
         Parameters
         ----------
-
-        numberOfStars             - number of stars to simulate
-        minDistance               - lower limit on the distance (closest possible star, pc)
-        maxDistance               - upper limit on the distance (volume limit of survey, pc)
-        meanAbsoluteMagnitude     - Mean of Gaussian absolute magnitude distribution
-        stddevAbsoluteMagnitude   - Standard deviation of Gaussian absolute magnitude distribution
-
-        Keywords
-        --------
-
-        surveyLimit - Apparent magnitude limit of the survey (default: no limit)
+        numberOfStars : int
+            Number of stars to simulate
+        minDistance : float
+            Lower limit on the distance (closest possible star, pc)
+        maxDistance : float
+            Upper limit on the distance (volume limit of survey, pc)
+        meanAbsoluteMagnitude : float
+            Mean of Gaussian absolute magnitude distribution
+        stddevAbsoluteMagnitude : float
+            Standard deviation of Gaussian absolute magnitude distribution
+        surveyLimit : float
+            Apparent magnitude limit of the survey (default: no limit)
         """
         super().__init__(numberOfStars, minDistance, maxDistance, surveyLimit)
         self.meanAbsoluteMagnitude = meanAbsoluteMagnitude
@@ -195,20 +232,23 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
         Generate the simulated observations.
         """
         self.trueParallaxes = 1000.0 / simDistancesConstantSpaceDensity(
-            self.numberOfStars, self.minDistance, self.maxDistance
+            self.numberOfStars, self.minDistance, self.maxDistance, self.rng
         )
         self.absoluteMagnitudes = simGaussianAbsoluteMagnitude(
-            self.numberOfStars, self.meanAbsoluteMagnitude, self.stddevAbsoluteMagnitude
+            self.numberOfStars,
+            self.meanAbsoluteMagnitude,
+            self.stddevAbsoluteMagnitude,
+            self.rng,
         )
         self.apparentMagnitudes = (
             self.absoluteMagnitudes - 5.0 * np.log10(self.trueParallaxes) + 10.0
         )
         self.parallaxErrors = self._generateParallaxErrors()
         self.magnitudeErrors = self._generateApparentMagnitudeErrors()
-        self.observedParallaxes = norm.rvs(
+        self.observedParallaxes = self.rng.normal(
             loc=self.trueParallaxes, scale=self.parallaxErrors
         )
-        self.observedMagnitudes = norm.rvs(
+        self.observedMagnitudes = self.rng.normal(
             loc=self.apparentMagnitudes, scale=self.magnitudeErrors
         )
         self._applyApparentMagnitudeLimit()
@@ -242,8 +282,13 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
 
         Parameters
         ----------
+        m : float or float array
+            The apparent magnitude(s) for which to calculate the PDF.
 
-        m - The apparent magnitude(s) for which to calculate the PDF.
+        Returns
+        -------
+        logPdf : float or float array
+            The value(s) of ln(PDF).
         """
         c = 0.6 * np.log(10.0)
         a = np.power(self.maxDistance, 3.0) - np.power(self.minDistance, 3.0)
@@ -274,6 +319,16 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
     def _apparentMagnitude_pdf(self, m):
         """
         Calculate value of the PDF of the apparent magnitudes in the simulated survey.
+
+        Parameters
+        ----------
+        m : float or float array
+            The apparent magnitude(s) for which to calculate the PDF.
+
+        Returns
+        -------
+        pdf : float or float array
+            The value(s) of the PDF.
         """
         return np.exp(self.apparentMagnitude_lpdf(m))
 
@@ -283,6 +338,13 @@ class UniformDistributionSingleLuminosityHip(UniformSpaceDistributionSingleLumin
     Simulate a parallax survey for stars distributed uniformly in space around the sun. The stars all
     have the same luminosity drawn from a Gaussian distribution. The errors on the observed parallaxes
     and apparent magnitudes roughly follow the characteristics of the Hipparcos Catalogue.
+
+    Attributes
+    ----------
+    meanAbsoluteMagnitude : float
+        Mean of Gaussian absolute magnitude distribution
+    stddevAbsoluteMagnitude : float
+        Standard deviation of Gaussian absolute magnitude distribution
     """
 
     def __init__(
@@ -299,17 +361,18 @@ class UniformDistributionSingleLuminosityHip(UniformSpaceDistributionSingleLumin
 
         Parameters
         ----------
-
-        numberOfStars             - number of stars to simulate
-        minDistance               - lower limit on the distance (closest possible star, pc)
-        maxDistance               - upper limit on the distance (volume limit of survey, pc)
-        meanAbsoluteMagnitude     - Mean of Gaussian absolute magnitude distribution
-        stddevAbsoluteMagnitude   - Standard deviation of Gaussian absolute magnitude distribution
-
-        Keywords
-        --------
-
-        surveyLimit - Apparent magnitude limit of the survey (default: no limit)
+        numberOfStars : int
+            Number of stars to simulate
+        minDistance : float
+            Lower limit on the distance (closest possible star, pc)
+        maxDistance : float
+            Upper limit on the distance (volume limit of survey, pc)
+        meanAbsoluteMagnitude : float
+            Mean of Gaussian absolute magnitude distribution
+        stddevAbsoluteMagnitude : float
+            Standard deviation of Gaussian absolute magnitude distribution
+        surveyLimit : float
+            Apparent magnitude limit of the survey (default: no limit)
         """
         super().__init__(
             numberOfStars,
@@ -360,6 +423,13 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
     Simulate a parallax survey for stars distributed uniformly in space around the sun. The stars all
     have the same luminosity drawn from a Gaussian distribution. The errors on the observed parallaxes
     and apparent magnitudes roughly follow the characteristics of the TGAS Catalogue.
+
+    Attributes
+    ----------
+    meanAbsoluteMagnitude : float
+        Mean of Gaussian absolute magnitude distribution
+    stddevAbsoluteMagnitude : float
+        Standard deviation of Gaussian absolute magnitude distribution
     """
 
     def __init__(
@@ -376,17 +446,18 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
 
         Parameters
         ----------
-
-        numberOfStars             - number of stars to simulate
-        minDistance               - lower limit on the distance (closest possible star, pc)
-        maxDistance               - upper limit on the distance (volume limit of survey, pc)
-        meanAbsoluteMagnitude     - Mean of Gaussian absolute magnitude distribution
-        stddevAbsoluteMagnitude   - Standard deviation of Gaussian absolute magnitude distribution
-
-        Keywords
-        --------
-
-        surveyLimit - Apparent magnitude limit of the survey (default: no limit)
+        numberOfStars : int
+            Number of stars to simulate
+        minDistance : float
+            Lower limit on the distance (closest possible star, pc)
+        maxDistance : float
+            Upper limit on the distance (volume limit of survey, pc)
+        meanAbsoluteMagnitude : float
+            Mean of Gaussian absolute magnitude distribution
+        stddevAbsoluteMagnitude : float
+            Standard deviation of Gaussian absolute magnitude distribution
+        surveyLimit : float
+            Apparent magnitude limit of the survey (default: no limit)
         """
         super().__init__(
             numberOfStars,
@@ -451,15 +522,11 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
 
     Parameters
     ----------
-
-    simulatedSurvey : Object containing the simulated survey.
-
-    Keywords
-    --------
-
-    pdfFile : string
+    simulatedSurvey : agabpylib.simulation.parallaxsurveys.ParallaxSurvey
+        Object containing the simulated survey.
+    pdfFile : str
         Name of optional PDF file in which to save the plot.
-    pngFile : string
+    pngFile : str
         Name of optional PNG file in which to save the plot.
     usekde  : boolean
         If true use kernel density estimates to show the distribution of survey quantities instead of
@@ -468,7 +535,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
     try:
         _ = simulatedSurvey.observedParallaxes.shape
     except AttributeError:
-        stderr.write("You have not generated the observations yet!\n")
+        stderr.write("You have not generated the survey observations yet!\n")
         return
 
     parLimitPlot = 50.0
@@ -760,8 +827,7 @@ def marginal_pdf_distance(r, rmin, rmax, mu, sigma, mlim):
 
     Parameters
     ----------
-
-    r : float vector
+    r : float array
         Values of r for which to calculate p(r).
     rmin : float
         Minimum distance in survey.
@@ -776,8 +842,8 @@ def marginal_pdf_distance(r, rmin, rmax, mu, sigma, mlim):
 
     Returns
     -------
-
-    p(r) as float vector.
+    pdf : float array
+        The PDF as a function of r
     """
     A = rmax**3 - rmin**3
     pdf = lambda x: np.exp(
@@ -798,8 +864,7 @@ def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
 
     Parameters
     ----------
-
-    M : float vector
+    M : float array
         Values of M_true for which to calculate p(M_true).
     rmin : float
         Minimum distance in survey.
@@ -814,8 +879,8 @@ def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
 
     Returns
     -------
-
-    p(M_true) as float vector.
+    pdf : float vector
+        The PDF as a function of M_true
     """
     A = rmax**3 - rmin**3
 

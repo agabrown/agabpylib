@@ -27,7 +27,7 @@ class SpaceDistribution(ABC):
     """
 
     @abstractmethod
-    def generate_positions(self, n):
+    def generate_positions(self, n, rng):
         """
         Generate the positions of the stars randomly according to the prescribed space distribution.
 
@@ -35,6 +35,9 @@ class SpaceDistribution(ABC):
         ----------
         n : int
             Number of star positions to generate.
+        rng : numpy.random.Generator
+            Random number generator. This is provided separately to enable user
+            control over the random number sequence.
 
         Returns
         -------
@@ -95,12 +98,11 @@ class ConstantDensitySphere(SpaceDistribution):
             Radius of the cluster in pc
         """
         self.radius = r
-        self.rng = np.random.default_rng()
 
-    def generate_positions(self, n):
-        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
-        r = self.radius * self.rng.uniform.rvs(loc=0, scale=1, size=n) ** (1.0 / 3.0)
+    def generate_positions(self, n, rng):
+        phi = rng.uniform(low=0, high=2 * np.pi, size=n)
+        theta = np.arcsin(rng.uniform(low=-1, high=1, size=n))
+        r = self.radius * rng.uniform(low=0, high=1, size=n) ** (1.0 / 3.0)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
         z = r * np.sin(theta)
@@ -142,11 +144,10 @@ class SphericalShell(SpaceDistribution):
             Radius of the shell in pc
         """
         self.radius = r
-        self.rng = np.random.default_rng()
 
-    def generate_positions(self, n):
-        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
+    def generate_positions(self, n, rng):
+        phi = rng.uniform(low=0, high=2 * np.pi, size=n)
+        theta = np.arcsin(rng.uniform(low=-1, high=1, size=n))
         r = self.radius
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
@@ -204,12 +205,11 @@ class PlummerSphere(SpaceDistribution):
             Core radius of the cluster in pc
         """
         self.core_radius = a
-        self.rng = np.random.default_rng()
 
-    def generate_positions(self, n):
-        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
-        h = self.rng.uniform.rvs(loc=0, scale=1, size=n)
+    def generate_positions(self, n, rng):
+        phi = rng.uniform(low=0, high=2 * np.pi, size=n)
+        theta = np.arcsin(rng.uniform(low=-1, high=1, size=n))
+        h = rng.uniform(low=0, high=1, size=n)
         r = self.core_radius / np.sqrt(h ** (-2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)
@@ -253,13 +253,12 @@ class TruncatedPlummerSphere(SpaceDistribution):
         """
         self.core_radius = a
         self.truncation_radius = t
-        self.rng = np.random.default_rng()
 
-    def generate_positions(self, n):
+    def generate_positions(self, n, rng):
         c = (1 + (self.core_radius / self.truncation_radius) ** 2) ** (1.5)
-        phi = self.rng.uniform.rvs(loc=0, scale=2 * np.pi, size=n)
-        theta = np.arcsin(self.rng.uniform.rvs(loc=-1, scale=2, size=n))
-        h = self.rng.uniform.rvs(loc=0, scale=1, size=n)
+        phi = rng.uniform(low=0, high=2 * np.pi, size=n)
+        theta = np.arcsin(rng.uniform(low=-1, high=1, size=n))
+        h = rng.uniform(low=0, high=1, size=n)
         r = self.core_radius / np.sqrt((c / h) ** (2 / 3) - 1)
         x = r * np.cos(phi) * np.cos(theta)
         y = r * np.sin(phi) * np.cos(theta)

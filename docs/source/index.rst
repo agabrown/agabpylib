@@ -9,9 +9,10 @@ agabpylib
 Python library with Anthony's private python utilities for data analysis, simulation, plotting, etc.
 
 .. warning::
-   This library is not stable in any sense (functionality, interfaces, etc), and broken code may be checked in
-   at anytime. There is likely to be outdated or badly performing code, and there is no committment to fixing
-   issues. Use at your own risk.
+   This library is not stable in any sense (functionality, interfaces, etc), and
+   broken or untested code may be checked in at anytime. Code may also be
+   removed at any time. There is likely to be outdated or badly performing code,
+   and there is no committment to fixing issues. Use at your own risk.
 
 Documentation
 -------------

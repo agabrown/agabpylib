@@ -30,6 +30,7 @@ The following python packages are required:
 * [pandas](https://pandas.pydata.org/)
 * [astropy](https://www.astropy.org/)
 * [setuptools](https://pypi.python.org/pypi/setuptools)
+* [PyGaia](https://github.com/agabrown/PyGaia)
 
 The following packages are optional:
 

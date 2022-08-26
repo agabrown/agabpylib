@@ -18,7 +18,7 @@ class Kinematics(ABC):
     """
 
     @abstractmethod
-    def generate_kinematics(self, x, y, z):
+    def generate_kinematics(self, x, y, z, rng):
         """
         Generate the velocity vectors of the stars randomly according to the prescribed kinematics of the cluster.
 
@@ -27,6 +27,9 @@ class Kinematics(ABC):
         x, y, z : astropy.units.Quantity arrays
             The x, y, z positions of the stars with respect to the barycentre, in units of pc, where the barycentre of
             the cluster is assumed to be at (0, 0, 0) pc!
+        rng : numpy.random.Generator
+            Random number generator. This is provided separately to enable user
+            control over the random number sequence.
 
         Returns
         -------
@@ -119,12 +122,12 @@ class LinearVelocityField(Kinematics):
         self.tmat[1, 2] = -self.omega[0]
         self.tmat[2, 1] = -self.tmat[1, 2]
 
-    def generate_kinematics(self, x, y, z):
+    def generate_kinematics(self, x, y, z, rng):
         positions = np.array([x, y, z]) * x.unit
         covmat = np.zeros((3, 3))
         covmat[np.diag_indices(3)] = self.s * self.s
-        v_x, v_y, v_z = multivariate_normal.rvs(
-            cov=covmat, size=x.size
+        v_x, v_y, v_z = rng.multivariate_normal(
+            np.array([0, 0, 0]), covmat, size=x.size
         ).T * u.km / u.s + np.matmul(self.tmat, positions)
         return v_x + self.v[0], v_y + self.v[1], v_z + self.v[2]
 
