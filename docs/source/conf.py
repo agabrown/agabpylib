@@ -22,8 +22,8 @@ project = "agabpylib"
 copyright = "2015-2022, Anthony G.A. Brown"
 author = "Anthony G.A. Brown"
 
-version = agabpylib.__version__
-release = agabpylib.__version__
+#version = agabpylib.__version__
+#release = agabpylib.__version__
 
 
 # -- General configuration ---------------------------------------------------

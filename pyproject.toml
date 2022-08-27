@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agabpylib"
+description = "Anthony's private private python utilities"
+version = "0.2.0"
+authors = [{ name = "Anthony G.A. Brown", email = "brown@strw.leidenuniv.nl" }]
+readme = "README.md"
+requires-python = ">=3.6"
+license = { text = "MIT License" }
+keywords = ["plotting, data analysis, numerical tools"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Development Status :: 0 - Alpha",
+    "License :: OSI Approved :: MIT",
+    "Topic :: Scientific/Engineering :: Astronomy",
+    "Intended Audience :: Science/Research",
+]
+dependencies = ["matplotlib>=3.0", "cycler>=0.11", "numpy>=1.19", "scipy>=1.7"]
+
+[project.urls]
+"Homepage" = "https://github.com/agabrown/agabpylib"
+"Documentation" = "https://agabpylib.readthedocs.io/en/latest/"
+"Source" = "https://github.com/agabrown/agabpylib"
+"Bug Tracker" = "https://github.com/agabrown/agabpylib/issues"
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=4.4.0",
+    "myst-parser>=0.18",
+    "sphinx-book-theme>=0.3.3",
+    "sphinx-automodap>=0.14.1",
+]

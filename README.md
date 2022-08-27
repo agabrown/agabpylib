@@ -26,15 +26,14 @@ The following python packages are required:
 * [scipy](https://www.scipy.org/)
 * [matplotlib](https://matplotlib.org/)
 * [cycler](https://github.com/matplotlib/cycler)
+
+The following packages are optional:
+
 * [scikit-learn](http://scikit-learn.org/stable/index.html)
 * [pandas](https://pandas.pydata.org/)
 * [astropy](https://www.astropy.org/)
 * [setuptools](https://pypi.python.org/pypi/setuptools)
 * [PyGaia](https://github.com/agabrown/PyGaia)
-
-The following packages are optional:
-
-* [pystan](https://mc-stan.org/users/interfaces/pystan.html)
 
 ## Attribution
 
