@@ -62,7 +62,7 @@ html_show_sourcelink = False
 html_theme_options = {
     "path_to_docs": "docs",
     "repository_url": "https://github.com/agabrown/agabpylib",
-    "repository_branch": "master",
+    "repository_branch": "main",
     "launch_buttons": {
         "binderhub_url": "https://mybinder.org",
         "colab_url": "https://colab.research.google.com/",
