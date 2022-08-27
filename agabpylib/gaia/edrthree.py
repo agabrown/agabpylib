@@ -5,6 +5,8 @@ Anthony Brown Dec 2020 - Aug 2022
 """
 import numpy as np
 
+__all__ = ["correct_gband", "correct_flux_excess_factor"]
+
 
 def correct_gband(bp_rp, astrometric_params_solved, phot_g_mean_mag, phot_g_mean_flux):
     """

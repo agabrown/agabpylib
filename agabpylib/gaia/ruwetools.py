@@ -16,6 +16,8 @@ import scipy.interpolate as spint
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
+__all__ = ["U0Interpolator"]
+
 
 def _get_data(path_to_file):
     """

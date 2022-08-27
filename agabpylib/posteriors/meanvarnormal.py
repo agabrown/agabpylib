@@ -9,6 +9,23 @@ Anthony Brown Jan 2015 - Aug 2022
 import numpy as np
 import scipy as sp
 
+__all__ = [
+    "marginal_mean_ums_flat_prior",
+    "marginal_mean_ums_uninf_prior",
+    "marginal_mean_umv_flat_prior",
+    "marginal_mean_umv_uninf_prior",
+    "marginal_sigma_ums_flat_prior",
+    "marginal_sigma_ums_uninf_prior",
+    "marginal_tau_umv_flat_prior",
+    "marginal_tau_umv_uninf_prior",
+    "np",
+    "sp",
+    "ums_flat_prior",
+    "ums_uninf_prior",
+    "umv_flat_prior",
+    "umv_uninf_prior",
+]
+
 
 def umv_flat_prior(n, xbar, V, mu, tau):
     r"""

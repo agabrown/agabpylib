@@ -12,6 +12,8 @@ import pystan
 import pickle
 from hashlib import md5
 
+__all__ = ["load_stan_code", "stan_cache"]
+
 
 def load_stan_code(filename):
     """

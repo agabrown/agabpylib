@@ -2,33 +2,47 @@
 Provides moments of data distributions beyond the standard examples such as mean, median, etc. For example,
 weighted means of multidimensional data, accounting for (correlated) uncertainties, are implemented.
 
-Anthony Brown Aug 2021 - Aug 2021
+Anthony Brown Aug 2021 - Aug 2022
 """
 
 import numpy as np
 from numpy.linalg import inv
 
+__all__ = ["weighted_mean_twod"]
+
 
 def weighted_mean_twod(x, y, sx, sy, cxy):
-    """
-    Provide the weighted mean of the vectors (x, y) with covariance matrices:
-    | sx**2    cxy*sx*sy |
-    | cxy*sx*sy    sy**2 |
+    r"""
+    Provide the weighted mean of the vectors x and y.
 
-    Parameters:
-        x : float array (1D)
-            Values of x-component of data vector
-        y : float array (1D)
-            Values of y-component of data vector
-        sx : float array (1D)
-            Uncertainties in x
-        sy : float array (1D)
-            Uncertainties in y
-        cxy : float array (1D)
-            Correlation coefficient of sx and sy
+    The elements :math:`(x_i, y_i)` have covariance matrices:
 
-    Returns:
-        2-vector with weighted means (wx, wy).
+    .. math::
+
+        \begin{pmatrix}
+        s_x^2 & c_{xy}s_xs_y \\
+        c_{xy}s_xs_y & s_y^2
+        \end{pmatrix}
+
+    Parameters
+    ----------
+    x : float array (1D)
+        Values of x-component of data vector
+    y : float array (1D)
+        Values of y-component of data vector
+    sx : float array (1D)
+        Uncertainties in x
+    sy : float array (1D)
+        Uncertainties in y
+    cxy : float array (1D)
+        Correlation coefficient of sx and sy
+
+    Returns
+    -------
+    wx, wy : float
+        Weighted means wx, wy.
+    covw : float array (2,2)
+        Covariance matrix of the weighted mean.
     """
     ndata = x.size
     cov = np.zeros((2 * ndata, 2 * ndata))

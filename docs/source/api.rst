@@ -60,4 +60,19 @@ Detailed API documentation
  
 .. automodapi:: agabpylib.simulation.parallaxsurveys
     :no-inheritance-diagram:
+
+.. automodapi:: agabpylib.stats.distributions
+    :no-inheritance-diagram:
+ 
+.. automodapi:: agabpylib.stats.moments
+    :no-inheritance-diagram:
+ 
+.. automodapi:: agabpylib.stats.robustrollingstats
+    :no-inheritance-diagram:
+ 
+.. automodapi:: agabpylib.stats.robuststats
+    :no-inheritance-diagram:
+ 
+.. automodapi:: agabpylib.stellarmodels.io
+    :no-inheritance-diagram:
  

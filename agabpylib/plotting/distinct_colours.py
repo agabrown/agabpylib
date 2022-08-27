@@ -10,6 +10,8 @@ SRON - Netherlands Institute for Space Research
     "muted" color set (see `<https://personal.sron.nl/~pault/>`_).
 """
 
+__all__ = ["get_distinct"]
+
 # colour table in HTML hex format
 hexcols = [
     "#332288",

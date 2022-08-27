@@ -7,38 +7,52 @@ the PADOVA web interface.
 from numpy import array, where, int32, float64, zeros, append, empty, log10
 import re
 
+__all__ = ["MIST", "PARSEC"]
+
 
 class MIST:
     """
     Reads MIST CMD files. Code is modified version of the class in
     https://github.com/jieunchoi/MIST_codes/blob/master/scripts/read_mist_models.py
+
+    Attributes
+    ----------
+    version : dict
+        MIST version string.
+    photo_sys : str
+        String with information on photometric systems.
+    abun : dict
+        Stellar model composition information.
+    Av_extinction : float
+        Extinction used in generating observational isocrhones.
+    rot : float
+        Rotational velocity parameter.
+    ages : list
+        List of available ages.
+    num_ages : int
+        Number of ages.
+    hdr_list : list
+        List of table column names.
+    isocmds : Numpy array
+        Isochrones data array.
+
+    Examples
+    --------
+    >>> isocmd = readisocmd.MIST('MIST_v1.0_feh_p0.00_afe_p0.0_vvcrit0.4.iso.cmd')
+    >>> age_ind = isocmd.age_index(7.0)
+    >>> B = isocmd.isocmds[age_ind]['Bessell_B']
+    >>> V = isocmd.isocmds[age_ind]['Bessell_V']
+    >>> plt.plot(B-V, V) #plot the CMD for logage = 7.0
     """
 
     def __init__(self, filename, verbose=True):
-
         """
+        Class constructor/initializer.
 
-        Args:
-            filename: the name of .iso.cmd file.
-
-        Usage:
-            >> isocmd = readisocmd.MIST('MIST_v1.0_feh_p0.00_afe_p0.0_vvcrit0.4.iso.cmd')
-            >> age_ind = isocmd.age_index(7.0)
-            >> B = isocmd.isocmds[age_ind]['Bessell_B']
-            >> V = isocmd.isocmds[age_ind]['Bessell_V']
-            >> plt.plot(B-V, V) #plot the CMD for logage = 7.0
-
-        Attributes:
-            version         Dictionary containing the MIST and MESA version numbers.
-            photo_sys       Photometric system.
-            abun            Dictionary containing Yinit, Zinit, [Fe/H], and [a/Fe] values.
-            Av_extinction   Av for CCM89 extinction.
-            rot             Rotation in units of surface v/v_crit.
-            ages            List of ages.
-            num_ages        Number of ages.
-            hdr_list        List of column headers.
-            isocmds         Data.
-
+        Parameters
+        ----------
+        filename : str
+            The name of .iso.cmd file.
         """
 
         self.filename = filename
@@ -58,14 +72,34 @@ class MIST:
         ) = self.read_isocmd_file()
 
     def read_isocmd_file(self):
-
         """
-
         Reads in the .iso.cmd file.
 
-        Args:
-            filename: the name of .iso.cmd file.
+        Parameters
+        ----------
+        filename : str
+            The name of .iso.cmd file.
 
+        Returns
+        -------
+        version : dict
+            MIST version string.
+        photo_sys : str
+            String with information on photometric systems.
+        abun : dict
+            Stellar model composition information.
+        Av_extinction : float
+            Extinction used in generating observational isocrhones.
+        rot : float
+            Rotational velocity parameter.
+        ages : list
+            List of available ages.
+        num_ages : int
+            Number of ages.
+        hdr_list : list
+            List of table column names.
+        isocmd_set : Numpy array
+            Isochrones data array.
         """
 
         # open file and read it in
@@ -112,14 +146,18 @@ class MIST:
         )
 
     def age_index(self, age):
-
         """
+        Get the isochrone table index for the input age.
 
-        Returns the index for the user-specified age.
+        Parameters
+        ----------
+        age : float
+            The base-10 logarithm of the age of the isochrone.
 
-        Args:
-            age: the base-10 logarithm of the age of the isochrone.
-
+        Returns
+        -------
+        age_ndex : int
+            The index for the user-specified age.
         """
 
         diff_arr = abs(array(self.ages) - age)
@@ -140,38 +178,49 @@ class PARSEC:
     """
     Reads PARSEC CMD files (http://stev.oapd.inaf.it/cmd). The code is taken and modified from
     https://github.com/jieunchoi/MIST_codes/blob/master/scripts/read_mist_models.py
+
+    Attributes
+    ----------
+    version : str
+        String containing the version information
+    photo_sys : str
+        Photometric systems available.
+    abun : dict
+        Dictionary containing Yinit, Zinit, [Fe/H], and [a/Fe] values.
+    Av_extinction : float
+        Av used for observation isochrones (Cardelli et al. (1989) + O'Donnell (1994) with RV=3.1.)
+    ages :  list
+        List ofi available ages.
+    num_ages : int
+        Number of ages.
+    hdr_list : list
+        List of table column names.
+    isocmds : Numpy array
+        Isochrones data.
+
+    Examples
+    --------
+    >>> isocmd = readisocmd.PADOVA('PARSEC_1.2S_feh_p0.00_GGBPGRP.iso.cmd')
+    >>> age_ind = isocmd.age_index(7.0)
+    >>> G = isocmd.isocmds[age_ind]['G']
+    >>> G_BP = isocmd.isocmds[age_ind]['G_BP']
+    >>> G_RP = isocmd.isocmds[age_ind]['G_RP']
+    >>> plt.plot(G_BP-G_RP, G) #plot the CMD for logage = 7.0
     """
 
     def __init__(self, filename, verbose=True, colibri=True):
-
         """
+        Class constructor/initializer
 
-        Args:
-            filename: the name of .iso.cmd file.
-
-        Keywords:
-            verbose: if True print out information while reading file
-            colibri: if True isochrones table is assumed to be in PARSEC v1.2S + COLIBRI PR16 format,
-            otherwise PARSEC version 1.2S is assumed.
-
-        Usage:
-            >> isocmd = readisocmd.PADOVA('PARSEC_1.2S_feh_p0.00_GGBPGRP.iso.cmd')
-            >> age_ind = isocmd.age_index(7.0)
-            >> G = isocmd.isocmds[age_ind]['G']
-            >> G_BP = isocmd.isocmds[age_ind]['G_BP']
-            >> G_RP = isocmd.isocmds[age_ind]['G_RP']
-            >> plt.plot(G_BP-G_RP, G) #plot the CMD for logage = 7.0
-
-        Attributes:
-            version         String containing the version information
-            photo_sys       Photometric system.
-            abun            Dictionary containing Yinit, Zinit, [Fe/H], and [a/Fe] values.
-            Av_extinction   Av (Cardelli et al. (1989) + O'Donnell (1994) with RV=3.1.)
-            ages            List of ages.
-            num_ages        Number of ages.
-            hdr_list        List of column headers.
-            isocmds         Data.
-
+        Parameters
+        ----------
+        filename : str
+            The name of .iso.cmd file.
+        verbose : boolean
+            If true print out information while reading file
+        colibri : boolean
+            If True isochrones table is assumed to be in PARSEC v1.2S + COLIBRI
+            PR16 format, otherwise PARSEC version 1.2S is assumed.
         """
 
         self.filename = filename
@@ -191,14 +240,32 @@ class PARSEC:
         ) = self.read_isocmd_file()
 
     def read_isocmd_file(self):
-
         """
-
         Reads in the .iso.cmd file.
 
-        Args:
-            filename: the name of .iso.cmd file.
+        Parameters
+        ----------
+        filename : str
+            The name of .iso.cmd file.
 
+        Returns
+        ----------
+        version : str
+            String containing the version information
+        photo_sys : str
+            Photometric systems available.
+        abun : dict
+            Dictionary containing Yinit, Zinit, [Fe/H], and [a/Fe] values.
+        Av_extinction : float
+            Av used for observation isochrones (Cardelli et al. (1989) + O'Donnell (1994) with RV=3.1.)
+        ages :  list
+            List ofi available ages.
+        num_ages : int
+            Number of ages.
+        hdr_list : list
+            List of table column names.
+        isocmd_set : Numpy array
+            Isochrones data.
         """
 
         Zsun = 0.0152
@@ -285,14 +352,13 @@ class PARSEC:
         )
 
     def age_index(self, age):
-
         """
-
         Returns the index for the user-specified age.
 
-        Args:
-            age: the base-10 logarithm of the age of the isochrone.
-
+        Parameters
+        ----------
+        age : float
+            The base-10 logarithm of the age of the isochrone.
         """
 
         diff_arr = abs(array(self.ages) - age)

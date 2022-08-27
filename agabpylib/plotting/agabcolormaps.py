@@ -21,6 +21,8 @@ _LUTSIZE = rcParams["image.lut"]
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))
 
+__all__ = ["planckian_locus", "register_agab_maps", "show_color_maps"]
+
 
 def _get_data(path_to_file):
     """

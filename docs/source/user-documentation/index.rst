@@ -11,4 +11,6 @@ User documentation
     plotting
     posteriors
     simulation
+    stats
+    stellarmodels
     

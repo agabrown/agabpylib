@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import cycler
 import agabpylib.plotting.distinct_colours as dc
 
+__all__ = ["useagab", "apply_tufte"]
+
 
 def useagab(
     usetex=False,

@@ -4,10 +4,8 @@ Plotting tools.
 This package provides classes and functions for plotting.
 """
 
-from .plotstyles import *
-from .inference import *
-from .distributions import *
-from .distinct_colours import *
 from .agabcolormaps import *
-
-__all__ = [s for s in dir() if not s.startswith("_")]
+from .distinct_colours import *
+from .distributions import *
+from .inference import *
+from .plotstyles import *

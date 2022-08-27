@@ -8,6 +8,8 @@ import numpy as np
 import matplotlib as mpl
 import scipy as sp
 
+__all__ = ["error_ellipses", "convert_to_stdev_nan"]
+
 
 def error_ellipses(mu, covmat, sigma_levels, **kwargs):
     """

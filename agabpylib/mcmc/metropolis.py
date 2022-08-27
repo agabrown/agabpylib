@@ -4,6 +4,8 @@ This module provides classes and functions that implement the Metropolis MCMC sa
 
 import numpy as np
 
+__all__ = ["MetropolisSampler"]
+
 
 class MetropolisSampler:
     """

@@ -8,6 +8,8 @@ Anthony Brown May 2015 - Aug 2022
 import numpy as np
 import scipy as sp
 
+__all__ = ["rse", "robust_stats"]
+
 _rse_constant = 1.0 / (np.sqrt(2) * 2 * sp.special.erfinv(0.8))
 
 
@@ -17,14 +19,15 @@ def rse(x):
 
     Parameters
     ----------
-
-    x - Array of input values (can be of any dimension)
+    x : float array
+        Array of input values (can be of any dimension)
 
     Returns
     -------
-
-    The Robust Scatter Estimate (RSE), defined as 0.390152 * (P90-P10), where P10 and P90 are the 10th and
-    90th percentile of the distribution of x.
+    rse : float
+        The Robust Scatter Estimate (RSE), defined as 0.390152 * (P90-P10),
+        where P10 and P90 are the 10th and 90th percentile of the distribution
+        of x.
     """
     return _rse_constant * (
         sp.stats.scoreatpercentile(x, 90) - sp.stats.scoreatpercentile(x, 10)
@@ -37,14 +40,14 @@ def robust_stats(x):
 
     Parameters
     ----------
-
-    x - input array (numpy array is assumed)
+    x : float array
+        Input array (numpy array is assumed)
 
     Returns
     -------
-
-    Dictionary {'median':median, 'rse':RSE, 'lowerq':lower quartile, 'upperq':upper quartile, 'min':minimum
-    value, 'max':maximum value}
+    stats : dict
+        Dictionary {'median':median, 'rse':RSE, 'lowerq':lower quartile,
+        'upperq':upper quartile, 'min':minimum value, 'max':maximum value}
     """
 
     med = np.median(x)

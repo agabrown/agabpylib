@@ -19,6 +19,8 @@ import agabpylib.plotting.inference as infr
 import agabpylib.densityestimation.kde as abkde
 import agabpylib.plotting.distinct_colours as dc
 
+__all__ = ["plot_joint_kde_and_marginals", "plot_joint_kde"]
+
 line_colours = dc.get_distinct(4)
 
 # Configure matplotlib
