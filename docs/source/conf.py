@@ -17,13 +17,14 @@
 
 # -- Project information -----------------------------------------------------
 import agabpylib
+import matplotlib
 
 project = "agabpylib"
 copyright = "2015-2022, Anthony G.A. Brown"
 author = "Anthony G.A. Brown"
 
-#version = agabpylib.__version__
-#release = agabpylib.__version__
+# version = agabpylib.__version__
+# release = agabpylib.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -37,10 +38,6 @@ extensions = [
     "sphinx_automodapi.automodapi",
     "matplotlib.sphinxext.plot_directive",
     "sphinx.ext.napoleon",
-    "myst_parser",
-]
-myst_enable_extensions = [
-    "colon_fence",
 ]
 numpydoc_show_class_members = False
 
