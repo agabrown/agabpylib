@@ -32,7 +32,6 @@ The following packages are optional:
 * [scikit-learn](http://scikit-learn.org/stable/index.html)
 * [pandas](https://pandas.pydata.org/)
 * [astropy](https://www.astropy.org/)
-* [setuptools](https://pypi.python.org/pypi/setuptools)
 * [PyGaia](https://github.com/agabrown/PyGaia)
 
 ## Attribution
