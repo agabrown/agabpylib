@@ -17,7 +17,7 @@ Clone the github repository:
 ```bash
 git clone https://github.com/agabrown/agabpylib.git
 cd agabpylib
-python setup.py install --user
+python -m pip install .
 ```
 
 The following python packages are required:

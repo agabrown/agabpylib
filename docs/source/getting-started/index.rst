@@ -11,7 +11,7 @@ Install agabpylib as follows:
     
     > git clone https://github.com/agabrown/agabpylib.git
     > cd agabpylib
-    > python setup.py install --user
+    > python -m pip install .
 
 Dependencies
 ------------
