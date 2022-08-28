@@ -9,7 +9,7 @@ there is no committment to fixing issues. Use at your own risk._
 
 ## Documentation
 
-Read it [here](https://agabpylib.readthedocs.io)
+Read it [here](https://agabpylib.readthedocs.io).
 
 ## Installation notes
 
