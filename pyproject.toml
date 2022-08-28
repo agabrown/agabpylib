@@ -32,5 +32,5 @@ docs = [
     "sphinx>=4.4.0",
     "myst-parser>=0.18",
     "sphinx-book-theme>=0.3.3",
-    "sphinx-automodap>=0.14",
+    "sphinx-automodapi>=0.14",
 ]
