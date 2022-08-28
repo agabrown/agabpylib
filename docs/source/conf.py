@@ -17,7 +17,6 @@
 
 # -- Project information -----------------------------------------------------
 import agabpylib
-import matplotlib
 
 project = "agabpylib"
 copyright = "2015-2022, Anthony G.A. Brown"
