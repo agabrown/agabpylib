@@ -10,10 +10,9 @@ build:
 
 python:
   install:
+    - requirements: docs/requirements.txt
     - method: pip
       path: .
-      extra_requirements:
-        - docs
 
 sphinx:
   builder: dirhtml
