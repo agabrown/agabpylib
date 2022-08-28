@@ -53,7 +53,8 @@ exclude_patterns = []
 
 html_theme = "sphinx_book_theme"
 html_title = "agabpylib"
-html_static_path = ["_static"]
+# Not needed for now
+# html_static_path = ["_static"]
 html_show_sourcelink = False
 html_theme_options = {
     "path_to_docs": "docs",
