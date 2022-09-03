@@ -124,7 +124,7 @@ class U0Interpolator:
         u0 : float array
             Array of u0 values evaluated at the input G-band magnitudes.
 
-         Raises
+        Raises
         ------
         ValueError
             For input values outside the interpolation range.
