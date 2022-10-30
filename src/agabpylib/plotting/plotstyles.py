@@ -4,8 +4,8 @@ Provides plotting style and matplotib axes configuration.
 Anthony Brown Aug 2015 - Aug 2022
 """
 
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib import rc
 import cycler
 import agabpylib.plotting.distinct_colours as dc
 
@@ -53,31 +53,31 @@ def useagab(
         The list of colours used by the colour cycler (optional).
     """
     if usetex:
-        mpl.mpl.rc("text", usetex=True)
-        mpl.rc("text.latex", preamble=r"\usepackage{amsmath}")
+        rc("text", usetex=True)
+        rc("text.latex", preamble=r"\usepackage{amsmath}")
     else:
-        mpl.rc("text", usetex=False)
-    mpl.rc("font", family=fontfam, size=fontsize)
-    mpl.rc("xtick.major", size=lenticks)
-    mpl.rc("xtick.minor", size=lenticks * 2 / 3)
-    mpl.rc("ytick.major", size=lenticks)
-    mpl.rc("ytick.minor", size=lenticks * 2 / 3)
-    mpl.rc("lines", linewidth=linewidths)
-    mpl.rc("axes", linewidth=axislinewidths)
-    mpl.rc("axes", facecolor="white")
+        rc("text", usetex=False)
+    rc("font", family=fontfam, size=fontsize)
+    rc("xtick.major", size=lenticks)
+    rc("xtick.minor", size=lenticks * 2 / 3)
+    rc("ytick.major", size=lenticks)
+    rc("ytick.minor", size=lenticks * 2 / 3)
+    rc("lines", linewidth=linewidths)
+    rc("axes", linewidth=axislinewidths)
+    rc("axes", facecolor="white")
     if sroncolours:
         line_colours = dc.get_distinct(ncolors)
     else:
         line_colours = plt.cm.get_cmap("tab10").colors
-    mpl.rc("axes", prop_cycle=(cycler.cycler("color", line_colours)))
-    mpl.rc("xtick", direction="out")
-    mpl.rc("ytick", direction="out")
-    mpl.rc("grid", color="cbcbcb")
-    mpl.rc("grid", linestyle="-")
-    mpl.rc("grid", linewidth=0.5)
-    mpl.rc("grid", alpha=1.0)
-    mpl.rc("figure", dpi=80)
-    mpl.rc("figure.subplot", bottom=0.125)
+    rc("axes", prop_cycle=(cycler.cycler("color", line_colours)))
+    rc("xtick", direction="out")
+    rc("ytick", direction="out")
+    rc("grid", color="cbcbcb")
+    rc("grid", linestyle="-")
+    rc("grid", linewidth=0.5)
+    rc("grid", alpha=1.0)
+    rc("figure", dpi=80)
+    rc("figure.subplot", bottom=0.125)
 
     if return_colours:
         return line_colours
