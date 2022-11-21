@@ -45,7 +45,8 @@ def weighted_mean_twod(x, y, sx, sy, cxy):
         Covariance matrix of the weighted mean.
     """
     ndata = x.size
-    cov = np.zeros((2 * ndata, 2 * ndata))
+    cinv = np.zeros((2 * ndata, 2 * ndata))
+    cov = np.zeros((2,2))
     mat_a = np.zeros((2 * ndata, 2))
     vec_b = np.zeros(2 * ndata)
     for j in range(0, 2 * ndata, 2):
@@ -54,11 +55,11 @@ def weighted_mean_twod(x, y, sx, sy, cxy):
         k = int(j / 2)
         vec_b[j] = x[k]
         vec_b[j + 1] = y[k]
-        cov[j, j] = sx[k] ** 2
-        cov[j + 1, j + 1] = sy[k] ** 2
-        cov[j + 1, j] = sx[k] * sy[k] * cxy[k]
-        cov[j, j + 1] = cov[j + 1, j]
-    cinv = inv(cov)
+        cov[0, 0] = sx[k] ** 2
+        cov[1, 1] = sy[k] ** 2
+        cov[1, 0] = sx[k] * sy[k] * cxy[k]
+        cov[0, 1] = cov[1, 0]
+        cinv[j:j+2,j:j+2] = inv(cov)
     covw = inv(np.dot(mat_a.T, np.dot(cinv, mat_a)))
     wx, wy = np.dot(covw, np.dot(mat_a.T, np.dot(cinv, vec_b)))
     return wx, wy, covw
