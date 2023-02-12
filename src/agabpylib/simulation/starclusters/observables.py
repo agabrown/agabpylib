@@ -17,12 +17,8 @@ from pygaia.errors.astrometric import (
     position_uncertainty,
     proper_motion_uncertainty,
 )
-from pygaia.errors.photometric import (
-    g_magnitude_uncertainty_eom,
-    bp_magnitude_uncertainty_eom,
-    rp_magnitude_uncertainty_eom,
-)
-from pygaia.errors.spectroscopic import vrad_error_sky_avg
+from pygaia.errors.photometric import magnitude_uncertainty
+from pygaia.errors.spectroscopic import radial_velocity_uncertainty
 
 __all__ = ["Observables", "GaiaSurvey"]
 
@@ -214,15 +210,13 @@ class GaiaSurvey(Observables):
             "K4V",
         ]
         spt = np.select(condlist, choicelist)
-        vrad_error = vrad_error_sky_avg(vmag, spt, extension=self.mission_extension)
+        vrad_error = radial_velocity_uncertainty(
+            grvs, teff, logg, release=self.gaia_release
+        )
 
-        gmag_error = g_magnitude_uncertainty_eom(gmag, extension=self.mission_extension)
-        bpmag_error = bp_magnitude_uncertainty_eom(
-            gmag, vmini, extension=self.mission_extension
-        )
-        rpmag_error = rp_magnitude_uncertainty_eom(
-            gmag, vmini, extension=self.mission_extension
-        )
+        gmag_error = magnitude_uncertainty("g", gmag, release=self.gaia_release)
+        bpmag_error = magnitude_uncertainty("gbp", bpmag, release=self.gaia_release)
+        rpmag_error = magnitude_uncertainty("grp", rpmag, release=self.gaia_release)
 
         # convert astrometric uncertainties to milliarcsec(/yr)
         ra_error = ra_error / 1000.0

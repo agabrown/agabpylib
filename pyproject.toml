@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "agabpylib"
 description = "Anthony's private private python utilities"
-version = "0.2.0"
+version = "0.3.0"
 authors = [{ name = "Anthony G.A. Brown", email = "brown@strw.leidenuniv.nl" }]
 readme = "README.md"
 requires-python = ">=3.6"

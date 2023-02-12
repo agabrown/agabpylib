@@ -47,7 +47,7 @@ def kde_scikitlearn(
         dmin = lims[0]
         dmax = lims[1]
 
-    kde = sklearn.neighbours.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
+    kde = sklearn.neighbors.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(data[:, None])
     if not (evalOnData):
         Dsamples = np.linspace(dmin, dmax, N)[:, None]
@@ -128,7 +128,7 @@ def kde2d_scikitlearn(
     # input units), then estimate the KDE bandwidth and carry out the KDE.
     scaler = sklearn.preprocessing.StandardScaler().fit(data_values)
     scaled_values = scaler.transform(data_values)
-    kde = sklearn.neighbours.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
+    kde = sklearn.neighbors.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(scaled_values)
     if not (evalOnData):
         if not (xeval == None):
