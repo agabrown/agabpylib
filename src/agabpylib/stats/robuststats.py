@@ -13,7 +13,7 @@ __all__ = ["rse", "robust_stats"]
 _rse_constant = 1.0 / (np.sqrt(2) * 2 * sp.special.erfinv(0.8))
 
 
-def rse(x):
+def rse(x, ax=None):
     """
     Calculate the Robust Scatter Estimate for an array of values (see GAIA-C3-TN-ARI-HL-007).
 
@@ -21,6 +21,8 @@ def rse(x):
     ----------
     x : float array
         Array of input values (can be of any dimension)
+    ax : int
+        Axis along which the RSE is computed. Default is None. If None, compute over the whole array x.
 
     Returns
     -------
@@ -30,11 +32,12 @@ def rse(x):
         of x.
     """
     return _rse_constant * (
-        sp.stats.scoreatpercentile(x, 90) - sp.stats.scoreatpercentile(x, 10)
+        sp.stats.scoreatpercentile(x, 90, axis=ax)
+        - sp.stats.scoreatpercentile(x, 10, axis=ax)
     )
 
 
-def robust_stats(x):
+def robust_stats(x, ax=None):
     """
     Provide robust statistics of the values in array x (which can be of any dimension).
 
@@ -42,6 +45,8 @@ def robust_stats(x):
     ----------
     x : float array
         Input array (numpy array is assumed)
+    ax : int
+        Axis along which the statistics are computed. Default is None. If None, compute over the whole array x.
 
     Returns
     -------
@@ -50,12 +55,12 @@ def robust_stats(x):
         'upperq':upper quartile, 'min':minimum value, 'max':maximum value}
     """
 
-    med = np.median(x)
-    therse = rse(x)
-    lowerq = sp.stats.scoreatpercentile(x, 25)
-    upperq = sp.stats.scoreatpercentile(x, 75)
-    lowerten = sp.stats.scoreatpercentile(x, 10)
-    upperten = sp.stats.scoreatpercentile(x, 90)
+    med = np.median(x, axis=ax)
+    therse = rse(x, axis=ax)
+    lowerq = sp.stats.scoreatpercentile(x, 25, axis=ax)
+    upperq = sp.stats.scoreatpercentile(x, 75, axis=ax)
+    lowerten = sp.stats.scoreatpercentile(x, 10, axis=ax)
+    upperten = sp.stats.scoreatpercentile(x, 90, axis=ax)
 
     return {
         "median": med,
@@ -64,7 +69,6 @@ def robust_stats(x):
         "upperq": upperq,
         "lower10": lowerten,
         "upper10": upperten,
-        "min": x.min(),
-        "max": x.max(),
-        "ndata": x.size,
+        "min": x.min(axis=ax),
+        "max": x.max(axis=ax),
     }
