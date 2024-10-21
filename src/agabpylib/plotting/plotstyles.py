@@ -1,7 +1,7 @@
 """
 Provides plotting style and matplotib axes configuration.
 
-Anthony Brown Aug 2015 - Aug 2022
+Anthony Brown Aug 2015 - Oct 2024
 """
 
 import matplotlib.pyplot as plt
@@ -83,7 +83,7 @@ def useagab(
         return line_colours
 
 
-def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="left"):
+def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="left", dropspines=5):
     """
     Apply the "Tufte" style to the plot axes contained in the input axis object.
 
@@ -101,6 +101,8 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="le
         If True minor tickmarks are also used for the grid
     yspine : string {"left", "right"}
         "left": set the vertical axis on the left, "right": set vertical axis on right (default "left")
+    dropspines : int
+        Move spines outward by this amount (default 5 points).
 
     Returns
     -------
@@ -109,8 +111,8 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="le
 
     if yspine == "right":
         # Move right and bottom spines outward by 5 points
-        ax.spines["right"].set_position(("outward", 5))
-        ax.spines["bottom"].set_position(("outward", 5))
+        ax.spines["right"].set_position(("outward", dropspines))
+        ax.spines["bottom"].set_position(("outward", dropspines))
 
         # Hide the left and top spines
         ax.spines["left"].set_visible(False)
@@ -121,8 +123,8 @@ def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="le
         ax.xaxis.set_ticks_position("bottom")
     else:
         # Move left and bottom spines outward by 5 points
-        ax.spines["left"].set_position(("outward", 5))
-        ax.spines["bottom"].set_position(("outward", 5))
+        ax.spines["left"].set_position(("outward", dropspines))
+        ax.spines["bottom"].set_position(("outward", dropspines))
 
         # Hide the right and top spines
         ax.spines["right"].set_visible(False)
