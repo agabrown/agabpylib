@@ -113,7 +113,7 @@ class ParallaxSurvey:
         Random number generator.
     """
 
-    def __init__(self, numberOfStars, minDistance, maxDistance, surveyLimit=np.Inf):
+    def __init__(self, numberOfStars, minDistance, maxDistance, surveyLimit=np.inf):
         """
         Class constructor/initializer.
 
@@ -203,7 +203,7 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
         maxDistance,
         meanAbsoluteMagnitude,
         stddevAbsoluteMagnitude,
-        surveyLimit=np.Inf,
+        surveyLimit=np.inf,
     ):
         """
         Class constructor/initializer.
@@ -354,7 +354,7 @@ class UniformDistributionSingleLuminosityHip(UniformSpaceDistributionSingleLumin
         maxDistance,
         meanAbsoluteMagnitude,
         stddevAbsoluteMagnitude,
-        surveyLimit=np.Inf,
+        surveyLimit=np.inf,
     ):
         """
         Class constructor/initializer.
@@ -439,7 +439,7 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
         maxDistance,
         meanAbsoluteMagnitude,
         stddevAbsoluteMagnitude,
-        surveyLimit=np.Inf,
+        surveyLimit=np.inf,
     ):
         """
         Class constructor/initializer.

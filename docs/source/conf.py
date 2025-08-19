@@ -19,7 +19,7 @@
 import agabpylib
 
 project = "agabpylib"
-copyright = "2015-2022, Anthony G.A. Brown"
+copyright = "2015-2025, Anthony G.A. Brown"
 author = "Anthony G.A. Brown"
 
 # version = agabpylib.__version__
