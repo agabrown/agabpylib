@@ -5,7 +5,7 @@ Anthony Brown Aug 2015 - Oct 2024
 """
 
 import matplotlib.pyplot as plt
-from matplotlib import rc
+from matplotlib import rc, colormaps
 import cycler
 import agabpylib.plotting.distinct_colours as dc
 
@@ -68,7 +68,7 @@ def useagab(
     if sroncolours:
         line_colours = dc.get_distinct(ncolors)
     else:
-        line_colours = plt.cm.get_cmap("tab10").colors
+        line_colours = colormaps["tab10"].colors
     rc("axes", prop_cycle=(cycler.cycler("color", line_colours)))
     rc("xtick", direction="out")
     rc("ytick", direction="out")
@@ -83,7 +83,9 @@ def useagab(
         return line_colours
 
 
-def apply_tufte(ax, withgrid=False, minorticks=False, gridboth=False, yspine="left", dropspines=5):
+def apply_tufte(
+    ax, withgrid=False, minorticks=False, gridboth=False, yspine="left", dropspines=5
+):
     """
     Apply the "Tufte" style to the plot axes contained in the input axis object.
 
