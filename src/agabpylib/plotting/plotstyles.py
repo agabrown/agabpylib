@@ -22,6 +22,7 @@ def useagab(
     linewidths=2,
     lenticks=6,
     return_colours=False,
+    dpi=80,
 ):
     """
     Configure the plotting style to my liking.
@@ -46,6 +47,8 @@ def useagab(
         Length of major tickmarks in points (default 6, minor tick marks adjusted automatically)
     return_colours: bool
         If true return the list of line/symbol colours.
+    dpi : float
+        Dots per inch
 
     Returns
     -------
@@ -76,7 +79,7 @@ def useagab(
     rc("grid", linestyle="-")
     rc("grid", linewidth=0.5)
     rc("grid", alpha=1.0)
-    rc("figure", dpi=80)
+    rc("figure", dpi=dpi)
     rc("figure.subplot", bottom=0.125)
 
     if return_colours:
