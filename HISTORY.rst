@@ -1,5 +1,10 @@
 .. :changelog:
 
+0.3.3 (Aug 2026)
+++++++++++++++++
+
+- Added `coding` package that encapsulates boiler-plate code that I often use.
+
 0.1.11 (Dec 2020)
 +++++++++++++++++
 
