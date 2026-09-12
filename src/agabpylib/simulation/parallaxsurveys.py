@@ -5,33 +5,34 @@ measurements of the parallax and the apparent magnitude of the stars.
 Anthony Brown 2011 - Aug 2022
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib import cm
-from sys import stderr
-from scipy.stats import norm, uniform
-from scipy.special import erf
-from scipy.integrate import quad
-from cycler import cycler
 from os import path
+from sys import exit, stderr
 
-from agabpylib.plotting.plotstyles import useagab, apply_tufte
-from agabpylib.plotting.distinct_colours import get_distinct
-from agabpylib.stats.robuststats import rse
+import matplotlib.pyplot as plt
+import numpy as np
+from cycler import cycler
+from matplotlib import cm
+from scipy.integrate import quad
+from scipy.special import erf
+from scipy.stats import norm
 from sklearn.neighbors import KernelDensity
+
+from agabpylib.plotting.distinct_colours import get_distinct
+from agabpylib.plotting.plotstyles import apply_tufte, useagab
+from agabpylib.stats.robuststats import rse
 
 _ROOT = path.abspath(path.dirname(__file__))
 
 __all__ = [
-    "simDistancesConstantSpaceDensity",
-    "simGaussianAbsoluteMagnitude",
     "ParallaxSurvey",
-    "UniformSpaceDistributionSingleLuminosity",
     "UniformDistributionSingleLuminosityHip",
     "UniformDistributionSingleLuminosityTGAS",
-    "showSurveyStatistics",
-    "marginal_pdf_distance",
+    "UniformSpaceDistributionSingleLuminosity",
     "marginal_pdf_absMag",
+    "marginal_pdf_distance",
+    "showSurveyStatistics",
+    "simDistancesConstantSpaceDensity",
+    "simGaussianAbsoluteMagnitude",
 ]
 
 
@@ -148,7 +149,7 @@ class ParallaxSurvey:
         seed - Value of random number seed
         """
         self.seed = seed
-        rng = np.random.default_rng(seed)
+        np.random.default_rng(seed)
 
     def getRandomNumberSeed(self):
         """
@@ -272,7 +273,7 @@ class UniformSpaceDistributionSingleLuminosity(ParallaxSurvey):
                     self.apparentMagnitudeLimit,
                 ]
             )
-            self._appMagPdfNorm, dummy = quad(self._apparentMagnitude_pdf, low, up)
+            self._appMagPdfNorm, _dummy = quad(self._apparentMagnitude_pdf, low, up)
 
     def apparentMagnitude_lpdf(self, m):
         """
@@ -484,7 +485,7 @@ class UniformDistributionSingleLuminosityTGAS(UniformSpaceDistributionSingleLumi
                 dtype=None,
             )
         else:
-            print("Cannot find file {0}".format(self.tgasErrorsPdfFile))
+            print(f"Cannot find file {self.tgasErrorsPdfFile}")
             print("exiting")
             exit()
 
@@ -687,8 +688,8 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
             label="observed",
         )
 
-    axB.set_xlabel("$m$, $m_\mathrm{true}$")
-    axB.set_ylabel("$p(m)$, $p(m_\mathrm{true})$")
+    axB.set_xlabel(r"$m$, $m_\mathrm{true}$")
+    axB.set_ylabel(r"$p(m)$, $p(m_\mathrm{true})$")
     leg = axB.legend(loc="upper left", handlelength=1.0)
     for t in leg.get_texts():
         t.set_fontsize(14)
@@ -756,7 +757,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
                 samples,
                 np.exp(logdens),
                 "-",
-                label=r"$\varpi/\sigma_\varpi\geq{0:.1f}$".format(plxSnrLim),
+                label=rf"$\varpi/\sigma_\varpi\geq{plxSnrLim:.1f}$",
                 lw=3,
             )
         else:
@@ -766,7 +767,7 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
                 density=True,
                 histtype="step",
                 lw=3,
-                label=r"$\varpi/\sigma_\varpi\geq{0:.1f}$".format(plxSnrLim),
+                label=rf"$\varpi/\sigma_\varpi\geq{plxSnrLim:.1f}$",
             )
 
     axC.set_xlabel("$M$")
@@ -799,16 +800,12 @@ def showSurveyStatistics(simulatedSurvey, pdfFile=None, pngFile=None, usekde=Fal
     axD.set_ylim(-10, 6)
 
     plt.suptitle(
-        "Simulated survey statistics: $N_\\mathrm{{stars}}={0}$, ".format(
-            simulatedSurvey.numberOfStars
-        )
-        + "$m_\\mathrm{{lim}}={0}$, ".format(simulatedSurvey.apparentMagnitudeLimit)
-        + "$N_\\mathrm{{survey}}={0}$, ".format(simulatedSurvey.numberOfStarsInSurvey)
-        + "${0}\\leq\\varpi\\leq{1}$, ".format(
-            simulatedSurvey.minParallax, simulatedSurvey.maxParallax
-        )
-        + "$\\mu_M={0}$, ".format(simulatedSurvey.meanAbsoluteMagnitude)
-        + "$\\sigma_M={0:.2f}$".format(simulatedSurvey.stddevAbsoluteMagnitude)
+        f"Simulated survey statistics: $N_\\mathrm{{stars}}={simulatedSurvey.numberOfStars}$, "
+        + f"$m_\\mathrm{{lim}}={simulatedSurvey.apparentMagnitudeLimit}$, "
+        + f"$N_\\mathrm{{survey}}={simulatedSurvey.numberOfStarsInSurvey}$, "
+        + f"${simulatedSurvey.minParallax}\\leq\\varpi\\leq{simulatedSurvey.maxParallax}$, "
+        + f"$\\mu_M={simulatedSurvey.meanAbsoluteMagnitude}$, "
+        + f"$\\sigma_M={simulatedSurvey.stddevAbsoluteMagnitude:.2f}$"
     )
 
     if pdfFile is not None:
@@ -852,7 +849,7 @@ def marginal_pdf_distance(r, rmin, rmax, mu, sigma, mlim):
         + 2 * np.log(x)
         + norm.logcdf(mlim - mu - 5 * np.log10(x) + 5, scale=sigma)
     )
-    C, dummy = quad(pdf, rmin, rmax)
+    C, _dummy = quad(pdf, rmin, rmax)
     return pdf(r) / C
 
 
@@ -887,8 +884,7 @@ def marginal_pdf_absMag(M, rmin, rmax, mu, sigma, mlim):
     def _pdf(x):
         rlim = np.power(10, 0.2 * (mlim - x + 5))
         if np.isscalar(rlim):
-            if rlim > rmax:
-                rlim = rmax
+            rlim = min(rlim, rmax)
         else:
             rlim[(rlim > rmax)] = rmax
         return (rlim**3 - rmin**3) / A * norm.pdf(x, loc=mu, scale=sigma)

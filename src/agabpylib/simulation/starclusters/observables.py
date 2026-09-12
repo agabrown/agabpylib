@@ -4,6 +4,7 @@ Generate the Gaia observables for a given simulated cluster.
 Anthony Brown Sep 2019 - Aug 2022
 """
 
+import sys
 from abc import ABC, abstractmethod
 
 import astropy.units as u
@@ -20,7 +21,7 @@ from pygaia.errors.astrometric import (
 from pygaia.errors.photometric import magnitude_uncertainty
 from pygaia.errors.spectroscopic import radial_velocity_uncertainty
 
-__all__ = ["Observables", "GaiaSurvey"]
+__all__ = ["GaiaSurvey", "Observables"]
 
 
 class Observables(ABC):
@@ -42,7 +43,6 @@ class Observables(ABC):
         -------
         Nothing: the simulated observations of the cluster are appended to the input table.
         """
-        pass
 
     def getinfo(self):
         """
@@ -61,7 +61,6 @@ class Observables(ABC):
         info : str
             String with specific information about the simulated observations.
         """
-        pass
 
     @abstractmethod
     def getmeta(self):
@@ -71,7 +70,6 @@ class Observables(ABC):
         meta : dict
             Metadata on the simulated observations.
         """
-        pass
 
 
 class GaiaSurvey(Observables):
@@ -122,7 +120,7 @@ class GaiaSurvey(Observables):
         """
         if not (release in ["dr3", "dr4", "dr5"]):
             raise ValueError("Release must be one of dr3/dr4/dr5")
-            exit(0)
+            sys.exit(0)
         self.gaia_release = release
         self.cluster_distance = distance_c
         self.cluster_ra = ra_c
@@ -209,7 +207,7 @@ class GaiaSurvey(Observables):
             "K0V",
             "K4V",
         ]
-        spt = np.select(condlist, choicelist)
+        np.select(condlist, choicelist)
         vrad_error = radial_velocity_uncertainty(
             grvs, teff, logg, release=self.gaia_release
         )

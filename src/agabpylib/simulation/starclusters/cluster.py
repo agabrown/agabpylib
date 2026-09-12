@@ -11,12 +11,13 @@ kinematic modelling studies.
 Anthony Brown Jul 2019 - Aug 2022
 """
 
-import numpy as np
-from scipy.interpolate import interp1d
-from os import path
 from datetime import datetime
+from os import path
+
 import astropy.units as u
-from astropy.table import QTable, Column
+import numpy as np
+from astropy.table import Column, QTable
+from scipy.interpolate import interp1d
 
 from agabpylib.stellarmodels.io.readisocmd import MIST, PARSEC
 
@@ -101,7 +102,7 @@ class StarAPs:
         else:
             afehsign = "p"
         if self.modelset == "mist":
-            subfolder = "MIST_v1.2_vvcrit{0:3.1f}_UBVRIplus".format(self.vvcrit)
+            subfolder = f"MIST_v1.2_vvcrit{self.vvcrit:3.1f}_UBVRIplus"
             fstring = "MIST_v1.2_feh_{0}{1:4.2f}_afe_{2}{3:3.1f}_vvcrit{4:3.1f}_UBVRIplus.iso.cmd"
             self.isofilename = fstring.format(
                 mehsign,
@@ -222,15 +223,15 @@ class StarAPs:
             info
             + "Astrophysical parameters\n"
             + "------------------------\n"
-            + "Isochrone models: {0}\n".format(self.modelset)
-            + "Age, log(Age) specified: {0}, {1}\n".format(self.age, self.logage)
-            + "log(Age) loaded: {0}\n".format(self.logageloaded)
-            + "[M/H]: {0}\n".format(self.metallicity)
-            + "[alpha/Fe]: {0}\n".format(self.afeh)
+            + f"Isochrone models: {self.modelset}\n"
+            + f"Age, log(Age) specified: {self.age}, {self.logage}\n"
+            + f"log(Age) loaded: {self.logageloaded}\n"
+            + f"[M/H]: {self.metallicity}\n"
+            + f"[alpha/Fe]: {self.afeh}\n"
         )
         if self.modelset == "mist":
-            info = info + "[v/vcrit]: {0}\n".format(self.afeh)
-        info = info + "Isochrone file: {0}\n\n".format(self.isofullpath)
+            info = info + f"[v/vcrit]: {self.afeh}\n"
+        info = info + f"Isochrone file: {self.isofullpath}\n\n"
         info = info + self.imf.getinfo()
         return info
 
@@ -299,7 +300,7 @@ class StarCluster:
         return (
             "Simulated cluster parameters\n"
             + "============================\n"
-            + "Number of stars: {0}\n\n".format(self.n_stars)
+            + f"Number of stars: {self.n_stars}\n\n"
             + self.staraps.getinfo()
             + "\n\n"
             + self.starpos.getinfo()

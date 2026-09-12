@@ -10,8 +10,9 @@ renormalized unit weight error (RUWE). The tables are provided on the Gaia DR2 K
 Anthony Brown Oct 2018 - Aug 2022
 """
 
-import numpy as np
 import os
+
+import numpy as np
 import scipy.interpolate as spint
 
 _ROOT = os.path.abspath(os.path.dirname(__file__))

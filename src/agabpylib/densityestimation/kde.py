@@ -131,7 +131,7 @@ def kde2d_scikitlearn(
     kde = sklearn.neighbors.KernelDensity(bandwidth=kde_bandwidth, **kwargs)
     kde.fit(scaled_values)
     if not (evalOnData):
-        if not (xeval == None):
+        if xeval != None:
             positions = np.vstack([xeval.T.ravel(), yeval.T.ravel()]).T
             log_dens = kde.score_samples(scaler.transform(positions))
         else:

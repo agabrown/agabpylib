@@ -4,8 +4,9 @@ Anthony Brown Aug 2026 - Aug 2026
 """
 
 import argparse
+
 from matplotlib.figure import Figure
-from matplotlib.pyplot import show, figure
+from matplotlib.pyplot import figure, show
 
 _plot_file_formats = ("pdf", "png", "ps", "eps", "jpg", "svg")
 
@@ -34,7 +35,7 @@ def plotcode_parser(desc):
     return parser
 
 
-def save_or_show_plot(fig: Figure, basename: str = None, sfmt: str = None, **kwargs):
+def save_or_show_plot(fig: Figure, basename: str, sfmt: str, **kwargs):
     """
     Save the plot or show it on screen.
 

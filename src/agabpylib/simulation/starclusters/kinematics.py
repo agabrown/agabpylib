@@ -4,10 +4,10 @@ Provides classes and methods to simulate the kinematics of stars in clusters.
 Anthony Brown Aug 2019 - Aug 2022
 """
 
-import numpy as np
-from scipy.stats import multivariate_normal
 from abc import ABC, abstractmethod
+
 import astropy.units as u
+import numpy as np
 
 __all__ = ["Kinematics", "LinearVelocityField"]
 
@@ -36,7 +36,6 @@ class Kinematics(ABC):
         v_x, v_y, v_z : astropy.units.Quantity arrays
             The v_x, v_y, v_z velocity components of the stars in units of km/s.
         """
-        pass
 
     def getinfo(self):
         """
@@ -55,7 +54,6 @@ class Kinematics(ABC):
         info : str
             String with specific information about the cluster kinematics.
         """
-        pass
 
     @abstractmethod
     def getmeta(self):
@@ -65,7 +63,6 @@ class Kinematics(ABC):
         meta : dict
             Metadata on the kinematics of the cluster stars.
         """
-        pass
 
 
 class LinearVelocityField(Kinematics):
@@ -132,9 +129,7 @@ class LinearVelocityField(Kinematics):
         return v_x + self.v[0], v_y + self.v[1], v_z + self.v[2]
 
     def addinfo(self):
-        return "Linear velocity field:\n v = {0}\n s = {1}\n omega = {2}\n kappa = {3}\n".format(
-            self.v, self.s, self.omega, self.kappa
-        )
+        return f"Linear velocity field:\n v = {self.v}\n s = {self.s}\n omega = {self.omega}\n kappa = {self.kappa}\n"
 
     def getmeta(self):
         return {

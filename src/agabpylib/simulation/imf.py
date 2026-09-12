@@ -4,11 +4,11 @@ Provide classes and methods for the simulation of initial mass functions.
 Anthony Brown Sep 2017 - Aug 2022
 """
 
-import numpy as np
-from scipy.stats import uniform
 from abc import ABC, abstractmethod
 
-__all__ = ["IMF", "Uniform", "MultiPartPowerLaw"]
+import numpy as np
+
+__all__ = ["IMF", "MultiPartPowerLaw", "Uniform"]
 
 
 class IMF(ABC):
@@ -35,7 +35,6 @@ class IMF(ABC):
         lnpdf_val : float array
             Value of the natural logarithm of the IMF for each of the input masses.
         """
-        pass
 
     @abstractmethod
     def cdf(self, mass, min_mass, max_mass):
@@ -81,7 +80,6 @@ class IMF(ABC):
         masses : float array
             Array of random mass values.
         """
-        pass
 
     @abstractmethod
     def getinfo(self):
@@ -91,7 +89,6 @@ class IMF(ABC):
         info : str
             String with information about the IMF.
         """
-        pass
 
     @abstractmethod
     def getmeta(self):
@@ -332,9 +329,7 @@ class MultiPartPowerLaw(IMF):
         return (
             "Initial Mass Function\n"
             + "---------------------\n"
-            + "Multi-part powerlaw: slopes {0}; masses of break-points {1}".format(
-                self.slopes, self.break_points
-            )
+            + f"Multi-part powerlaw: slopes {self.slopes}; masses of break-points {self.break_points}"
         )
 
     def getmeta(self):

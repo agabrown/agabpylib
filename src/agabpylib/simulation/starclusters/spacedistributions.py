@@ -9,14 +9,15 @@ Provides classes and methods to simulate the space distributions of stars in clu
 Anthony Brown Jul 2019 - Sep 2019
 """
 
-import numpy as np
 from abc import ABC, abstractmethod
 
+import numpy as np
+
 __all__ = [
-    "SpaceDistribution",
     "ConstantDensitySphere",
-    "SphericalShell",
     "PlummerSphere",
+    "SpaceDistribution",
+    "SphericalShell",
     "TruncatedPlummerSphere",
 ]
 
@@ -44,7 +45,6 @@ class SpaceDistribution(ABC):
         x, y, z : astropy.units.Quantity arrays
             The x, y, z positions of the stars in units of pc.
         """
-        pass
 
     def getinfo(self):
         """
@@ -63,7 +63,6 @@ class SpaceDistribution(ABC):
         info : str
             String with specific information about the space distribution.
         """
-        pass
 
     @abstractmethod
     def getmeta(self):
@@ -73,7 +72,6 @@ class SpaceDistribution(ABC):
         meta : dict
             Metadata on the space distribution of the cluster stars.
         """
-        pass
 
 
 class ConstantDensitySphere(SpaceDistribution):
@@ -109,9 +107,7 @@ class ConstantDensitySphere(SpaceDistribution):
         return x, y, z
 
     def addinfo(self):
-        return "Uniform space density distribution over sphere of radius {0}\n".format(
-            self.radius
-        )
+        return f"Uniform space density distribution over sphere of radius {self.radius}\n"
 
     def getmeta(self):
         return {
@@ -155,7 +151,7 @@ class SphericalShell(SpaceDistribution):
         return x, y, z
 
     def addinfo(self):
-        return "Spherical shell of radius {0}\n".format(self.radius)
+        return f"Spherical shell of radius {self.radius}\n"
 
     def getmeta(self):
         return {
@@ -217,9 +213,7 @@ class PlummerSphere(SpaceDistribution):
         return x, y, z
 
     def addinfo(self):
-        return "Plummer density distribution with core radius {0}".format(
-            self.core_radius
-        )
+        return f"Plummer density distribution with core radius {self.core_radius}"
 
     def getmeta(self):
         return {
@@ -266,9 +260,7 @@ class TruncatedPlummerSphere(SpaceDistribution):
         return x, y, z
 
     def addinfo(self):
-        return "Truncated Plummer density distribution: core radius {0}, truncation radius {1}".format(
-            self.core_radius, self.truncation_radius
-        )
+        return f"Truncated Plummer density distribution: core radius {self.core_radius}, truncation radius {self.truncation_radius}"
 
     def getmeta(self):
         return {
