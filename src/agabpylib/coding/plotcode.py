@@ -35,7 +35,7 @@ def plotcode_parser(desc):
     return parser
 
 
-def save_or_show_plot(fig: Figure, basename: str, sfmt: str, **kwargs):
+def save_or_show_plot(fig: Figure, basename: str | None=None, sfmt: str | None=None, **kwargs):
     """
     Save the plot or show it on screen.
 
